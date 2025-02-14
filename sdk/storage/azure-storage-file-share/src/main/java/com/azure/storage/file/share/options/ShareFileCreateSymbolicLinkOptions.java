@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * NFS only. Options that may be passed when creating a symbolic link for a file.
  */
-public class ShareFileCreateSymbolicLinkOptions {
+public final class ShareFileCreateSymbolicLinkOptions {
     private Map<String, String> metadata;
     private OffsetDateTime fileCreationTime;
     private OffsetDateTime fileLastWriteTime;

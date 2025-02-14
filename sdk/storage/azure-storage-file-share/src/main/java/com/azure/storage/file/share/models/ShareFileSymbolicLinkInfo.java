@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
  * Contains information about a symbolic link. Only applicable to NFS files.
  */
 @Immutable
-public class ShareFileSymbolicLinkInfo {
+public final class ShareFileSymbolicLinkInfo {
     private final String eTag;
     private final OffsetDateTime lastModified;
     private final String linkText;
