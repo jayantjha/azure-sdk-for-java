@@ -21,7 +21,7 @@ import com.azure.core.test.utils.MockTokenCredential;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 
-class AIProjectClientTestBase extends TestProxyTestBase {
+public class AIProjectClientTestBase extends TestProxyTestBase {
     protected AgentsClient agentsClient;
 
     protected ConnectionsClient connectionsClient;
