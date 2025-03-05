@@ -1,6 +1,7 @@
 package com.azure.ai.projects;
 
 import com.azure.ai.projects.generated.AIProjectClientTestBase;
+import com.azure.ai.projects.models.ConnectionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

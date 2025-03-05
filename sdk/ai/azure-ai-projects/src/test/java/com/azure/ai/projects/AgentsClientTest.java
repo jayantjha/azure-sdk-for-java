@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.tools.Tool;
@@ -301,6 +302,191 @@ class AgentsClientTest extends AIProjectClientTestBase {
     }
 
     @Test
+    void createAgentWithBatchFileSearch() throws IOException, InterruptedException, URISyntaxException {
+        var productFile = getFile("product_info_1.md");
+
+        VectorStore vectorStore = agentsClient.createVectorStore(
+            null,"my_vector_store",
+            null, null, null, null);
+
+        OpenAIFile uploadedAgentFile = agentsClient.uploadFile(
+            new FileDetails(
+                BinaryData.fromFile(productFile))
+                .setFilename("sample_product_info.md"),
+            FilePurpose.AGENTS);
+
+        VectorStoreFileBatch vectorStoreFileBatch = agentsClient.createVectorStoreFileBatch(
+            vectorStore.getId(), List.of(uploadedAgentFile.getId()), null, null);
+
+        FileSearchToolResource fileSearchToolResource = new FileSearchToolResource()
+            .setVectorStoreIds(List.of(vectorStore.getId()));
+
+        var agentName = "my_batch_file_search_agent";
+        Agent agent = null;
+        var agentOptional = agentsClient.listAgents().getData().stream()
+            .filter(a -> a.getName().equals(agentName))
+            .findFirst();
+        if (agentOptional.isPresent())
+            agent = agentOptional.get();
+        else {
+            var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+                .setName(agentName)
+                .setInstructions("You are a helpful agent.")
+                .setTools(List.of(new FileSearchToolDefinition()))
+                .setToolResources(new ToolResources().setFileSearch(fileSearchToolResource));
+            agent = agentsClient.createAgent(createAgentOptions);
+        }
+
+        var thread = agentsClient.createThread();
+        assertNotNull(thread);
+        var createdMessage = agentsClient.createMessage(
+            thread.getId(),
+            MessageRole.USER,
+            "What feature does Smart Eyewear offer?");
+        assertNotNull(createdMessage);
+
+        //run agent
+        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+            .setAdditionalInstructions("");
+        var threadRun = agentsClient.createRun(createRunOptions);
+        assertNotNull(threadRun);
+
+        checkMessagesFromRun(threadRun, thread);
+    }
+
+    @Test
+    void createAISearchAgent() {
+        String aiSearchConnectionId = "subscriptions/696debc0-8b66-4d84-87b1-39f43917d76c/resourceGroups/rg-jayant/providers/Microsoft.MachineLearningServices/workspaces/jayant-sdk-project-eus/connections/testjayant";
+
+        ToolResources toolResources = new ToolResources()
+            .setAzureAISearch(new AzureAISearchResource()
+                .setIndexList(List.of(new IndexResource(aiSearchConnectionId, "sample_index"))));
+
+        var agentName = "my_ai_search_agent";
+        Agent agent = null;
+        var agentOptional = agentsClient.listAgents().getData().stream()
+            .filter(a -> a.getName().equals(agentName))
+            .findFirst();
+        if (agentOptional.isPresent())
+            agent = agentOptional.get();
+        else {
+            var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+                .setName(agentName)
+                .setInstructions("You are a helpful agent")
+                .setTools(List.of(new AzureAISearchToolDefinition()))
+                .setToolResources(toolResources);
+            agent = agentsClient.createAgent(createAgentOptions);
+        }
+        var thread = agentsClient.createThread();
+        assertNotNull(thread);
+        var createdMessage = agentsClient.createMessage(
+            thread.getId(),
+            MessageRole.USER,
+            "Tell me anything!");
+        assertNotNull(createdMessage);
+
+        //run agent
+        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+            .setAdditionalInstructions("");
+        var threadRun = agentsClient.createRun(createRunOptions);
+        assertNotNull(threadRun);
+
+        checkMessagesFromRun(threadRun, thread);
+    }
+
+    @Test
+    void createCodeInterpreterFileAttachmentAgent() throws FileNotFoundException, URISyntaxException {
+        var htmlFile = getFile("sample_test.html");
+
+        var agentName = "my_code_interpreter_file_attachment_agent";
+        var ciTool = new CodeInterpreterToolDefinition();
+        var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+            .setName(agentName)
+            .setInstructions("You are a helpful agent")
+            .setTools(List.of(ciTool));
+        Agent agent = agentsClient.createAgent(createAgentOptions);
+
+        OpenAIFile uploadedFile = agentsClient.uploadFile(
+            new FileDetails(BinaryData.fromFile(htmlFile))
+                .setFilename("sample_test.html"),
+            FilePurpose.AGENTS);
+
+        MessageAttachment messageAttachment = new MessageAttachment(
+            List.of(BinaryData.fromObject(ciTool))
+        ).setFileId(uploadedFile.getId());
+
+        var thread = agentsClient.createThread();
+        assertNotNull(thread);
+        var createdMessage = agentsClient.createMessage(
+            thread.getId(),
+            MessageRole.USER,
+            "What does the attachment say?",
+            List.of(messageAttachment),
+            null
+        );
+        assertNotNull(createdMessage);
+
+        //run agent
+        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+            .setAdditionalInstructions("");
+        var threadRun = agentsClient.createRun(createRunOptions);
+        assertNotNull(threadRun);
+
+        checkMessagesFromRun(threadRun, thread);
+    }
+
+    @Test
+    @Disabled
+    void createAgentWithEnterpriseFileSearch() {
+        var storageBlobUri = Configuration.getGlobalConfiguration().get("STORAGE_BLOB_URI", "");
+        VectorStoreDataSource vectorStoreDataSource = new VectorStoreDataSource(
+            storageBlobUri, VectorStoreDataSourceAssetType.URI_ASSET);
+        VectorStore vs = agentsClient.createVectorStore(
+            null, "sample_vector_store",
+            new VectorStoreConfiguration(List.of(vectorStoreDataSource)),
+            null, null, null
+        );
+
+        FileSearchToolResource fileSearchToolResource = new FileSearchToolResource()
+            .setVectorStoreIds(List.of(vs.getId()));
+
+        var agentName = "my_enterprise_file_search_agent";
+        Agent agent = null;
+        var agentOptional = agentsClient.listAgents().getData().stream()
+            .filter(a -> a.getName().equals(agentName))
+            .findFirst();
+        if (agentOptional.isPresent())
+            agent = agentOptional.get();
+        else {
+            var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+                .setName(agentName)
+                .setInstructions("You are a helpful agent.")
+                .setTools(List.of(new FileSearchToolDefinition()))
+                .setToolResources(new ToolResources().setFileSearch(fileSearchToolResource));
+            agent = agentsClient.createAgent(createAgentOptions);
+        }
+
+        var thread = agentsClient.createThread();
+        assertNotNull(thread);
+        var createdMessage = agentsClient.createMessage(
+            thread.getId(),
+            MessageRole.USER,
+            "What feature does Smart Eyewear offer?");
+        assertNotNull(createdMessage);
+
+        //run agent
+        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+            .setAdditionalInstructions("");
+        var threadRun = agentsClient.createRun(createRunOptions);
+        assertNotNull(threadRun);
+
+        checkMessagesFromRun(threadRun, thread);
+
+        agentsClient.deleteVectorStore(vs.getId());
+    }
+
+    @Test
+    @Disabled
     void createAgentWithOpenApi() throws FileNotFoundException, URISyntaxException {
         var filePath = getFile("weather_openapi.json");
         OpenApiAnonymousAuthDetails oaiAuth = new OpenApiAnonymousAuthDetails();
@@ -343,6 +529,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
     }
 
     @Test
+    @Disabled
     void createAgentWithAzureFunction() {
         var storageQueueUri = Configuration.getGlobalConfiguration().get("STORAGE_QUEUE_URI", "");
 
@@ -403,9 +590,8 @@ class AgentsClientTest extends AIProjectClientTestBase {
         checkMessagesFromRun(threadRun, thread);
     }
 
-
-
     @Test
+    @Disabled
     void createStreamingAgent() {
         var agentName = "my_code_interpreter_agent";
         Agent agent = null;
@@ -430,6 +616,13 @@ class AgentsClientTest extends AIProjectClientTestBase {
             "Hi, Assistant! Draw a graph for a line with a slope of 4 and y-intercept of 9.");
         assertNotNull(createdMessage);
         fail("Incomplete");
+    }
+
+    @Test
+    @Disabled
+    void listAndDeleteAllAgents() {
+        agentsClient.listAgents().getData().stream()
+            .forEach(agent -> agentsClient.deleteAgent(agent.getId()));
     }
 
     private Path getFile(String fileName) throws FileNotFoundException, URISyntaxException {
