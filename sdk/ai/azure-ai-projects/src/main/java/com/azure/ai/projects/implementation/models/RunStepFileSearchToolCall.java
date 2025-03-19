@@ -27,7 +27,7 @@ public final class RunStepFileSearchToolCall extends RunStepToolCall {
      * The ID of the tool call. This ID must be referenced when you submit tool outputs.
      */
     @Generated
-    private final String id;
+    private final String id = "";
 
     /*
      * For now, this is always going to be an empty object.
@@ -37,7 +37,7 @@ public final class RunStepFileSearchToolCall extends RunStepToolCall {
 
     /**
      * Creates an instance of RunStepFileSearchToolCall class.
-     * 
+     *
      * @param id the id value to set.
      * @param fileSearch the fileSearch value to set.
      */
@@ -49,7 +49,7 @@ public final class RunStepFileSearchToolCall extends RunStepToolCall {
 
     /**
      * Get the type property: The object type.
-     * 
+     *
      * @return the type value.
      */
     @Generated
@@ -60,7 +60,7 @@ public final class RunStepFileSearchToolCall extends RunStepToolCall {
 
     /**
      * Get the id property: The ID of the tool call. This ID must be referenced when you submit tool outputs.
-     * 
+     *
      * @return the id value.
      */
     @Generated
@@ -70,7 +70,7 @@ public final class RunStepFileSearchToolCall extends RunStepToolCall {
 
     /**
      * Get the fileSearch property: For now, this is always going to be an empty object.
-     * 
+     *
      * @return the fileSearch value.
      */
     @Generated
@@ -94,7 +94,7 @@ public final class RunStepFileSearchToolCall extends RunStepToolCall {
 
     /**
      * Reads an instance of RunStepFileSearchToolCall from the JsonReader.
-     * 
+     *
      * @param jsonReader The JsonReader being read.
      * @return An instance of RunStepFileSearchToolCall if the JsonReader was pointing to an instance of it, or null if
      * it was pointing to JSON null.
@@ -104,7 +104,6 @@ public final class RunStepFileSearchToolCall extends RunStepToolCall {
     @Generated
     public static RunStepFileSearchToolCall fromJson(JsonReader jsonReader) throws IOException {
         return jsonReader.readObject(reader -> {
-            String id = null;
             String id = null;
             RunStepFileSearchToolCallResults fileSearch = null;
             String type = "file_search";
@@ -123,7 +122,7 @@ public final class RunStepFileSearchToolCall extends RunStepToolCall {
                 }
             }
             RunStepFileSearchToolCall deserializedRunStepFileSearchToolCall
-                = new RunStepFileSearchToolCall(id, id, fileSearch);
+                = new RunStepFileSearchToolCall(id, fileSearch);
             deserializedRunStepFileSearchToolCall.type = type;
 
             return deserializedRunStepFileSearchToolCall;
