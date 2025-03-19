@@ -436,7 +436,6 @@ class AgentsClientTest extends AIProjectClientTestBase {
     }
 
     @Test
-    @Disabled
     void createAgentWithEnterpriseFileSearch() {
         var storageBlobUri = Configuration.getGlobalConfiguration().get("STORAGE_BLOB_URI", "");
         VectorStoreDataSource vectorStoreDataSource = new VectorStoreDataSource(
