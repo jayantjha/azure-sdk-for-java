@@ -24,6 +24,11 @@ public enum AuthenticationType {
     SAS("SAS"),
 
     /**
+     * Custom authentication.
+     */
+    CUSTOM("CustomKeys"),
+
+    /**
      * No authentication.
      */
     NONE("None");

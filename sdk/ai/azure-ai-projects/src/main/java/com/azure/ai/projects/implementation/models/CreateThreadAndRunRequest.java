@@ -25,12 +25,6 @@ import java.util.Map;
 public final class CreateThreadAndRunRequest implements JsonSerializable<CreateThreadAndRunRequest> {
 
     /*
-     * The ID of the agent for which the thread should be created.
-     */
-    @Generated
-    private final String agentId;
-
-    /*
      * The details used to create the new thread. If no thread is provided, an empty one will be created.
      */
     @Generated
@@ -139,21 +133,11 @@ public final class CreateThreadAndRunRequest implements JsonSerializable<CreateT
     /**
      * Creates an instance of CreateThreadAndRunRequest class.
      *
-     * @param agentId the agentId value to set.
+     * @param assistantId the assistantId value to set.
      */
     @Generated
-    public CreateThreadAndRunRequest(String agentId) {
-        this.agentId = agentId;
-    }
-
-    /**
-     * Get the agentId property: The ID of the agent for which the thread should be created.
-     *
-     * @return the agentId value.
-     */
-    @Generated
-    public String getAgentId() {
-        return this.agentId;
+    public CreateThreadAndRunRequest(String assistantId) {
+        this.assistantId = assistantId;
     }
 
     /**
@@ -533,7 +517,7 @@ public final class CreateThreadAndRunRequest implements JsonSerializable<CreateT
     @Override
     public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
         jsonWriter.writeStartObject();
-        jsonWriter.writeStringField("assistant_id", this.agentId);
+        jsonWriter.writeStringField("assistant_id", this.assistantId);
         jsonWriter.writeJsonField("thread", this.thread);
         jsonWriter.writeStringField("model", this.model);
         jsonWriter.writeStringField("instructions", this.instructions);
@@ -570,7 +554,7 @@ public final class CreateThreadAndRunRequest implements JsonSerializable<CreateT
     @Generated
     public static CreateThreadAndRunRequest fromJson(JsonReader jsonReader) throws IOException {
         return jsonReader.readObject(reader -> {
-            String agentId = null;
+            String assistantId = null;
             AgentThreadCreationOptions thread = null;
             String model = null;
             String instructions = null;
@@ -590,7 +574,7 @@ public final class CreateThreadAndRunRequest implements JsonSerializable<CreateT
                 String fieldName = reader.getFieldName();
                 reader.nextToken();
                 if ("assistant_id".equals(fieldName)) {
-                    agentId = reader.getString();
+                    assistantId = reader.getString();
                 } else if ("thread".equals(fieldName)) {
                     thread = AgentThreadCreationOptions.fromJson(reader);
                 } else if ("model".equals(fieldName)) {
@@ -627,7 +611,8 @@ public final class CreateThreadAndRunRequest implements JsonSerializable<CreateT
                     reader.skipChildren();
                 }
             }
-            CreateThreadAndRunRequest deserializedCreateThreadAndRunRequest = new CreateThreadAndRunRequest(agentId);
+            CreateThreadAndRunRequest deserializedCreateThreadAndRunRequest
+                = new CreateThreadAndRunRequest(assistantId);
             deserializedCreateThreadAndRunRequest.thread = thread;
             deserializedCreateThreadAndRunRequest.model = model;
             deserializedCreateThreadAndRunRequest.instructions = instructions;
@@ -645,5 +630,21 @@ public final class CreateThreadAndRunRequest implements JsonSerializable<CreateT
             deserializedCreateThreadAndRunRequest.metadata = metadata;
             return deserializedCreateThreadAndRunRequest;
         });
+    }
+
+    /*
+     * The ID of the agent for which the thread should be created.
+     */
+    @Generated
+    private final String assistantId;
+
+    /**
+     * Get the assistantId property: The ID of the agent for which the thread should be created.
+     *
+     * @return the assistantId value.
+     */
+    @Generated
+    public String getAssistantId() {
+        return this.assistantId;
     }
 }

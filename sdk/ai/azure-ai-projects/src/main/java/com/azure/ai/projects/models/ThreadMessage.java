@@ -83,12 +83,6 @@ public final class ThreadMessage implements JsonSerializable<ThreadMessage> {
     private final List<MessageContent> content;
 
     /*
-     * If applicable, the ID of the agent that authored this message.
-     */
-    @Generated
-    private final String agentId;
-
-    /*
      * If applicable, the ID of the run associated with the authoring of this message.
      */
     @Generated
@@ -120,7 +114,7 @@ public final class ThreadMessage implements JsonSerializable<ThreadMessage> {
      * @param incompleteAt the incompleteAt value to set.
      * @param role the role value to set.
      * @param content the content value to set.
-     * @param agentId the agentId value to set.
+     * @param assistantId the assistantId value to set.
      * @param runId the runId value to set.
      * @param attachments the attachments value to set.
      * @param metadata the metadata value to set.
@@ -128,7 +122,7 @@ public final class ThreadMessage implements JsonSerializable<ThreadMessage> {
     @Generated
     private ThreadMessage(String id, OffsetDateTime createdAt, String threadId, MessageStatus status,
         MessageIncompleteDetails incompleteDetails, OffsetDateTime completedAt, OffsetDateTime incompleteAt,
-        MessageRole role, List<MessageContent> content, String agentId, String runId,
+        MessageRole role, List<MessageContent> content, String assistantId, String runId,
         List<MessageAttachment> attachments, Map<String, String> metadata) {
         this.id = id;
         if (createdAt == null) {
@@ -151,7 +145,7 @@ public final class ThreadMessage implements JsonSerializable<ThreadMessage> {
         }
         this.role = role;
         this.content = content;
-        this.agentId = agentId;
+        this.assistantId = assistantId;
         this.runId = runId;
         this.attachments = attachments;
         this.metadata = metadata;
@@ -264,16 +258,6 @@ public final class ThreadMessage implements JsonSerializable<ThreadMessage> {
     }
 
     /**
-     * Get the agentId property: If applicable, the ID of the agent that authored this message.
-     *
-     * @return the agentId value.
-     */
-    @Generated
-    public String getAgentId() {
-        return this.agentId;
-    }
-
-    /**
      * Get the runId property: If applicable, the ID of the run associated with the authoring of this message.
      *
      * @return the runId value.
@@ -322,7 +306,7 @@ public final class ThreadMessage implements JsonSerializable<ThreadMessage> {
         jsonWriter.writeNumberField("incomplete_at", this.incompleteAt);
         jsonWriter.writeStringField("role", this.role == null ? null : this.role.toString());
         jsonWriter.writeArrayField("content", this.content, (writer, element) -> writer.writeJson(element));
-        jsonWriter.writeStringField("assistant_id", this.agentId);
+        jsonWriter.writeStringField("assistant_id", this.assistantId);
         jsonWriter.writeStringField("run_id", this.runId);
         jsonWriter.writeArrayField("attachments", this.attachments, (writer, element) -> writer.writeJson(element));
         jsonWriter.writeMapField("metadata", this.metadata, (writer, element) -> writer.writeString(element));
@@ -350,7 +334,7 @@ public final class ThreadMessage implements JsonSerializable<ThreadMessage> {
             OffsetDateTime incompleteAt = null;
             MessageRole role = null;
             List<MessageContent> content = null;
-            String agentId = null;
+            String assistantId = null;
             String runId = null;
             List<MessageAttachment> attachments = null;
             Map<String, String> metadata = null;
@@ -384,7 +368,7 @@ public final class ThreadMessage implements JsonSerializable<ThreadMessage> {
                 } else if ("content".equals(fieldName)) {
                     content = reader.readArray(reader1 -> MessageContent.fromJson(reader1));
                 } else if ("assistant_id".equals(fieldName)) {
-                    agentId = reader.getString();
+                    assistantId = reader.getString();
                 } else if ("run_id".equals(fieldName)) {
                     runId = reader.getString();
                 } else if ("attachments".equals(fieldName)) {
@@ -396,7 +380,23 @@ public final class ThreadMessage implements JsonSerializable<ThreadMessage> {
                 }
             }
             return new ThreadMessage(id, createdAt, threadId, status, incompleteDetails, completedAt, incompleteAt,
-                role, content, agentId, runId, attachments, metadata);
+                role, content, assistantId, runId, attachments, metadata);
         });
+    }
+
+    /*
+     * If applicable, the ID of the agent that authored this message.
+     */
+    @Generated
+    private final String assistantId;
+
+    /**
+     * Get the assistantId property: If applicable, the ID of the agent that authored this message.
+     *
+     * @return the assistantId value.
+     */
+    @Generated
+    public String getAssistantId() {
+        return this.assistantId;
     }
 }

@@ -123,6 +123,8 @@ public class InternalConnectionProperties implements JsonSerializable<InternalCo
                     return InternalConnectionPropertiesApiKeyAuth.fromJson(readerToUse.reset());
                 } else if ("AAD".equals(discriminatorValue)) {
                     return InternalConnectionPropertiesAADAuth.fromJson(readerToUse.reset());
+                } else if ("CustomKeys".equals(discriminatorValue)) {
+                    return InternalConnectionPropertiesCustomAuth.fromJson(readerToUse.reset());
                 } else if ("SAS".equals(discriminatorValue)) {
                     return InternalConnectionPropertiesSASAuth.fromJson(readerToUse.reset());
                 } else if ("None".equals(discriminatorValue)) {

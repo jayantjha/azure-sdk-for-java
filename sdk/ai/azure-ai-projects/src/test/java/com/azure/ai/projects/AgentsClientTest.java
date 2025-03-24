@@ -7,6 +7,10 @@ import com.azure.core.http.HttpHeaderName;
 import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
+import com.azure.json.JsonProviders;
+import com.azure.json.JsonReader;
+import com.azure.json.implementation.jackson.core.JsonFactoryBuilder;
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +18,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.FileInfo;
 
 import javax.tools.Tool;
 import java.io.*;
@@ -213,7 +218,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
     @Test
     void createAgentWithBingGrounding() {
         ToolConnectionList toolConnectionList = new ToolConnectionList()
-            .setConnectionList(List.of(new ToolConnection("/subscriptions/696debc0-8b66-4d84-87b1-39f43917d76c/resourceGroups/rg-jayant/providers/Microsoft.MachineLearningServices/workspaces/jayant-sdk-project-eus/connections/jayantagentbing")));
+            .setConnectionList(List.of(new ToolConnection("/subscriptions/696debc0-8b66-4d84-87b1-39f43917d76c/resourceGroups/rg-jayant/providers/Microsoft.MachineLearningServices/workspaces/jayant-project-2aqa/connections/jayantagentbing")));
         BingGroundingToolDefinition bingGroundingTool = new BingGroundingToolDefinition(toolConnectionList);
         var agentName = "my_bing_grounding_agent";
         Agent agent = null;
@@ -437,13 +442,15 @@ class AgentsClientTest extends AIProjectClientTestBase {
 
     @Test
     void createAgentWithEnterpriseFileSearch() {
-        var storageBlobUri = Configuration.getGlobalConfiguration().get("STORAGE_BLOB_URI", "");
+        // this should data asset uri from the data added in AI Foundry Project
+        var storageBlobUri = "azureml://subscriptions/696debc0-8b66-4d84-87b1-39f43917d76c/resourcegroups/rg-jayant/workspaces/jayant-project-2aqa/datastores/workspaceblobstore/paths/product_info_1.md";
         VectorStoreDataSource vectorStoreDataSource = new VectorStoreDataSource(
             storageBlobUri, VectorStoreDataSourceAssetType.URI_ASSET);
+
         VectorStore vs = agentsClient.createVectorStore(
             null, "sample_vector_store",
             new VectorStoreConfiguration(List.of(vectorStoreDataSource)),
-            null, null, null
+            null,null, null
         );
 
         FileSearchToolResource fileSearchToolResource = new FileSearchToolResource()
@@ -470,7 +477,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
         var createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
-            "What feature does Smart Eyewear offer?");
+            "What is data about?");
         assertNotNull(createdMessage);
 
         //run agent
@@ -485,17 +492,16 @@ class AgentsClientTest extends AIProjectClientTestBase {
     }
 
     @Test
-    @Disabled
-    void createAgentWithOpenApi() throws FileNotFoundException, URISyntaxException {
+    void createAgentWithOpenApi() throws IOException, URISyntaxException {
         var filePath = getFile("weather_openapi.json");
+        var reader = JsonProviders.createReader(Files.readString(filePath));
+
         OpenApiAnonymousAuthDetails oaiAuth = new OpenApiAnonymousAuthDetails();
-        OpenApiToolDefinition openApiTool = new OpenApiToolDefinition(
-            new OpenApiFunctionDefinition(
-                "get_weather",
-                BinaryData.fromFile(filePath),
-                oaiAuth
-            ).setDescription("Retrieve weather information for a location")
-        );
+        OpenApiToolDefinition openApiTool = new OpenApiToolDefinition(new OpenApiFunctionDefinition(
+            "openapitool",
+            reader.getNullable(nonNullReader -> BinaryData.fromObject(nonNullReader.readUntyped())),
+            oaiAuth
+        ));
         var agentName = "my_openapi_agent";
         Agent agent = null;
         var agentOptional = agentsClient.listAgents().getData().stream()
@@ -504,7 +510,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
         if (agentOptional.isPresent())
             agent = agentOptional.get();
         else {
-            var createAgentOptions = new CreateAgentOptions("gpt-4o")
+            var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
                 .setName(agentName)
                 .setInstructions("You are a helpful agent")
                 .setTools(List.of(openApiTool));
@@ -528,7 +534,6 @@ class AgentsClientTest extends AIProjectClientTestBase {
     }
 
     @Test
-    @Disabled
     void createAgentWithAzureFunction() {
         var storageQueueUri = Configuration.getGlobalConfiguration().get("STORAGE_QUEUE_URI", "");
 
@@ -589,8 +594,49 @@ class AgentsClientTest extends AIProjectClientTestBase {
         checkMessagesFromRun(threadRun, thread);
     }
 
+
     @Test
-    @Disabled
+    void createSharepointToolAgent() {
+        SharepointToolDefinition sharepointToolDefinition = new SharepointToolDefinition(
+            new ToolConnectionList().setConnectionList(List.of(new ToolConnection("sharepoint_connection_name")))
+        );
+
+        var agentName = "my_sharepoint_agent";
+        Agent agent = null;
+        var agentOptional = agentsClient.listAgents().getData().stream()
+            .filter(a -> a.getName().equals(agentName))
+            .findFirst();
+        if (agentOptional.isPresent())
+            agent = agentOptional.get();
+        else {
+            RequestOptions requestOptions = new RequestOptions()
+                .setHeader(HttpHeaderName.fromString("x-ms-enable-preview"), "true");
+            CreateAgentRequest createAgentRequestObj = new CreateAgentRequest("gpt-4o-mini")
+                .setName(agentName)
+                .setInstructions("You are a helpful assistant")
+                .setTools(List.of(sharepointToolDefinition));
+            BinaryData createAgentRequest = BinaryData.fromObject(createAgentRequestObj);
+            agent = agentsClient.createAgentWithResponse(createAgentRequest, requestOptions)
+                .getValue().toObject(Agent.class);
+        }
+        var thread = agentsClient.createThread();
+        assertNotNull(thread);
+        var createdMessage = agentsClient.createMessage(
+            thread.getId(),
+            MessageRole.USER,
+            "Summarize illustrations.docx");
+        assertNotNull(createdMessage);
+
+        //run agent
+        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+            .setAdditionalInstructions("");
+        var threadRun = agentsClient.createRun(createRunOptions);
+        assertNotNull(threadRun);
+
+        checkMessagesFromRun(threadRun, thread);
+    }
+
+    @Test
     void createStreamingAgent() {
         var agentName = "my_code_interpreter_agent";
         Agent agent = null;
@@ -639,7 +685,15 @@ class AgentsClientTest extends AIProjectClientTestBase {
                 Thread.sleep(500);
                 threadRun = agentsClient.getRun(thread.getId(), threadRun.getId());
             }
-            while (threadRun.getStatus() == RunStatus.QUEUED || threadRun.getStatus() == RunStatus.IN_PROGRESS);
+            while (
+                threadRun.getStatus() == RunStatus.QUEUED
+                || threadRun.getStatus() == RunStatus.IN_PROGRESS
+                || threadRun.getStatus() == RunStatus.REQUIRES_ACTION);
+
+            if (threadRun.getStatus() == RunStatus.FAILED) {
+                System.out.println(threadRun.getLastError().getMessage());
+            }
+
             var runMessages = agentsClient.listMessages(thread.getId());
             assertTrue(runMessages.getData().stream().count() > 1);
         } catch (InterruptedException e) {

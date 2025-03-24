@@ -68,7 +68,7 @@ public final class ConnectionsImpl {
      * The interface defining all the services for AIProjectClientConnections to be used by the proxy service to perform
      * REST calls.
      */
-    @Host("{endpoint}/agents/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{projectName}")
+    @Host("{endpoint}/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{projectName}")
     @ServiceInterface(name = "AIProjectClientConne")
     public interface ConnectionsService {
         @Get("/")
@@ -242,7 +242,8 @@ public final class ConnectionsImpl {
      * <caption>Query Parameters</caption>
      * <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
      * <tr><td>category</td><td>String</td><td>No</td><td>Category of the workspace connection. Allowed values:
-     * "AzureOpenAI", "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey".</td></tr>
+     * "AzureOpenAI", "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys",
+     * "CognitiveService".</td></tr>
      * <tr><td>includeAll</td><td>Boolean</td><td>No</td><td>Indicates whether to list datastores. Service default: do
      * not list datastores.</td></tr>
      * <tr><td>target</td><td>String</td><td>No</td><td>Target of the workspace connection.</td></tr>
@@ -258,8 +259,8 @@ public final class ConnectionsImpl {
      *             id: String (Required)
      *             name: String (Required)
      *             properties (Required): {
-     *                 authType: String(ApiKey/AAD/SAS/None) (Required)
-     *                 category: String(AzureOpenAI/Serverless/AzureBlob/AIServices/CognitiveSearch/ApiKey) (Required)
+     *                 authType: String(ApiKey/AAD/SAS/CustomKeys/None) (Required)
+     *                 category: String(AzureOpenAI/Serverless/AzureBlob/AIServices/CognitiveSearch/ApiKey/CustomKeys/CognitiveService) (Required)
      *                 target: String (Required)
      *             }
      *         }
@@ -290,7 +291,8 @@ public final class ConnectionsImpl {
      * <caption>Query Parameters</caption>
      * <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
      * <tr><td>category</td><td>String</td><td>No</td><td>Category of the workspace connection. Allowed values:
-     * "AzureOpenAI", "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey".</td></tr>
+     * "AzureOpenAI", "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys",
+     * "CognitiveService".</td></tr>
      * <tr><td>includeAll</td><td>Boolean</td><td>No</td><td>Indicates whether to list datastores. Service default: do
      * not list datastores.</td></tr>
      * <tr><td>target</td><td>String</td><td>No</td><td>Target of the workspace connection.</td></tr>
@@ -306,8 +308,8 @@ public final class ConnectionsImpl {
      *             id: String (Required)
      *             name: String (Required)
      *             properties (Required): {
-     *                 authType: String(ApiKey/AAD/SAS/None) (Required)
-     *                 category: String(AzureOpenAI/Serverless/AzureBlob/AIServices/CognitiveSearch/ApiKey) (Required)
+     *                 authType: String(ApiKey/AAD/SAS/CustomKeys/None) (Required)
+     *                 category: String(AzureOpenAI/Serverless/AzureBlob/AIServices/CognitiveSearch/ApiKey/CustomKeys/CognitiveService) (Required)
      *                 target: String (Required)
      *             }
      *         }
@@ -341,8 +343,8 @@ public final class ConnectionsImpl {
      *     id: String (Required)
      *     name: String (Required)
      *     properties (Required): {
-     *         authType: String(ApiKey/AAD/SAS/None) (Required)
-     *         category: String(AzureOpenAI/Serverless/AzureBlob/AIServices/CognitiveSearch/ApiKey) (Required)
+     *         authType: String(ApiKey/AAD/SAS/CustomKeys/None) (Required)
+     *         category: String(AzureOpenAI/Serverless/AzureBlob/AIServices/CognitiveSearch/ApiKey/CustomKeys/CognitiveService) (Required)
      *         target: String (Required)
      *     }
      * }
@@ -377,8 +379,8 @@ public final class ConnectionsImpl {
      *     id: String (Required)
      *     name: String (Required)
      *     properties (Required): {
-     *         authType: String(ApiKey/AAD/SAS/None) (Required)
-     *         category: String(AzureOpenAI/Serverless/AzureBlob/AIServices/CognitiveSearch/ApiKey) (Required)
+     *         authType: String(ApiKey/AAD/SAS/CustomKeys/None) (Required)
+     *         category: String(AzureOpenAI/Serverless/AzureBlob/AIServices/CognitiveSearch/ApiKey/CustomKeys/CognitiveService) (Required)
      *         target: String (Required)
      *     }
      * }
@@ -421,8 +423,8 @@ public final class ConnectionsImpl {
      *     id: String (Required)
      *     name: String (Required)
      *     properties (Required): {
-     *         authType: String(ApiKey/AAD/SAS/None) (Required)
-     *         category: String(AzureOpenAI/Serverless/AzureBlob/AIServices/CognitiveSearch/ApiKey) (Required)
+     *         authType: String(ApiKey/AAD/SAS/CustomKeys/None) (Required)
+     *         category: String(AzureOpenAI/Serverless/AzureBlob/AIServices/CognitiveSearch/ApiKey/CustomKeys/CognitiveService) (Required)
      *         target: String (Required)
      *     }
      * }
@@ -470,8 +472,8 @@ public final class ConnectionsImpl {
      *     id: String (Required)
      *     name: String (Required)
      *     properties (Required): {
-     *         authType: String(ApiKey/AAD/SAS/None) (Required)
-     *         category: String(AzureOpenAI/Serverless/AzureBlob/AIServices/CognitiveSearch/ApiKey) (Required)
+     *         authType: String(ApiKey/AAD/SAS/CustomKeys/None) (Required)
+     *         category: String(AzureOpenAI/Serverless/AzureBlob/AIServices/CognitiveSearch/ApiKey/CustomKeys/CognitiveService) (Required)
      *         target: String (Required)
      *     }
      * }

@@ -28,7 +28,7 @@ class ConnectionsClientTest extends AIProjectClientTestBase {
 
     @Test
     void getConnection() {
-        var connection = connectionsClient.getConnection("jayantagentbing");
+        var connection = connectionsClient.getConnection("jayant-hub-2aqa-connection-AISearch");
         assertNotNull(connection);
     }
 }

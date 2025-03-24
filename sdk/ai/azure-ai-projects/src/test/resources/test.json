@@ -1,0 +1,6 @@
+{
+  "data_sources" : [ {
+    "uri" : "https://agentstorage2aqa.blob.core.windows.net/mydata/weather_openapi.json",
+    "type" : "uri_asset"
+  } ]
+}

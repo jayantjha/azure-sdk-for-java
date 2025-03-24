@@ -406,7 +406,7 @@ public final class AgentsAsyncClient {
      * }
      * </pre>
      *
-     * @param agentId Identifier of the agent.
+     * @param assistantId Identifier of the agent.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -417,8 +417,8 @@ public final class AgentsAsyncClient {
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<BinaryData>> getAgentWithResponse(String agentId, RequestOptions requestOptions) {
-        return this.serviceClient.getAgentWithResponseAsync(agentId, requestOptions);
+    public Mono<Response<BinaryData>> getAgentWithResponse(String assistantId, RequestOptions requestOptions) {
+        return this.serviceClient.getAgentWithResponseAsync(assistantId, requestOptions);
     }
 
     /**
@@ -546,7 +546,7 @@ public final class AgentsAsyncClient {
      * }
      * </pre>
      *
-     * @param agentId The ID of the agent to modify.
+     * @param assistantId The ID of the agent to modify.
      * @param updateAgentRequest The updateAgentRequest parameter.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @throws HttpResponseException thrown if the request is rejected by server.
@@ -558,9 +558,9 @@ public final class AgentsAsyncClient {
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<BinaryData>> updateAgentWithResponse(String agentId, BinaryData updateAgentRequest,
+    public Mono<Response<BinaryData>> updateAgentWithResponse(String assistantId, BinaryData updateAgentRequest,
         RequestOptions requestOptions) {
-        return this.serviceClient.updateAgentWithResponseAsync(agentId, updateAgentRequest, requestOptions);
+        return this.serviceClient.updateAgentWithResponseAsync(assistantId, updateAgentRequest, requestOptions);
     }
 
     /**
@@ -577,7 +577,7 @@ public final class AgentsAsyncClient {
      * }
      * </pre>
      *
-     * @param agentId Identifier of the agent.
+     * @param assistantId Identifier of the agent.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -588,8 +588,8 @@ public final class AgentsAsyncClient {
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<BinaryData>> deleteAgentWithResponse(String agentId, RequestOptions requestOptions) {
-        return this.serviceClient.deleteAgentWithResponseAsync(agentId, requestOptions);
+    public Mono<Response<BinaryData>> deleteAgentWithResponse(String assistantId, RequestOptions requestOptions) {
+        return this.serviceClient.deleteAgentWithResponseAsync(assistantId, requestOptions);
     }
 
     /**
@@ -3258,7 +3258,7 @@ public final class AgentsAsyncClient {
     /**
      * Retrieves an existing agent.
      *
-     * @param agentId Identifier of the agent.
+     * @param assistantId Identifier of the agent.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -3269,10 +3269,10 @@ public final class AgentsAsyncClient {
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Agent> getAgent(String agentId) {
+    public Mono<Agent> getAgent(String assistantId) {
         // Generated convenience method for getAgentWithResponse
         RequestOptions requestOptions = new RequestOptions();
-        return getAgentWithResponse(agentId, requestOptions).flatMap(FluxUtil::toMono)
+        return getAgentWithResponse(assistantId, requestOptions).flatMap(FluxUtil::toMono)
             .map(protocolMethodData -> protocolMethodData.toObject(Agent.class));
     }
 
@@ -3293,7 +3293,7 @@ public final class AgentsAsyncClient {
     public Mono<Agent> updateAgent(UpdateAgentOptions options) {
         // Generated convenience method for updateAgentWithResponse
         RequestOptions requestOptions = new RequestOptions();
-        String agentId = options.getAgentId();
+        String assistantId = options.getAssistantId();
         UpdateAgentRequest updateAgentRequestObj = new UpdateAgentRequest().setModel(options.getModel())
             .setName(options.getName())
             .setDescription(options.getDescription())
@@ -3305,14 +3305,14 @@ public final class AgentsAsyncClient {
             .setResponseFormat(options.getResponseFormat())
             .setMetadata(options.getMetadata());
         BinaryData updateAgentRequest = BinaryData.fromObject(updateAgentRequestObj);
-        return updateAgentWithResponse(agentId, updateAgentRequest, requestOptions).flatMap(FluxUtil::toMono)
+        return updateAgentWithResponse(assistantId, updateAgentRequest, requestOptions).flatMap(FluxUtil::toMono)
             .map(protocolMethodData -> protocolMethodData.toObject(Agent.class));
     }
 
     /**
      * Deletes an agent.
      *
-     * @param agentId Identifier of the agent.
+     * @param assistantId Identifier of the agent.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -3323,10 +3323,10 @@ public final class AgentsAsyncClient {
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<AgentDeletionStatus> deleteAgent(String agentId) {
+    public Mono<AgentDeletionStatus> deleteAgent(String assistantId) {
         // Generated convenience method for deleteAgentWithResponse
         RequestOptions requestOptions = new RequestOptions();
-        return deleteAgentWithResponse(agentId, requestOptions).flatMap(FluxUtil::toMono)
+        return deleteAgentWithResponse(assistantId, requestOptions).flatMap(FluxUtil::toMono)
             .map(protocolMethodData -> protocolMethodData.toObject(AgentDeletionStatus.class));
     }
 
@@ -3714,21 +3714,22 @@ public final class AgentsAsyncClient {
         RequestOptions requestOptions = new RequestOptions();
         String threadId = options.getThreadId();
         List<RunAdditionalFieldList> include = options.getInclude();
-        CreateRunRequest createRunRequestObj = new CreateRunRequest(options.getAgentId()).setModel(options.getModel())
-            .setInstructions(options.getInstructions())
-            .setAdditionalInstructions(options.getAdditionalInstructions())
-            .setAdditionalMessages(options.getAdditionalMessages())
-            .setTools(options.getTools())
-            .setStream(options.isStream())
-            .setTemperature(options.getTemperature())
-            .setTopP(options.getTopP())
-            .setMaxPromptTokens(options.getMaxPromptTokens())
-            .setMaxCompletionTokens(options.getMaxCompletionTokens())
-            .setTruncationStrategy(options.getTruncationStrategy())
-            .setToolChoice(options.getToolChoice())
-            .setResponseFormat(options.getResponseFormat())
-            .setParallelToolCalls(options.isParallelToolCalls())
-            .setMetadata(options.getMetadata());
+        CreateRunRequest createRunRequestObj
+            = new CreateRunRequest(options.getAssistantId()).setModel(options.getModel())
+                .setInstructions(options.getInstructions())
+                .setAdditionalInstructions(options.getAdditionalInstructions())
+                .setAdditionalMessages(options.getAdditionalMessages())
+                .setTools(options.getTools())
+                .setStream(options.isStream())
+                .setTemperature(options.getTemperature())
+                .setTopP(options.getTopP())
+                .setMaxPromptTokens(options.getMaxPromptTokens())
+                .setMaxCompletionTokens(options.getMaxCompletionTokens())
+                .setTruncationStrategy(options.getTruncationStrategy())
+                .setToolChoice(options.getToolChoice())
+                .setResponseFormat(options.getResponseFormat())
+                .setParallelToolCalls(options.isParallelToolCalls())
+                .setMetadata(options.getMetadata());
         BinaryData createRunRequest = BinaryData.fromObject(createRunRequestObj);
         if (include != null) {
             requestOptions.addQueryParam("include[]",
@@ -3977,7 +3978,7 @@ public final class AgentsAsyncClient {
         // Generated convenience method for createThreadAndRunWithResponse
         RequestOptions requestOptions = new RequestOptions();
         CreateThreadAndRunRequest createThreadAndRunRequestObj
-            = new CreateThreadAndRunRequest(options.getAgentId()).setThread(options.getThread())
+            = new CreateThreadAndRunRequest(options.getAssistantId()).setThread(options.getThread())
                 .setModel(options.getModel())
                 .setInstructions(options.getInstructions())
                 .setTools(options.getTools())

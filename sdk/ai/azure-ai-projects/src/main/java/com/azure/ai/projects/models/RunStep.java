@@ -40,12 +40,6 @@ public final class RunStep implements JsonSerializable<RunStep> {
     private final RunStepType type;
 
     /*
-     * The ID of the agent associated with the run step.
-     */
-    @Generated
-    private final String agentId;
-
-    /*
      * The ID of the thread that was run.
      */
     @Generated
@@ -124,7 +118,7 @@ public final class RunStep implements JsonSerializable<RunStep> {
      *
      * @param id the id value to set.
      * @param type the type value to set.
-     * @param agentId the agentId value to set.
+     * @param assistantId the assistantId value to set.
      * @param threadId the threadId value to set.
      * @param runId the runId value to set.
      * @param status the status value to set.
@@ -138,12 +132,13 @@ public final class RunStep implements JsonSerializable<RunStep> {
      * @param metadata the metadata value to set.
      */
     @Generated
-    private RunStep(String id, RunStepType type, String agentId, String threadId, String runId, RunStepStatus status,
-        RunStepDetails stepDetails, RunStepError lastError, OffsetDateTime createdAt, OffsetDateTime expiredAt,
-        OffsetDateTime completedAt, OffsetDateTime cancelledAt, OffsetDateTime failedAt, Map<String, String> metadata) {
+    private RunStep(String id, RunStepType type, String assistantId, String threadId, String runId,
+        RunStepStatus status, RunStepDetails stepDetails, RunStepError lastError, OffsetDateTime createdAt,
+        OffsetDateTime expiredAt, OffsetDateTime completedAt, OffsetDateTime cancelledAt, OffsetDateTime failedAt,
+        Map<String, String> metadata) {
         this.id = id;
         this.type = type;
-        this.agentId = agentId;
+        this.assistantId = assistantId;
         this.threadId = threadId;
         this.runId = runId;
         this.status = status;
@@ -205,16 +200,6 @@ public final class RunStep implements JsonSerializable<RunStep> {
     @Generated
     public RunStepType getType() {
         return this.type;
-    }
-
-    /**
-     * Get the agentId property: The ID of the agent associated with the run step.
-     *
-     * @return the agentId value.
-     */
-    @Generated
-    public String getAgentId() {
-        return this.agentId;
     }
 
     /**
@@ -362,7 +347,7 @@ public final class RunStep implements JsonSerializable<RunStep> {
         jsonWriter.writeStringField("id", this.id);
         jsonWriter.writeStringField("object", this.object);
         jsonWriter.writeStringField("type", this.type == null ? null : this.type.toString());
-        jsonWriter.writeStringField("assistant_id", this.agentId);
+        jsonWriter.writeStringField("assistant_id", this.assistantId);
         jsonWriter.writeStringField("thread_id", this.threadId);
         jsonWriter.writeStringField("run_id", this.runId);
         jsonWriter.writeStringField("status", this.status == null ? null : this.status.toString());
@@ -392,7 +377,7 @@ public final class RunStep implements JsonSerializable<RunStep> {
         return jsonReader.readObject(reader -> {
             String id = null;
             RunStepType type = null;
-            String agentId = null;
+            String assistantId = null;
             String threadId = null;
             String runId = null;
             RunStepStatus status = null;
@@ -413,7 +398,7 @@ public final class RunStep implements JsonSerializable<RunStep> {
                 } else if ("type".equals(fieldName)) {
                     type = RunStepType.fromString(reader.getString());
                 } else if ("assistant_id".equals(fieldName)) {
-                    agentId = reader.getString();
+                    assistantId = reader.getString();
                 } else if ("thread_id".equals(fieldName)) {
                     threadId = reader.getString();
                 } else if ("run_id".equals(fieldName)) {
@@ -456,10 +441,26 @@ public final class RunStep implements JsonSerializable<RunStep> {
                     reader.skipChildren();
                 }
             }
-            RunStep deserializedRunStep = new RunStep(id, type, agentId, threadId, runId, status, stepDetails,
+            RunStep deserializedRunStep = new RunStep(id, type, assistantId, threadId, runId, status, stepDetails,
                 lastError, createdAt, expiredAt, completedAt, cancelledAt, failedAt, metadata);
             deserializedRunStep.usage = usage;
             return deserializedRunStep;
         });
+    }
+
+    /*
+     * The ID of the agent associated with the run step.
+     */
+    @Generated
+    private final String assistantId;
+
+    /**
+     * Get the assistantId property: The ID of the agent associated with the run step.
+     *
+     * @return the assistantId value.
+     */
+    @Generated
+    public String getAssistantId() {
+        return this.assistantId;
     }
 }

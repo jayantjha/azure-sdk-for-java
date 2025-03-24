@@ -401,7 +401,7 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param agentId Identifier of the agent.
+     * @param assistantId Identifier of the agent.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -411,8 +411,8 @@ public final class AgentsClient {
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<BinaryData> getAgentWithResponse(String agentId, RequestOptions requestOptions) {
-        return this.serviceClient.getAgentWithResponse(agentId, requestOptions);
+    public Response<BinaryData> getAgentWithResponse(String assistantId, RequestOptions requestOptions) {
+        return this.serviceClient.getAgentWithResponse(assistantId, requestOptions);
     }
 
     /**
@@ -540,7 +540,7 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param agentId The ID of the agent to modify.
+     * @param assistantId The ID of the agent to modify.
      * @param updateAgentRequest The updateAgentRequest parameter.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @throws HttpResponseException thrown if the request is rejected by server.
@@ -551,9 +551,9 @@ public final class AgentsClient {
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<BinaryData> updateAgentWithResponse(String agentId, BinaryData updateAgentRequest,
+    public Response<BinaryData> updateAgentWithResponse(String assistantId, BinaryData updateAgentRequest,
         RequestOptions requestOptions) {
-        return this.serviceClient.updateAgentWithResponse(agentId, updateAgentRequest, requestOptions);
+        return this.serviceClient.updateAgentWithResponse(assistantId, updateAgentRequest, requestOptions);
     }
 
     /**
@@ -570,7 +570,7 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param agentId Identifier of the agent.
+     * @param assistantId Identifier of the agent.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -580,8 +580,8 @@ public final class AgentsClient {
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<BinaryData> deleteAgentWithResponse(String agentId, RequestOptions requestOptions) {
-        return this.serviceClient.deleteAgentWithResponse(agentId, requestOptions);
+    public Response<BinaryData> deleteAgentWithResponse(String assistantId, RequestOptions requestOptions) {
+        return this.serviceClient.deleteAgentWithResponse(assistantId, requestOptions);
     }
 
     /**
@@ -3212,7 +3212,7 @@ public final class AgentsClient {
     /**
      * Retrieves an existing agent.
      *
-     * @param agentId Identifier of the agent.
+     * @param assistantId Identifier of the agent.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -3223,10 +3223,10 @@ public final class AgentsClient {
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Agent getAgent(String agentId) {
+    public Agent getAgent(String assistantId) {
         // Generated convenience method for getAgentWithResponse
         RequestOptions requestOptions = new RequestOptions();
-        return getAgentWithResponse(agentId, requestOptions).getValue().toObject(Agent.class);
+        return getAgentWithResponse(assistantId, requestOptions).getValue().toObject(Agent.class);
     }
 
     /**
@@ -3246,7 +3246,7 @@ public final class AgentsClient {
     public Agent updateAgent(UpdateAgentOptions options) {
         // Generated convenience method for updateAgentWithResponse
         RequestOptions requestOptions = new RequestOptions();
-        String agentId = options.getAgentId();
+        String assistantId = options.getAssistantId();
         UpdateAgentRequest updateAgentRequestObj = new UpdateAgentRequest().setModel(options.getModel())
             .setName(options.getName())
             .setDescription(options.getDescription())
@@ -3258,13 +3258,14 @@ public final class AgentsClient {
             .setResponseFormat(options.getResponseFormat())
             .setMetadata(options.getMetadata());
         BinaryData updateAgentRequest = BinaryData.fromObject(updateAgentRequestObj);
-        return updateAgentWithResponse(agentId, updateAgentRequest, requestOptions).getValue().toObject(Agent.class);
+        return updateAgentWithResponse(assistantId, updateAgentRequest, requestOptions).getValue()
+            .toObject(Agent.class);
     }
 
     /**
      * Deletes an agent.
      *
-     * @param agentId Identifier of the agent.
+     * @param assistantId Identifier of the agent.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -3275,10 +3276,10 @@ public final class AgentsClient {
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public AgentDeletionStatus deleteAgent(String agentId) {
+    public AgentDeletionStatus deleteAgent(String assistantId) {
         // Generated convenience method for deleteAgentWithResponse
         RequestOptions requestOptions = new RequestOptions();
-        return deleteAgentWithResponse(agentId, requestOptions).getValue().toObject(AgentDeletionStatus.class);
+        return deleteAgentWithResponse(assistantId, requestOptions).getValue().toObject(AgentDeletionStatus.class);
     }
 
     /**
@@ -3658,21 +3659,22 @@ public final class AgentsClient {
         RequestOptions requestOptions = new RequestOptions();
         String threadId = options.getThreadId();
         List<RunAdditionalFieldList> include = options.getInclude();
-        CreateRunRequest createRunRequestObj = new CreateRunRequest(options.getAgentId()).setModel(options.getModel())
-            .setInstructions(options.getInstructions())
-            .setAdditionalInstructions(options.getAdditionalInstructions())
-            .setAdditionalMessages(options.getAdditionalMessages())
-            .setTools(options.getTools())
-            .setStream(options.isStream())
-            .setTemperature(options.getTemperature())
-            .setTopP(options.getTopP())
-            .setMaxPromptTokens(options.getMaxPromptTokens())
-            .setMaxCompletionTokens(options.getMaxCompletionTokens())
-            .setTruncationStrategy(options.getTruncationStrategy())
-            .setToolChoice(options.getToolChoice())
-            .setResponseFormat(options.getResponseFormat())
-            .setParallelToolCalls(options.isParallelToolCalls())
-            .setMetadata(options.getMetadata());
+        CreateRunRequest createRunRequestObj
+            = new CreateRunRequest(options.getAssistantId()).setModel(options.getModel())
+                .setInstructions(options.getInstructions())
+                .setAdditionalInstructions(options.getAdditionalInstructions())
+                .setAdditionalMessages(options.getAdditionalMessages())
+                .setTools(options.getTools())
+                .setStream(options.isStream())
+                .setTemperature(options.getTemperature())
+                .setTopP(options.getTopP())
+                .setMaxPromptTokens(options.getMaxPromptTokens())
+                .setMaxCompletionTokens(options.getMaxCompletionTokens())
+                .setTruncationStrategy(options.getTruncationStrategy())
+                .setToolChoice(options.getToolChoice())
+                .setResponseFormat(options.getResponseFormat())
+                .setParallelToolCalls(options.isParallelToolCalls())
+                .setMetadata(options.getMetadata());
         BinaryData createRunRequest = BinaryData.fromObject(createRunRequestObj);
         if (include != null) {
             requestOptions.addQueryParam("include[]",
@@ -3916,7 +3918,7 @@ public final class AgentsClient {
         // Generated convenience method for createThreadAndRunWithResponse
         RequestOptions requestOptions = new RequestOptions();
         CreateThreadAndRunRequest createThreadAndRunRequestObj
-            = new CreateThreadAndRunRequest(options.getAgentId()).setThread(options.getThread())
+            = new CreateThreadAndRunRequest(options.getAssistantId()).setThread(options.getThread())
                 .setModel(options.getModel())
                 .setInstructions(options.getInstructions())
                 .setTools(options.getTools())

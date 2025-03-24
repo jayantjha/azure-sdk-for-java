@@ -24,12 +24,6 @@ import java.util.Map;
 public final class CreateRunRequest implements JsonSerializable<CreateRunRequest> {
 
     /*
-     * The ID of the agent that should run the thread.
-     */
-    @Generated
-    private final String agentId;
-
-    /*
      * The overridden model name that the agent should use to run the thread.
      */
     @Generated
@@ -140,21 +134,11 @@ public final class CreateRunRequest implements JsonSerializable<CreateRunRequest
     /**
      * Creates an instance of CreateRunRequest class.
      *
-     * @param agentId the agentId value to set.
+     * @param assistantId the assistantId value to set.
      */
     @Generated
-    public CreateRunRequest(String agentId) {
-        this.agentId = agentId;
-    }
-
-    /**
-     * Get the agentId property: The ID of the agent that should run the thread.
-     *
-     * @return the agentId value.
-     */
-    @Generated
-    public String getAgentId() {
-        return this.agentId;
+    public CreateRunRequest(String assistantId) {
+        this.assistantId = assistantId;
     }
 
     /**
@@ -534,7 +518,7 @@ public final class CreateRunRequest implements JsonSerializable<CreateRunRequest
     @Override
     public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
         jsonWriter.writeStartObject();
-        jsonWriter.writeStringField("assistant_id", this.agentId);
+        jsonWriter.writeStringField("assistant_id", this.assistantId);
         jsonWriter.writeStringField("model", this.model);
         jsonWriter.writeStringField("instructions", this.instructions);
         jsonWriter.writeStringField("additional_instructions", this.additionalInstructions);
@@ -572,7 +556,7 @@ public final class CreateRunRequest implements JsonSerializable<CreateRunRequest
     @Generated
     public static CreateRunRequest fromJson(JsonReader jsonReader) throws IOException {
         return jsonReader.readObject(reader -> {
-            String agentId = null;
+            String assistantId = null;
             String model = null;
             String instructions = null;
             String additionalInstructions = null;
@@ -592,7 +576,7 @@ public final class CreateRunRequest implements JsonSerializable<CreateRunRequest
                 String fieldName = reader.getFieldName();
                 reader.nextToken();
                 if ("assistant_id".equals(fieldName)) {
-                    agentId = reader.getString();
+                    assistantId = reader.getString();
                 } else if ("model".equals(fieldName)) {
                     model = reader.getString();
                 } else if ("instructions".equals(fieldName)) {
@@ -629,7 +613,7 @@ public final class CreateRunRequest implements JsonSerializable<CreateRunRequest
                     reader.skipChildren();
                 }
             }
-            CreateRunRequest deserializedCreateRunRequest = new CreateRunRequest(agentId);
+            CreateRunRequest deserializedCreateRunRequest = new CreateRunRequest(assistantId);
             deserializedCreateRunRequest.model = model;
             deserializedCreateRunRequest.instructions = instructions;
             deserializedCreateRunRequest.additionalInstructions = additionalInstructions;
@@ -647,5 +631,21 @@ public final class CreateRunRequest implements JsonSerializable<CreateRunRequest
             deserializedCreateRunRequest.metadata = metadata;
             return deserializedCreateRunRequest;
         });
+    }
+
+    /*
+     * The ID of the agent that should run the thread.
+     */
+    @Generated
+    private final String assistantId;
+
+    /**
+     * Get the assistantId property: The ID of the agent that should run the thread.
+     *
+     * @return the assistantId value.
+     */
+    @Generated
+    public String getAssistantId() {
+        return this.assistantId;
     }
 }

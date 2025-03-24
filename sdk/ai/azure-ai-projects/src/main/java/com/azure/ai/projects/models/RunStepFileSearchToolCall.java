@@ -24,12 +24,6 @@ public final class RunStepFileSearchToolCall extends RunStepToolCall {
     private String type = "file_search";
 
     /*
-     * The ID of the tool call. This ID must be referenced when you submit tool outputs.
-     */
-    @Generated
-    private final String id = "";
-
-    /*
      * For now, this is always going to be an empty object.
      */
     @Generated
@@ -59,16 +53,6 @@ public final class RunStepFileSearchToolCall extends RunStepToolCall {
     }
 
     /**
-     * Get the id property: The ID of the tool call. This ID must be referenced when you submit tool outputs.
-     *
-     * @return the id value.
-     */
-    @Generated
-    public String getId() {
-        return this.id;
-    }
-
-    /**
      * Get the fileSearch property: For now, this is always going to be an empty object.
      *
      * @return the fileSearch value.
@@ -86,7 +70,6 @@ public final class RunStepFileSearchToolCall extends RunStepToolCall {
     public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
         jsonWriter.writeStartObject();
         jsonWriter.writeStringField("id", getId());
-        jsonWriter.writeStringField("id", this.id);
         jsonWriter.writeJsonField("file_search", this.fileSearch);
         jsonWriter.writeStringField("type", this.type);
         return jsonWriter.writeEndObject();

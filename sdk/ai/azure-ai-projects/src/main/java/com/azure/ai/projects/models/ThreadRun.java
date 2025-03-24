@@ -42,12 +42,6 @@ public final class ThreadRun implements JsonSerializable<ThreadRun> {
     private final String threadId;
 
     /*
-     * The ID of the agent associated with the thread this run was performed against.
-     */
-    @Generated
-    private final String agentId;
-
-    /*
      * The status of the agent thread run.
      */
     @Generated
@@ -199,7 +193,7 @@ public final class ThreadRun implements JsonSerializable<ThreadRun> {
      *
      * @param id the id value to set.
      * @param threadId the threadId value to set.
-     * @param agentId the agentId value to set.
+     * @param assistantId the assistantId value to set.
      * @param status the status value to set.
      * @param lastError the lastError value to set.
      * @param model the model value to set.
@@ -222,15 +216,15 @@ public final class ThreadRun implements JsonSerializable<ThreadRun> {
      * @param parallelToolCalls the parallelToolCalls value to set.
      */
     @Generated
-    private ThreadRun(String id, String threadId, String agentId, RunStatus status, RunError lastError, String model,
-        String instructions, List<ToolDefinition> tools, OffsetDateTime createdAt, OffsetDateTime expiresAt,
-        OffsetDateTime startedAt, OffsetDateTime completedAt, OffsetDateTime cancelledAt, OffsetDateTime failedAt,
-        IncompleteRunDetails incompleteDetails, RunCompletionUsage usage, Integer maxPromptTokens,
-        Integer maxCompletionTokens, TruncationObject truncationStrategy, BinaryData toolChoice,
-        BinaryData responseFormat, Map<String, String> metadata, boolean parallelToolCalls) {
+    private ThreadRun(String id, String threadId, String assistantId, RunStatus status, RunError lastError,
+        String model, String instructions, List<ToolDefinition> tools, OffsetDateTime createdAt,
+        OffsetDateTime expiresAt, OffsetDateTime startedAt, OffsetDateTime completedAt, OffsetDateTime cancelledAt,
+        OffsetDateTime failedAt, IncompleteRunDetails incompleteDetails, RunCompletionUsage usage,
+        Integer maxPromptTokens, Integer maxCompletionTokens, TruncationObject truncationStrategy,
+        BinaryData toolChoice, BinaryData responseFormat, Map<String, String> metadata, boolean parallelToolCalls) {
         this.id = id;
         this.threadId = threadId;
-        this.agentId = agentId;
+        this.assistantId = assistantId;
         this.status = status;
         this.lastError = lastError;
         this.model = model;
@@ -305,16 +299,6 @@ public final class ThreadRun implements JsonSerializable<ThreadRun> {
     @Generated
     public String getThreadId() {
         return this.threadId;
-    }
-
-    /**
-     * Get the agentId property: The ID of the agent associated with the thread this run was performed against.
-     *
-     * @return the agentId value.
-     */
-    @Generated
-    public String getAgentId() {
-        return this.agentId;
     }
 
     /**
@@ -590,7 +574,7 @@ public final class ThreadRun implements JsonSerializable<ThreadRun> {
         jsonWriter.writeStringField("id", this.id);
         jsonWriter.writeStringField("object", this.object);
         jsonWriter.writeStringField("thread_id", this.threadId);
-        jsonWriter.writeStringField("assistant_id", this.agentId);
+        jsonWriter.writeStringField("assistant_id", this.assistantId);
         jsonWriter.writeStringField("status", this.status == null ? null : this.status.toString());
         jsonWriter.writeJsonField("last_error", this.lastError);
         jsonWriter.writeStringField("model", this.model);
@@ -634,7 +618,7 @@ public final class ThreadRun implements JsonSerializable<ThreadRun> {
         return jsonReader.readObject(reader -> {
             String id = null;
             String threadId = null;
-            String agentId = null;
+            String assistantId = null;
             RunStatus status = null;
             RunError lastError = null;
             String model = null;
@@ -667,7 +651,7 @@ public final class ThreadRun implements JsonSerializable<ThreadRun> {
                 } else if ("thread_id".equals(fieldName)) {
                     threadId = reader.getString();
                 } else if ("assistant_id".equals(fieldName)) {
-                    agentId = reader.getString();
+                    assistantId = reader.getString();
                 } else if ("status".equals(fieldName)) {
                     status = RunStatus.fromString(reader.getString());
                 } else if ("last_error".equals(fieldName)) {
@@ -740,7 +724,7 @@ public final class ThreadRun implements JsonSerializable<ThreadRun> {
                 }
             }
             ThreadRun deserializedThreadRun
-                = new ThreadRun(id, threadId, agentId, status, lastError, model, instructions, tools, createdAt,
+                = new ThreadRun(id, threadId, assistantId, status, lastError, model, instructions, tools, createdAt,
                     expiresAt, startedAt, completedAt, cancelledAt, failedAt, incompleteDetails, usage, maxPromptTokens,
                     maxCompletionTokens, truncationStrategy, toolChoice, responseFormat, metadata, parallelToolCalls);
             deserializedThreadRun.requiredAction = requiredAction;
@@ -749,5 +733,21 @@ public final class ThreadRun implements JsonSerializable<ThreadRun> {
             deserializedThreadRun.toolResources = toolResources;
             return deserializedThreadRun;
         });
+    }
+
+    /*
+     * The ID of the agent associated with the thread this run was performed against.
+     */
+    @Generated
+    private final String assistantId;
+
+    /**
+     * Get the assistantId property: The ID of the agent associated with the thread this run was performed against.
+     *
+     * @return the assistantId value.
+     */
+    @Generated
+    public String getAssistantId() {
+        return this.assistantId;
     }
 }

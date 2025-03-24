@@ -300,6 +300,7 @@ public final class Evaluation implements JsonSerializable<Evaluation> {
         } else {
             jsonWriter.writeStartObject();
             jsonWriter.writeJsonField("data", this.data);
+            jsonWriter.writeJsonField("target", this.target);
             jsonWriter.writeStringField("displayName", this.displayName);
             jsonWriter.writeStringField("description", this.description);
             jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
@@ -319,6 +320,15 @@ public final class Evaluation implements JsonSerializable<Evaluation> {
                 JsonMergePatchHelper.getInputDataAccessor().prepareModelForJsonMergePatch(this.data, true);
                 jsonWriter.writeJsonField("data", this.data);
                 JsonMergePatchHelper.getInputDataAccessor().prepareModelForJsonMergePatch(this.data, false);
+            }
+        }
+        if (updatedProperties.contains("target")) {
+            if (this.target == null) {
+                jsonWriter.writeNullField("target");
+            } else {
+                JsonMergePatchHelper.getEvaluationTargetAccessor().prepareModelForJsonMergePatch(this.target, true);
+                jsonWriter.writeJsonField("target", this.target);
+                JsonMergePatchHelper.getEvaluationTargetAccessor().prepareModelForJsonMergePatch(this.target, false);
             }
         }
         if (updatedProperties.contains("displayName")) {
@@ -401,6 +411,8 @@ public final class Evaluation implements JsonSerializable<Evaluation> {
                     deserializedEvaluation.id = reader.getString();
                 } else if ("data".equals(fieldName)) {
                     deserializedEvaluation.data = InputData.fromJson(reader);
+                } else if ("target".equals(fieldName)) {
+                    deserializedEvaluation.target = EvaluationTarget.fromJson(reader);
                 } else if ("displayName".equals(fieldName)) {
                     deserializedEvaluation.displayName = reader.getString();
                 } else if ("description".equals(fieldName)) {
@@ -425,5 +437,34 @@ public final class Evaluation implements JsonSerializable<Evaluation> {
             }
             return deserializedEvaluation;
         });
+    }
+
+    /*
+     * Evaluation target specifying the model config and parameters
+     */
+    @Generated
+    private EvaluationTarget target;
+
+    /**
+     * Get the target property: Evaluation target specifying the model config and parameters.
+     *
+     * @return the target value.
+     */
+    @Generated
+    public EvaluationTarget getTarget() {
+        return this.target;
+    }
+
+    /**
+     * Set the target property: Evaluation target specifying the model config and parameters.
+     *
+     * @param target the target value to set.
+     * @return the Evaluation object itself.
+     */
+    @Generated
+    public Evaluation setTarget(EvaluationTarget target) {
+        this.target = target;
+        this.updatedProperties.add("target");
+        return this;
     }
 }

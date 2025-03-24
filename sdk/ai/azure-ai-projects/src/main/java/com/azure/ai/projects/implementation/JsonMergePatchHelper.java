@@ -5,8 +5,10 @@
 package com.azure.ai.projects.implementation;
 
 import com.azure.ai.projects.models.Evaluation;
+import com.azure.ai.projects.models.EvaluationTarget;
 import com.azure.ai.projects.models.EvaluatorConfiguration;
 import com.azure.ai.projects.models.InputData;
+import com.azure.ai.projects.models.TargetModelConfig;
 
 /**
  * This is the Helper class to enable json merge patch serialization for a model.
@@ -42,6 +44,40 @@ public class JsonMergePatchHelper {
 
     public static InputDataAccessor getInputDataAccessor() {
         return inputDataAccessor;
+    }
+
+    private static EvaluationTargetAccessor evaluationTargetAccessor;
+
+    public interface EvaluationTargetAccessor {
+        EvaluationTarget prepareModelForJsonMergePatch(EvaluationTarget evaluationTarget,
+            boolean jsonMergePatchEnabled);
+
+        boolean isJsonMergePatch(EvaluationTarget evaluationTarget);
+    }
+
+    public static void setEvaluationTargetAccessor(EvaluationTargetAccessor accessor) {
+        evaluationTargetAccessor = accessor;
+    }
+
+    public static EvaluationTargetAccessor getEvaluationTargetAccessor() {
+        return evaluationTargetAccessor;
+    }
+
+    private static TargetModelConfigAccessor targetModelConfigAccessor;
+
+    public interface TargetModelConfigAccessor {
+        TargetModelConfig prepareModelForJsonMergePatch(TargetModelConfig targetModelConfig,
+            boolean jsonMergePatchEnabled);
+
+        boolean isJsonMergePatch(TargetModelConfig targetModelConfig);
+    }
+
+    public static void setTargetModelConfigAccessor(TargetModelConfigAccessor accessor) {
+        targetModelConfigAccessor = accessor;
+    }
+
+    public static TargetModelConfigAccessor getTargetModelConfigAccessor() {
+        return targetModelConfigAccessor;
     }
 
     private static EvaluatorConfigurationAccessor evaluatorConfigurationAccessor;

@@ -121,7 +121,7 @@ public final class AgentsImpl {
             @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept,
             RequestOptions requestOptions, Context context);
 
-        @Get("/assistants/{agentId}")
+        @Get("/assistants/{assistantId}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = { 401 })
         @UnexpectedResponseExceptionType(value = ResourceNotFoundException.class, code = { 404 })
@@ -130,10 +130,10 @@ public final class AgentsImpl {
         Mono<Response<BinaryData>> getAgent(@HostParam("endpoint") String endpoint,
             @HostParam("subscriptionId") String subscriptionId,
             @HostParam("resourceGroupName") String resourceGroupName, @HostParam("projectName") String projectName,
-            @QueryParam("api-version") String apiVersion, @PathParam("agentId") String agentId,
+            @QueryParam("api-version") String apiVersion, @PathParam("assistantId") String assistantId,
             @HeaderParam("Accept") String accept, RequestOptions requestOptions, Context context);
 
-        @Get("/assistants/{agentId}")
+        @Get("/assistants/{assistantId}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = { 401 })
         @UnexpectedResponseExceptionType(value = ResourceNotFoundException.class, code = { 404 })
@@ -142,10 +142,10 @@ public final class AgentsImpl {
         Response<BinaryData> getAgentSync(@HostParam("endpoint") String endpoint,
             @HostParam("subscriptionId") String subscriptionId,
             @HostParam("resourceGroupName") String resourceGroupName, @HostParam("projectName") String projectName,
-            @QueryParam("api-version") String apiVersion, @PathParam("agentId") String agentId,
+            @QueryParam("api-version") String apiVersion, @PathParam("assistantId") String assistantId,
             @HeaderParam("Accept") String accept, RequestOptions requestOptions, Context context);
 
-        @Post("/assistants/{agentId}")
+        @Post("/assistants/{assistantId}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = { 401 })
         @UnexpectedResponseExceptionType(value = ResourceNotFoundException.class, code = { 404 })
@@ -154,12 +154,12 @@ public final class AgentsImpl {
         Mono<Response<BinaryData>> updateAgent(@HostParam("endpoint") String endpoint,
             @HostParam("subscriptionId") String subscriptionId,
             @HostParam("resourceGroupName") String resourceGroupName, @HostParam("projectName") String projectName,
-            @QueryParam("api-version") String apiVersion, @PathParam("agentId") String agentId,
+            @QueryParam("api-version") String apiVersion, @PathParam("assistantId") String assistantId,
             @HeaderParam("Content-Type") String contentType, @HeaderParam("Accept") String accept,
             @BodyParam("application/json") BinaryData updateAgentRequest, RequestOptions requestOptions,
             Context context);
 
-        @Post("/assistants/{agentId}")
+        @Post("/assistants/{assistantId}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = { 401 })
         @UnexpectedResponseExceptionType(value = ResourceNotFoundException.class, code = { 404 })
@@ -168,12 +168,12 @@ public final class AgentsImpl {
         Response<BinaryData> updateAgentSync(@HostParam("endpoint") String endpoint,
             @HostParam("subscriptionId") String subscriptionId,
             @HostParam("resourceGroupName") String resourceGroupName, @HostParam("projectName") String projectName,
-            @QueryParam("api-version") String apiVersion, @PathParam("agentId") String agentId,
+            @QueryParam("api-version") String apiVersion, @PathParam("assistantId") String assistantId,
             @HeaderParam("Content-Type") String contentType, @HeaderParam("Accept") String accept,
             @BodyParam("application/json") BinaryData updateAgentRequest, RequestOptions requestOptions,
             Context context);
 
-        @Delete("/assistants/{agentId}")
+        @Delete("/assistants/{assistantId}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = { 401 })
         @UnexpectedResponseExceptionType(value = ResourceNotFoundException.class, code = { 404 })
@@ -182,10 +182,10 @@ public final class AgentsImpl {
         Mono<Response<BinaryData>> deleteAgent(@HostParam("endpoint") String endpoint,
             @HostParam("subscriptionId") String subscriptionId,
             @HostParam("resourceGroupName") String resourceGroupName, @HostParam("projectName") String projectName,
-            @QueryParam("api-version") String apiVersion, @PathParam("agentId") String agentId,
+            @QueryParam("api-version") String apiVersion, @PathParam("assistantId") String assistantId,
             @HeaderParam("Accept") String accept, RequestOptions requestOptions, Context context);
 
-        @Delete("/assistants/{agentId}")
+        @Delete("/assistants/{assistantId}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = { 401 })
         @UnexpectedResponseExceptionType(value = ResourceNotFoundException.class, code = { 404 })
@@ -194,7 +194,7 @@ public final class AgentsImpl {
         Response<BinaryData> deleteAgentSync(@HostParam("endpoint") String endpoint,
             @HostParam("subscriptionId") String subscriptionId,
             @HostParam("resourceGroupName") String resourceGroupName, @HostParam("projectName") String projectName,
-            @QueryParam("api-version") String apiVersion, @PathParam("agentId") String agentId,
+            @QueryParam("api-version") String apiVersion, @PathParam("assistantId") String assistantId,
             @HeaderParam("Accept") String accept, RequestOptions requestOptions, Context context);
 
         @Post("/threads")
@@ -1668,7 +1668,7 @@ public final class AgentsImpl {
      * }
      * </pre>
      * 
-     * @param agentId Identifier of the agent.
+     * @param assistantId Identifier of the agent.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -1678,11 +1678,11 @@ public final class AgentsImpl {
      * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<BinaryData>> getAgentWithResponseAsync(String agentId, RequestOptions requestOptions) {
+    public Mono<Response<BinaryData>> getAgentWithResponseAsync(String assistantId, RequestOptions requestOptions) {
         final String accept = "application/json";
         return FluxUtil.withContext(context -> service.getAgent(this.client.getEndpoint(),
             this.client.getSubscriptionId(), this.client.getResourceGroupName(), this.client.getProjectName(),
-            this.client.getServiceVersion().getVersion(), agentId, accept, requestOptions, context));
+            this.client.getServiceVersion().getVersion(), assistantId, accept, requestOptions, context));
     }
 
     /**
@@ -1750,7 +1750,7 @@ public final class AgentsImpl {
      * }
      * </pre>
      * 
-     * @param agentId Identifier of the agent.
+     * @param assistantId Identifier of the agent.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -1759,11 +1759,11 @@ public final class AgentsImpl {
      * @return represents an agent that can call the model and use tools along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<BinaryData> getAgentWithResponse(String agentId, RequestOptions requestOptions) {
+    public Response<BinaryData> getAgentWithResponse(String assistantId, RequestOptions requestOptions) {
         final String accept = "application/json";
         return service.getAgentSync(this.client.getEndpoint(), this.client.getSubscriptionId(),
             this.client.getResourceGroupName(), this.client.getProjectName(),
-            this.client.getServiceVersion().getVersion(), agentId, accept, requestOptions, Context.NONE);
+            this.client.getServiceVersion().getVersion(), assistantId, accept, requestOptions, Context.NONE);
     }
 
     /**
@@ -1891,7 +1891,7 @@ public final class AgentsImpl {
      * }
      * </pre>
      * 
-     * @param agentId The ID of the agent to modify.
+     * @param assistantId The ID of the agent to modify.
      * @param updateAgentRequest The updateAgentRequest parameter.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @throws HttpResponseException thrown if the request is rejected by server.
@@ -1902,13 +1902,13 @@ public final class AgentsImpl {
      * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<BinaryData>> updateAgentWithResponseAsync(String agentId, BinaryData updateAgentRequest,
+    public Mono<Response<BinaryData>> updateAgentWithResponseAsync(String assistantId, BinaryData updateAgentRequest,
         RequestOptions requestOptions) {
         final String contentType = "application/json";
         final String accept = "application/json";
         return FluxUtil.withContext(context -> service.updateAgent(this.client.getEndpoint(),
             this.client.getSubscriptionId(), this.client.getResourceGroupName(), this.client.getProjectName(),
-            this.client.getServiceVersion().getVersion(), agentId, contentType, accept, updateAgentRequest,
+            this.client.getServiceVersion().getVersion(), assistantId, contentType, accept, updateAgentRequest,
             requestOptions, context));
     }
 
@@ -2037,7 +2037,7 @@ public final class AgentsImpl {
      * }
      * </pre>
      * 
-     * @param agentId The ID of the agent to modify.
+     * @param assistantId The ID of the agent to modify.
      * @param updateAgentRequest The updateAgentRequest parameter.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @throws HttpResponseException thrown if the request is rejected by server.
@@ -2047,13 +2047,13 @@ public final class AgentsImpl {
      * @return represents an agent that can call the model and use tools along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<BinaryData> updateAgentWithResponse(String agentId, BinaryData updateAgentRequest,
+    public Response<BinaryData> updateAgentWithResponse(String assistantId, BinaryData updateAgentRequest,
         RequestOptions requestOptions) {
         final String contentType = "application/json";
         final String accept = "application/json";
         return service.updateAgentSync(this.client.getEndpoint(), this.client.getSubscriptionId(),
             this.client.getResourceGroupName(), this.client.getProjectName(),
-            this.client.getServiceVersion().getVersion(), agentId, contentType, accept, updateAgentRequest,
+            this.client.getServiceVersion().getVersion(), assistantId, contentType, accept, updateAgentRequest,
             requestOptions, Context.NONE);
     }
 
@@ -2071,7 +2071,7 @@ public final class AgentsImpl {
      * }
      * </pre>
      * 
-     * @param agentId Identifier of the agent.
+     * @param assistantId Identifier of the agent.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -2081,11 +2081,11 @@ public final class AgentsImpl {
      * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<BinaryData>> deleteAgentWithResponseAsync(String agentId, RequestOptions requestOptions) {
+    public Mono<Response<BinaryData>> deleteAgentWithResponseAsync(String assistantId, RequestOptions requestOptions) {
         final String accept = "application/json";
         return FluxUtil.withContext(context -> service.deleteAgent(this.client.getEndpoint(),
             this.client.getSubscriptionId(), this.client.getResourceGroupName(), this.client.getProjectName(),
-            this.client.getServiceVersion().getVersion(), agentId, accept, requestOptions, context));
+            this.client.getServiceVersion().getVersion(), assistantId, accept, requestOptions, context));
     }
 
     /**
@@ -2102,7 +2102,7 @@ public final class AgentsImpl {
      * }
      * </pre>
      * 
-     * @param agentId Identifier of the agent.
+     * @param assistantId Identifier of the agent.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -2111,11 +2111,11 @@ public final class AgentsImpl {
      * @return the status of an agent deletion operation along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<BinaryData> deleteAgentWithResponse(String agentId, RequestOptions requestOptions) {
+    public Response<BinaryData> deleteAgentWithResponse(String assistantId, RequestOptions requestOptions) {
         final String accept = "application/json";
         return service.deleteAgentSync(this.client.getEndpoint(), this.client.getSubscriptionId(),
             this.client.getResourceGroupName(), this.client.getProjectName(),
-            this.client.getServiceVersion().getVersion(), agentId, accept, requestOptions, Context.NONE);
+            this.client.getServiceVersion().getVersion(), assistantId, accept, requestOptions, Context.NONE);
     }
 
     /**

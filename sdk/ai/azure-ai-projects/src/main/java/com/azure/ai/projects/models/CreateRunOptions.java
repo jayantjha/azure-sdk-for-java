@@ -30,12 +30,6 @@ public final class CreateRunOptions {
     private List<RunAdditionalFieldList> include;
 
     /*
-     * The ID of the agent that should run the thread.
-     */
-    @Generated
-    private final String agentId;
-
-    /*
      * The overridden model name that the agent should use to run the thread.
      */
     @Generated
@@ -147,12 +141,12 @@ public final class CreateRunOptions {
      * Creates an instance of CreateRunOptions class.
      *
      * @param threadId the threadId value to set.
-     * @param agentId the agentId value to set.
+     * @param assistantId the assistantId value to set.
      */
     @Generated
-    public CreateRunOptions(String threadId, String agentId) {
+    public CreateRunOptions(String threadId, String assistantId) {
         this.threadId = threadId;
-        this.agentId = agentId;
+        this.assistantId = assistantId;
     }
 
     /**
@@ -189,16 +183,6 @@ public final class CreateRunOptions {
     public CreateRunOptions setInclude(List<RunAdditionalFieldList> include) {
         this.include = include;
         return this;
-    }
-
-    /**
-     * Get the agentId property: The ID of the agent that should run the thread.
-     *
-     * @return the agentId value.
-     */
-    @Generated
-    public String getAgentId() {
-        return this.agentId;
     }
 
     /**
@@ -569,5 +553,21 @@ public final class CreateRunOptions {
     public CreateRunOptions setMetadata(Map<String, String> metadata) {
         this.metadata = metadata;
         return this;
+    }
+
+    /*
+     * The ID of the agent that should run the thread.
+     */
+    @Generated
+    private final String assistantId;
+
+    /**
+     * Get the assistantId property: The ID of the agent that should run the thread.
+     *
+     * @return the assistantId value.
+     */
+    @Generated
+    public String getAssistantId() {
+        return this.assistantId;
     }
 }

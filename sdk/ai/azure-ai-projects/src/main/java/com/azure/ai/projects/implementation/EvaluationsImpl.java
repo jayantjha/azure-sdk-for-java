@@ -337,6 +337,15 @@ public final class EvaluationsImpl {
      *     data (Optional, Required on create): {
      *         type: String (Required)
      *     }
+     *     target (Optional): {
+     *         systemMessage: String (Optional, Required on create)
+     *         modelConfig (Optional, Required on create): {
+     *             type: String (Required)
+     *         }
+     *         modelParams (Optional): {
+     *             String: BinaryData (Required)
+     *         }
+     *     }
      *     displayName: String (Optional)
      *     description: String (Optional)
      *     systemData (Optional): {
@@ -393,6 +402,15 @@ public final class EvaluationsImpl {
      *     id: String (Required)
      *     data (Optional, Required on create): {
      *         type: String (Required)
+     *     }
+     *     target (Optional): {
+     *         systemMessage: String (Optional, Required on create)
+     *         modelConfig (Optional, Required on create): {
+     *             type: String (Required)
+     *         }
+     *         modelParams (Optional): {
+     *             String: BinaryData (Required)
+     *         }
      *     }
      *     displayName: String (Optional)
      *     description: String (Optional)
@@ -451,6 +469,15 @@ public final class EvaluationsImpl {
      *     data (Optional, Required on create): {
      *         type: String (Required)
      *     }
+     *     target (Optional): {
+     *         systemMessage: String (Optional, Required on create)
+     *         modelConfig (Optional, Required on create): {
+     *             type: String (Required)
+     *         }
+     *         modelParams (Optional): {
+     *             String: BinaryData (Required)
+     *         }
+     *     }
      *     displayName: String (Optional)
      *     description: String (Optional)
      *     systemData (Optional): {
@@ -489,6 +516,15 @@ public final class EvaluationsImpl {
      *     id: String (Required)
      *     data (Optional, Required on create): {
      *         type: String (Required)
+     *     }
+     *     target (Optional): {
+     *         systemMessage: String (Optional, Required on create)
+     *         modelConfig (Optional, Required on create): {
+     *             type: String (Required)
+     *         }
+     *         modelParams (Optional): {
+     *             String: BinaryData (Required)
+     *         }
      *     }
      *     displayName: String (Optional)
      *     description: String (Optional)
@@ -548,6 +584,15 @@ public final class EvaluationsImpl {
      *     data (Optional, Required on create): {
      *         type: String (Required)
      *     }
+     *     target (Optional): {
+     *         systemMessage: String (Optional, Required on create)
+     *         modelConfig (Optional, Required on create): {
+     *             type: String (Required)
+     *         }
+     *         modelParams (Optional): {
+     *             String: BinaryData (Required)
+     *         }
+     *     }
      *     displayName: String (Optional)
      *     description: String (Optional)
      *     systemData (Optional): {
@@ -586,6 +631,15 @@ public final class EvaluationsImpl {
      *     id: String (Required)
      *     data (Optional, Required on create): {
      *         type: String (Required)
+     *     }
+     *     target (Optional): {
+     *         systemMessage: String (Optional, Required on create)
+     *         modelConfig (Optional, Required on create): {
+     *             type: String (Required)
+     *         }
+     *         modelParams (Optional): {
+     *             String: BinaryData (Required)
+     *         }
      *     }
      *     displayName: String (Optional)
      *     description: String (Optional)
@@ -655,6 +709,15 @@ public final class EvaluationsImpl {
      *     data (Optional, Required on create): {
      *         type: String (Required)
      *     }
+     *     target (Optional): {
+     *         systemMessage: String (Optional, Required on create)
+     *         modelConfig (Optional, Required on create): {
+     *             type: String (Required)
+     *         }
+     *         modelParams (Optional): {
+     *             String: BinaryData (Required)
+     *         }
+     *     }
      *     displayName: String (Optional)
      *     description: String (Optional)
      *     systemData (Optional): {
@@ -723,6 +786,15 @@ public final class EvaluationsImpl {
      *     id: String (Required)
      *     data (Optional, Required on create): {
      *         type: String (Required)
+     *     }
+     *     target (Optional): {
+     *         systemMessage: String (Optional, Required on create)
+     *         modelConfig (Optional, Required on create): {
+     *             type: String (Required)
+     *         }
+     *         modelParams (Optional): {
+     *             String: BinaryData (Required)
+     *         }
      *     }
      *     displayName: String (Optional)
      *     description: String (Optional)
@@ -810,6 +882,15 @@ public final class EvaluationsImpl {
      *     data (Optional, Required on create): {
      *         type: String (Required)
      *     }
+     *     target (Optional): {
+     *         systemMessage: String (Optional, Required on create)
+     *         modelConfig (Optional, Required on create): {
+     *             type: String (Required)
+     *         }
+     *         modelParams (Optional): {
+     *             String: BinaryData (Required)
+     *         }
+     *     }
      *     displayName: String (Optional)
      *     description: String (Optional)
      *     systemData (Optional): {
@@ -876,6 +957,15 @@ public final class EvaluationsImpl {
      *     id: String (Required)
      *     data (Optional, Required on create): {
      *         type: String (Required)
+     *     }
+     *     target (Optional): {
+     *         systemMessage: String (Optional, Required on create)
+     *         modelConfig (Optional, Required on create): {
+     *             type: String (Required)
+     *         }
+     *         modelParams (Optional): {
+     *             String: BinaryData (Required)
+     *         }
      *     }
      *     displayName: String (Optional)
      *     description: String (Optional)
@@ -954,6 +1044,15 @@ public final class EvaluationsImpl {
      *     data (Optional, Required on create): {
      *         type: String (Required)
      *     }
+     *     target (Optional): {
+     *         systemMessage: String (Optional, Required on create)
+     *         modelConfig (Optional, Required on create): {
+     *             type: String (Required)
+     *         }
+     *         modelParams (Optional): {
+     *             String: BinaryData (Required)
+     *         }
+     *     }
      *     displayName: String (Optional)
      *     description: String (Optional)
      *     systemData (Optional): {
@@ -992,6 +1091,15 @@ public final class EvaluationsImpl {
      *     id: String (Required)
      *     data (Optional, Required on create): {
      *         type: String (Required)
+     *     }
+     *     target (Optional): {
+     *         systemMessage: String (Optional, Required on create)
+     *         modelConfig (Optional, Required on create): {
+     *             type: String (Required)
+     *         }
+     *         modelParams (Optional): {
+     *             String: BinaryData (Required)
+     *         }
      *     }
      *     displayName: String (Optional)
      *     description: String (Optional)
@@ -1053,6 +1161,15 @@ public final class EvaluationsImpl {
      *     data (Optional, Required on create): {
      *         type: String (Required)
      *     }
+     *     target (Optional): {
+     *         systemMessage: String (Optional, Required on create)
+     *         modelConfig (Optional, Required on create): {
+     *             type: String (Required)
+     *         }
+     *         modelParams (Optional): {
+     *             String: BinaryData (Required)
+     *         }
+     *     }
      *     displayName: String (Optional)
      *     description: String (Optional)
      *     systemData (Optional): {
@@ -1091,6 +1208,15 @@ public final class EvaluationsImpl {
      *     id: String (Required)
      *     data (Optional, Required on create): {
      *         type: String (Required)
+     *     }
+     *     target (Optional): {
+     *         systemMessage: String (Optional, Required on create)
+     *         modelConfig (Optional, Required on create): {
+     *             type: String (Required)
+     *         }
+     *         modelParams (Optional): {
+     *             String: BinaryData (Required)
+     *         }
      *     }
      *     displayName: String (Optional)
      *     description: String (Optional)
@@ -1882,6 +2008,15 @@ public final class EvaluationsImpl {
      *     data (Optional, Required on create): {
      *         type: String (Required)
      *     }
+     *     target (Optional): {
+     *         systemMessage: String (Optional, Required on create)
+     *         modelConfig (Optional, Required on create): {
+     *             type: String (Required)
+     *         }
+     *         modelParams (Optional): {
+     *             String: BinaryData (Required)
+     *         }
+     *     }
      *     displayName: String (Optional)
      *     description: String (Optional)
      *     systemData (Optional): {
@@ -1942,6 +2077,15 @@ public final class EvaluationsImpl {
      *     id: String (Required)
      *     data (Optional, Required on create): {
      *         type: String (Required)
+     *     }
+     *     target (Optional): {
+     *         systemMessage: String (Optional, Required on create)
+     *         modelConfig (Optional, Required on create): {
+     *             type: String (Required)
+     *         }
+     *         modelParams (Optional): {
+     *             String: BinaryData (Required)
+     *         }
      *     }
      *     displayName: String (Optional)
      *     description: String (Optional)
