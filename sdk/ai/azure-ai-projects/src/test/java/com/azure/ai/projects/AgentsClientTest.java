@@ -8,19 +8,13 @@ import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 import com.azure.json.JsonProviders;
-import com.azure.json.JsonReader;
-import com.azure.json.implementation.jackson.core.JsonFactoryBuilder;
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.opentest4j.FileInfo;
 
-import javax.tools.Tool;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -490,6 +484,111 @@ class AgentsClientTest extends AIProjectClientTestBase {
 
         agentsClient.deleteVectorStore(vs.getId());
     }
+
+    @Test
+    void createAgentWithBatchEnterpriseFileSearch() {
+        // this should data asset uri from the data added in AI Foundry Project
+        var storageBlobUri = "azureml://subscriptions/696debc0-8b66-4d84-87b1-39f43917d76c/resourcegroups/rg-jayant/workspaces/jayant-project-2aqa/datastores/workspaceblobstore/paths/product_info_1.md";
+        VectorStoreDataSource vectorStoreDataSource = new VectorStoreDataSource(
+            storageBlobUri, VectorStoreDataSourceAssetType.URI_ASSET);
+
+        VectorStore vs = agentsClient.createVectorStore(
+            null, "sample_vector_store",
+            null,
+            null,null, null
+        );
+
+        agentsClient.createVectorStoreFileBatch(vs.getId(),
+            null, List.of(vectorStoreDataSource), null);
+
+        FileSearchToolResource fileSearchToolResource = new FileSearchToolResource()
+            .setVectorStoreIds(List.of(vs.getId()));
+
+        var agentName = "my_batch_enterprise_file_search_agent";
+        Agent agent = null;
+        var agentOptional = agentsClient.listAgents().getData().stream()
+            .filter(a -> a.getName().equals(agentName))
+            .findFirst();
+        if (agentOptional.isPresent())
+            agent = agentOptional.get();
+        else {
+            var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+                .setName(agentName)
+                .setInstructions("You are a helpful agent.")
+                .setTools(List.of(new FileSearchToolDefinition()))
+                .setToolResources(new ToolResources().setFileSearch(fileSearchToolResource));
+            agent = agentsClient.createAgent(createAgentOptions);
+        }
+
+        var thread = agentsClient.createThread();
+        assertNotNull(thread);
+        var createdMessage = agentsClient.createMessage(
+            thread.getId(),
+            MessageRole.USER,
+            "What is data about?");
+        assertNotNull(createdMessage);
+
+        //run agent
+        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+            .setAdditionalInstructions("");
+        var threadRun = agentsClient.createRun(createRunOptions);
+        assertNotNull(threadRun);
+
+        checkMessagesFromRun(threadRun, thread);
+
+        agentsClient.deleteVectorStore(vs.getId());
+    }
+
+    @Test
+    void createAgentWithCodeInterpreterEnterpriseFileSearch() {
+        // this should data asset uri from the data added in AI Foundry Project
+        var storageBlobUri = "azureml://subscriptions/696debc0-8b66-4d84-87b1-39f43917d76c/resourcegroups/rg-jayant/workspaces/jayant-project-2aqa/datastores/workspaceblobstore/paths/product_info_1.md";
+        VectorStoreDataSource vectorStoreDataSource = new VectorStoreDataSource(
+            storageBlobUri, VectorStoreDataSourceAssetType.URI_ASSET);
+
+        var agentName = "my_code_interpreter_enterprise_agent";
+        Agent agent = null;
+
+        var tool = new CodeInterpreterToolDefinition();
+        var agentOptional = agentsClient.listAgents().getData().stream()
+            .filter(a -> a.getName().equals(agentName))
+            .findFirst();
+        if (agentOptional.isPresent())
+            agent = agentOptional.get();
+        else {
+            var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+                .setName(agentName)
+                .setInstructions("You are a helpful agent.")
+                .setTools(List.of(tool));
+            agent = agentsClient.createAgent(createAgentOptions);
+        }
+
+        MessageAttachment messageAttachment =  new MessageAttachment(
+            List.of(BinaryData.fromObject(tool))
+        ).setDataSource(vectorStoreDataSource);
+
+        var thread = agentsClient.createThread();
+        assertNotNull(thread);
+
+        var createdMessage = agentsClient.createMessage(
+            thread.getId(),
+            MessageRole.USER,
+            "What does the attachment say?",
+            List.of(messageAttachment),
+            null
+        );
+        assertNotNull(createdMessage);
+
+
+        //run agent
+        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+            .setAdditionalInstructions("");
+        var threadRun = agentsClient.createRun(createRunOptions);
+        assertNotNull(threadRun);
+
+        checkMessagesFromRun(threadRun, thread);
+    }
+
 
     @Test
     void createAgentWithOpenApi() throws IOException, URISyntaxException {
