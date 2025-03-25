@@ -14,22 +14,22 @@ import reactor.core.publisher.Mono;
 /**
  * Implementation of async collection abstraction over streaming assistant updates.
  */
-public class AsyncStreamingUpdateCollection extends IterableStream<StreamingUpdate> {
-    
+public class StreamingUpdateAsyncCollection extends IterableStream<StreamingUpdate> {
+
     private final Supplier<Mono<Response<?>>> sendRequestAsync;
-    
+
     /**
      * Creates a new AsyncStreamingUpdateCollection with the specified async request supplier.
      *
      * @param sendRequestAsync The async request supplier.
      */
-    public AsyncStreamingUpdateCollection(Supplier<Mono<Response<?>>> sendRequestAsync) {
+    public StreamingUpdateAsyncCollection(Supplier<Mono<Response<?>>> sendRequestAsync) {
         super(Flux.defer(() -> {
             // This is a simplified version as we can't directly translate the C# SSE handling
             // In a real implementation, this would use the Azure SDK SSE parser for Java
             return Flux.empty();
         }));
-        
+
         this.sendRequestAsync = sendRequestAsync;
     }
 }
