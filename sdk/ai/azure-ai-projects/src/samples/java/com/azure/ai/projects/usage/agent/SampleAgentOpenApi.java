@@ -3,16 +3,25 @@ package com.azure.ai.projects.usage.agent;
 import com.azure.ai.projects.AIProjectClientBuilder;
 import com.azure.ai.projects.AgentsClient;
 import com.azure.ai.projects.models.*;
+import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.json.JsonProviders;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
-public class SampleAgentVectorStoreBatchEnterpriseFileSearch {
+public class SampleAgentOpenApi {
 
     @Test
-    void vectorStoreBatchEnterpriseFileSearchExample() {
+    void openApiExample() throws IOException, URISyntaxException {
         AgentsClient agentsClient
             = new AIProjectClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
             .subscriptionId(Configuration.getGlobalConfiguration().get("SUBSCRIPTIONID", "subscriptionid"))
@@ -21,35 +30,28 @@ public class SampleAgentVectorStoreBatchEnterpriseFileSearch {
             .credential(new DefaultAzureCredentialBuilder().build())
             .buildAgentsClient();
 
-        var dataUri = "azureml://subscriptions/696debc0-8b66-4d84-87b1-39f43917d76c/resourcegroups/rg-jayant/workspaces/jayant-project-2aqa/datastores/workspaceblobstore/paths/product_info_1.md";
-        VectorStoreDataSource vectorStoreDataSource = new VectorStoreDataSource(
-            dataUri, VectorStoreDataSourceAssetType.URI_ASSET);
+        var filePath = getFile("weather_openapi.json");
+        var reader = JsonProviders.createReader(Files.readString(filePath));
 
-        VectorStore vs = agentsClient.createVectorStore(
-            null, "sample_vector_store",
-            new VectorStoreConfiguration(List.of(vectorStoreDataSource)),
-            null,null, null
-        );
+        OpenApiAnonymousAuthDetails oaiAuth = new OpenApiAnonymousAuthDetails();
+        OpenApiToolDefinition openApiTool = new OpenApiToolDefinition(new OpenApiFunctionDefinition(
+            "openapitool",
+            reader.getNullable(nonNullReader -> BinaryData.fromObject(nonNullReader.readUntyped())),
+            oaiAuth
+        ));
 
-        agentsClient.createVectorStoreFileBatch(vs.getId(),
-            null, List.of(vectorStoreDataSource), null);
-
-        FileSearchToolResource fileSearchToolResource = new FileSearchToolResource()
-            .setVectorStoreIds(List.of(vs.getId()));
-
-        var agentName = "vector_store_batch_enterprise_file_search_example";
+        var agentName = "openAPI_example";
         var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You are a helpful agent")
-            .setTools(List.of(new FileSearchToolDefinition()))
-            .setToolResources(new ToolResources().setFileSearch(fileSearchToolResource));
+            .setTools(List.of(openApiTool));
         Agent agent = agentsClient.createAgent(createAgentOptions);
 
         var thread = agentsClient.createThread();
         var createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
-            "What feature does Smart Eyewear offer?");
+            "What's the weather in seattle?");
 
         //run agent
         var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
@@ -97,4 +99,14 @@ public class SampleAgentVectorStoreBatchEnterpriseFileSearch {
             agentsClient.deleteAgent(agent.getId());
         }
     }
+
+    private Path getFile(String fileName) throws FileNotFoundException, URISyntaxException {
+        URL resource = getClass().getClassLoader().getResource(fileName);
+        if (resource == null) {
+            throw new FileNotFoundException("File not found");
+        }
+        File file = new File(resource.toURI());
+        return file.toPath();
+    }
+
 }
