@@ -1,0 +1,129 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+package com.azure.ai.projects.models;
+
+import com.azure.core.util.BinaryData;
+
+/**
+ * Represents an update to text annotations in a message.
+ */
+public class TextAnnotationUpdate {
+
+    private final MessageDeltaTextAnnotation internalAnnotation;
+    private final MessageDeltaTextFileCitationAnnotation fileSearchCitation;
+    private final MessageDeltaTextFilePathAnnotation codeCitation;
+
+    /**
+     * Creates a new TextAnnotationUpdate with the specified annotation.
+     *
+     * @param internalAnnotation The annotation.
+     */
+    TextAnnotationUpdate(MessageDeltaTextAnnotation internalAnnotation) {
+        this.internalAnnotation = internalAnnotation;
+        this.fileSearchCitation = internalAnnotation instanceof MessageDeltaTextFileCitationAnnotation ? 
+                (MessageDeltaTextFileCitationAnnotation) internalAnnotation : null;
+        this.codeCitation = internalAnnotation instanceof MessageDeltaTextFilePathAnnotation ? 
+                (MessageDeltaTextFilePathAnnotation) internalAnnotation : null;
+    }
+
+    /**
+     * Gets the index of the content item that this annotation applies to.
+     *
+     * @return The content index.
+     */
+    public int getContentIndex() {
+        if (fileSearchCitation != null && fileSearchCitation.getIndex() != null) {
+            return fileSearchCitation.getIndex();
+        } else if (codeCitation != null && codeCitation.getIndex() != null) {
+            return codeCitation.getIndex();
+        } else if (internalAnnotation != null && 
+                   internalAnnotation.getSerializedAdditionalRawData() != null &&
+                   internalAnnotation.getSerializedAdditionalRawData().containsKey("index")) {
+            BinaryData indexData = internalAnnotation.getSerializedAdditionalRawData().get("index");
+            return Integer.parseInt(indexData.toString());
+        } else {
+            return -1;
+        }
+    }
+
+    /**
+     * Gets the index in the message content at which the citation begins.
+     *
+     * @return The start index.
+     */
+    public Integer getStartIndex() {
+        if (fileSearchCitation != null && fileSearchCitation.getStartIndex() != null) {
+            return fileSearchCitation.getStartIndex();
+        } else if (codeCitation != null && codeCitation.getStartIndex() != null) {
+            return codeCitation.getStartIndex();
+        } else if (internalAnnotation != null && 
+                   internalAnnotation.getSerializedAdditionalRawData() != null &&
+                   internalAnnotation.getSerializedAdditionalRawData().containsKey("start_index")) {
+            BinaryData indexData = internalAnnotation.getSerializedAdditionalRawData().get("start_index");
+            return Integer.parseInt(indexData.toString());
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Gets the index in the message content at which the citation ends.
+     *
+     * @return The end index.
+     */
+    public Integer getEndIndex() {
+        if (fileSearchCitation != null && fileSearchCitation.getEndIndex() != null) {
+            return fileSearchCitation.getEndIndex();
+        } else if (codeCitation != null && codeCitation.getEndIndex() != null) {
+            return codeCitation.getEndIndex();
+        } else if (internalAnnotation != null && 
+                   internalAnnotation.getSerializedAdditionalRawData() != null &&
+                   internalAnnotation.getSerializedAdditionalRawData().containsKey("start_index")) {
+            BinaryData indexData = internalAnnotation.getSerializedAdditionalRawData().get("start_index");
+            return Integer.parseInt(indexData.toString());
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Gets the text in the message content that should be replaced.
+     *
+     * @return The text to replace.
+     */
+    public String getTextToReplace() {
+        if (fileSearchCitation != null) {
+            return fileSearchCitation.getText();
+        } else if (codeCitation != null) {
+            return codeCitation.getText();
+        } else if (internalAnnotation != null && 
+                   internalAnnotation.getSerializedAdditionalRawData() != null &&
+                   internalAnnotation.getSerializedAdditionalRawData().containsKey("text")) {
+            BinaryData textData = internalAnnotation.getSerializedAdditionalRawData().get("text");
+            return textData.toString();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Gets the ID of the file cited by the {@code file_search} tool for this annotation.
+     *
+     * @return The input file ID.
+     */
+    public String getInputFileId() {
+        return fileSearchCitation != null && fileSearchCitation.getFileCitation() != null ? 
+               fileSearchCitation.getFileCitation().getFileId() : null;
+    }
+
+    /**
+     * Gets the ID of the file that was generated by the {@code code_interpreter} tool for this citation.
+     *
+     * @return The output file ID.
+     */
+    public String getOutputFileId() {
+        return codeCitation != null && codeCitation.getFilePath() != null ? 
+               codeCitation.getFilePath().getFileId() : null;
+    }
+}
