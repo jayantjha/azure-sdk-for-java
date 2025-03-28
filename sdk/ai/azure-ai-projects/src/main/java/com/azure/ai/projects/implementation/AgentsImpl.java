@@ -678,7 +678,7 @@ public final class AgentsImpl {
             @HostParam("subscriptionId") String subscriptionId,
             @HostParam("resourceGroupName") String resourceGroupName, @HostParam("projectName") String projectName,
             @QueryParam("api-version") String apiVersion, @HeaderParam("content-type") String contentType,
-            @HeaderParam("Accept") String accept, @BodyParam("multipart/form-data") BinaryData uploadFileRequest,
+            @HeaderParam("Accept") String accept, @BodyParam("multipart/form-data") BinaryData body,
             RequestOptions requestOptions, Context context);
 
         // @Multipart not supported by RestProxy
@@ -692,7 +692,7 @@ public final class AgentsImpl {
             @HostParam("subscriptionId") String subscriptionId,
             @HostParam("resourceGroupName") String resourceGroupName, @HostParam("projectName") String projectName,
             @QueryParam("api-version") String apiVersion, @HeaderParam("content-type") String contentType,
-            @HeaderParam("Accept") String accept, @BodyParam("multipart/form-data") BinaryData uploadFileRequest,
+            @HeaderParam("Accept") String accept, @BodyParam("multipart/form-data") BinaryData body,
             RequestOptions requestOptions, Context context);
 
         @Delete("/files/{fileId}")
@@ -1152,6 +1152,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -1215,6 +1218,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -1297,6 +1303,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -1360,6 +1369,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -1463,6 +1475,9 @@ public final class AgentsImpl {
      *                          (Optional){
      *                             index_connection_id: String (Required)
      *                             index_name: String (Required)
+     *                             query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                             top_k: Integer (Optional)
+     *                             filter: String (Optional)
      *                         }
      *                     ]
      *                 }
@@ -1569,6 +1584,9 @@ public final class AgentsImpl {
      *                          (Optional){
      *                             index_connection_id: String (Required)
      *                             index_name: String (Required)
+     *                             query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                             top_k: Integer (Optional)
+     *                             filter: String (Optional)
      *                         }
      *                     ]
      *                 }
@@ -1654,6 +1672,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -1736,6 +1757,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -1814,6 +1838,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -1877,6 +1904,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -1960,6 +1990,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -2023,6 +2056,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -2175,6 +2211,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -2226,6 +2265,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -2314,6 +2356,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -2365,6 +2410,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -2437,6 +2485,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -2507,6 +2558,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -2573,6 +2627,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -2624,6 +2681,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -2695,6 +2755,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -2746,6 +2809,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -3605,6 +3671,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -3768,6 +3837,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -3886,6 +3958,9 @@ public final class AgentsImpl {
      *                          (Optional){
      *                             index_connection_id: String (Required)
      *                             index_name: String (Required)
+     *                             query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                             top_k: Integer (Optional)
+     *                             filter: String (Optional)
      *                         }
      *                     ]
      *                 }
@@ -4006,6 +4081,9 @@ public final class AgentsImpl {
      *                          (Optional){
      *                             index_connection_id: String (Required)
      *                             index_name: String (Required)
+     *                             query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                             top_k: Integer (Optional)
+     *                             filter: String (Optional)
      *                         }
      *                     ]
      *                 }
@@ -4105,6 +4183,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -4202,6 +4283,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -4309,6 +4393,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -4421,6 +4508,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -4537,6 +4627,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -4654,6 +4747,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -4753,6 +4849,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -4850,6 +4949,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -4935,6 +5037,9 @@ public final class AgentsImpl {
      *                      (Optional){
      *                         index_connection_id: String (Required)
      *                         index_name: String (Required)
+     *                         query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                         top_k: Integer (Optional)
+     *                         filter: String (Optional)
      *                     }
      *                 ]
      *             }
@@ -5049,6 +5154,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -5137,6 +5245,9 @@ public final class AgentsImpl {
      *                      (Optional){
      *                         index_connection_id: String (Required)
      *                         index_name: String (Required)
+     *                         query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                         top_k: Integer (Optional)
+     *                         filter: String (Optional)
      *                     }
      *                 ]
      *             }
@@ -5251,6 +5362,9 @@ public final class AgentsImpl {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -5697,7 +5811,7 @@ public final class AgentsImpl {
      * }
      * </pre>
      * 
-     * @param uploadFileRequest The uploadFileRequest parameter.
+     * @param body Multipart body.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -5707,14 +5821,12 @@ public final class AgentsImpl {
      * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<BinaryData>> uploadFileWithResponseAsync(BinaryData uploadFileRequest,
-        RequestOptions requestOptions) {
+    public Mono<Response<BinaryData>> uploadFileWithResponseAsync(BinaryData body, RequestOptions requestOptions) {
         final String contentType = "multipart/form-data";
         final String accept = "application/json";
         return FluxUtil.withContext(context -> service.uploadFile(this.client.getEndpoint(),
             this.client.getSubscriptionId(), this.client.getResourceGroupName(), this.client.getProjectName(),
-            this.client.getServiceVersion().getVersion(), contentType, accept, uploadFileRequest, requestOptions,
-            context));
+            this.client.getServiceVersion().getVersion(), contentType, accept, body, requestOptions, context));
     }
 
     /**
@@ -5736,7 +5848,7 @@ public final class AgentsImpl {
      * }
      * </pre>
      * 
-     * @param uploadFileRequest The uploadFileRequest parameter.
+     * @param body Multipart body.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -5745,13 +5857,12 @@ public final class AgentsImpl {
      * @return represents an agent that can call the model and use tools along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<BinaryData> uploadFileWithResponse(BinaryData uploadFileRequest, RequestOptions requestOptions) {
+    public Response<BinaryData> uploadFileWithResponse(BinaryData body, RequestOptions requestOptions) {
         final String contentType = "multipart/form-data";
         final String accept = "application/json";
         return service.uploadFileSync(this.client.getEndpoint(), this.client.getSubscriptionId(),
             this.client.getResourceGroupName(), this.client.getProjectName(),
-            this.client.getServiceVersion().getVersion(), contentType, accept, uploadFileRequest, requestOptions,
-            Context.NONE);
+            this.client.getServiceVersion().getVersion(), contentType, accept, body, requestOptions, Context.NONE);
     }
 
     /**
@@ -5892,7 +6003,7 @@ public final class AgentsImpl {
      * 
      * <pre>
      * {@code
-     * byte[]
+     * BinaryData
      * }
      * </pre>
      * 
@@ -5902,11 +6013,11 @@ public final class AgentsImpl {
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return represent a byte array along with {@link Response} on successful completion of {@link Mono}.
+     * @return the response body along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Response<BinaryData>> getFileContentWithResponseAsync(String fileId, RequestOptions requestOptions) {
-        final String accept = "application/json";
+        final String accept = "application/octet-stream";
         return FluxUtil.withContext(context -> service.getFileContent(this.client.getEndpoint(),
             this.client.getSubscriptionId(), this.client.getResourceGroupName(), this.client.getProjectName(),
             this.client.getServiceVersion().getVersion(), fileId, accept, requestOptions, context));
@@ -5918,7 +6029,7 @@ public final class AgentsImpl {
      * 
      * <pre>
      * {@code
-     * byte[]
+     * BinaryData
      * }
      * </pre>
      * 
@@ -5928,11 +6039,11 @@ public final class AgentsImpl {
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return represent a byte array along with {@link Response}.
+     * @return the response body along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> getFileContentWithResponse(String fileId, RequestOptions requestOptions) {
-        final String accept = "application/json";
+        final String accept = "application/octet-stream";
         return service.getFileContentSync(this.client.getEndpoint(), this.client.getSubscriptionId(),
             this.client.getResourceGroupName(), this.client.getProjectName(),
             this.client.getServiceVersion().getVersion(), fileId, accept, requestOptions, Context.NONE);

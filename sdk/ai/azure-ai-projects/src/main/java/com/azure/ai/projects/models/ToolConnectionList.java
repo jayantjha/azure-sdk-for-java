@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * A set of connection resources currently used by either the `bing_grounding`, `fabric_aiskill`, or
+ * A set of connection resources currently used by either the `bing_grounding`, `fabric_dataagent`, or
  * `sharepoint_grounding` tools.
  */
 @Fluent

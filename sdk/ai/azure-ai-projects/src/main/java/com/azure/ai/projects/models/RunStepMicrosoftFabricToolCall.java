@@ -22,7 +22,7 @@ public final class RunStepMicrosoftFabricToolCall extends RunStepToolCall {
      * The object type.
      */
     @Generated
-    private String type = "fabric_aiskill";
+    private String type = "fabric_dataagent";
 
     /*
      * Reserved for future use.
@@ -71,7 +71,7 @@ public final class RunStepMicrosoftFabricToolCall extends RunStepToolCall {
     public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
         jsonWriter.writeStartObject();
         jsonWriter.writeStringField("id", getId());
-        jsonWriter.writeMapField("fabric_aiskill", this.microsoftFabric,
+        jsonWriter.writeMapField("fabric_dataagent", this.microsoftFabric,
             (writer, element) -> writer.writeString(element));
         jsonWriter.writeStringField("type", this.type);
         return jsonWriter.writeEndObject();
@@ -91,13 +91,13 @@ public final class RunStepMicrosoftFabricToolCall extends RunStepToolCall {
         return jsonReader.readObject(reader -> {
             String id = null;
             Map<String, String> microsoftFabric = null;
-            String type = "fabric_aiskill";
+            String type = "fabric_dataagent";
             while (reader.nextToken() != JsonToken.END_OBJECT) {
                 String fieldName = reader.getFieldName();
                 reader.nextToken();
                 if ("id".equals(fieldName)) {
                     id = reader.getString();
-                } else if ("fabric_aiskill".equals(fieldName)) {
+                } else if ("fabric_dataagent".equals(fieldName)) {
                     microsoftFabric = reader.readMap(reader1 -> reader1.getString());
                 } else if ("type".equals(fieldName)) {
                     type = reader.getString();

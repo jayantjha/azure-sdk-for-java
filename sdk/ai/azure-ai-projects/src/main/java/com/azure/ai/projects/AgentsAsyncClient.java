@@ -27,7 +27,6 @@ import com.azure.ai.projects.models.CreateAgentOptions;
 import com.azure.ai.projects.models.CreateRunOptions;
 import com.azure.ai.projects.models.CreateThreadAndRunOptions;
 import com.azure.ai.projects.models.FileDeletionStatus;
-import com.azure.ai.projects.models.FileDetails;
 import com.azure.ai.projects.models.FileListResponse;
 import com.azure.ai.projects.models.FilePurpose;
 import com.azure.ai.projects.models.ListSortOrder;
@@ -49,6 +48,7 @@ import com.azure.ai.projects.models.ThreadRun;
 import com.azure.ai.projects.models.ToolOutput;
 import com.azure.ai.projects.models.ToolResources;
 import com.azure.ai.projects.models.UpdateAgentOptions;
+import com.azure.ai.projects.models.UploadFileRequest;
 import com.azure.ai.projects.models.VectorStore;
 import com.azure.ai.projects.models.VectorStoreChunkingStrategyRequest;
 import com.azure.ai.projects.models.VectorStoreConfiguration;
@@ -144,6 +144,9 @@ public final class AgentsAsyncClient {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -207,6 +210,9 @@ public final class AgentsAsyncClient {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -308,6 +314,9 @@ public final class AgentsAsyncClient {
      *                          (Optional){
      *                             index_connection_id: String (Required)
      *                             index_name: String (Required)
+     *                             query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                             top_k: Integer (Optional)
+     *                             filter: String (Optional)
      *                         }
      *                     ]
      *                 }
@@ -392,6 +401,9 @@ public final class AgentsAsyncClient {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -469,6 +481,9 @@ public final class AgentsAsyncClient {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -532,6 +547,9 @@ public final class AgentsAsyncClient {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -649,6 +667,9 @@ public final class AgentsAsyncClient {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -700,6 +721,9 @@ public final class AgentsAsyncClient {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -769,6 +793,9 @@ public final class AgentsAsyncClient {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -834,6 +861,9 @@ public final class AgentsAsyncClient {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -885,6 +915,9 @@ public final class AgentsAsyncClient {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -1383,6 +1416,9 @@ public final class AgentsAsyncClient {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -1498,6 +1534,9 @@ public final class AgentsAsyncClient {
      *                          (Optional){
      *                             index_connection_id: String (Required)
      *                             index_name: String (Required)
+     *                             query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                             top_k: Integer (Optional)
+     *                             filter: String (Optional)
      *                         }
      *                     ]
      *                 }
@@ -1596,6 +1635,9 @@ public final class AgentsAsyncClient {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -1702,6 +1744,9 @@ public final class AgentsAsyncClient {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -1815,6 +1860,9 @@ public final class AgentsAsyncClient {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -1912,6 +1960,9 @@ public final class AgentsAsyncClient {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -1997,6 +2048,9 @@ public final class AgentsAsyncClient {
      *                      (Optional){
      *                         index_connection_id: String (Required)
      *                         index_name: String (Required)
+     *                         query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                         top_k: Integer (Optional)
+     *                         filter: String (Optional)
      *                     }
      *                 ]
      *             }
@@ -2111,6 +2165,9 @@ public final class AgentsAsyncClient {
      *                  (Optional){
      *                     index_connection_id: String (Required)
      *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
      *                 }
      *             ]
      *         }
@@ -2349,7 +2406,7 @@ public final class AgentsAsyncClient {
      * }
      * </pre>
      *
-     * @param uploadFileRequest The uploadFileRequest parameter.
+     * @param body Multipart body.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -2360,10 +2417,10 @@ public final class AgentsAsyncClient {
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<BinaryData>> uploadFileWithResponse(BinaryData uploadFileRequest, RequestOptions requestOptions) {
+    Mono<Response<BinaryData>> uploadFileWithResponse(BinaryData body, RequestOptions requestOptions) {
         // Operation 'uploadFile' is of content-type 'multipart/form-data'. Protocol API is not usable and hence not
         // generated.
-        return this.serviceClient.uploadFileWithResponseAsync(uploadFileRequest, requestOptions);
+        return this.serviceClient.uploadFileWithResponseAsync(body, requestOptions);
     }
 
     /**
@@ -2435,7 +2492,7 @@ public final class AgentsAsyncClient {
      * 
      * <pre>
      * {@code
-     * byte[]
+     * BinaryData
      * }
      * </pre>
      *
@@ -2445,7 +2502,7 @@ public final class AgentsAsyncClient {
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return represent a byte array along with {@link Response} on successful completion of {@link Mono}.
+     * @return the response body along with {@link Response} on successful completion of {@link Mono}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4176,69 +4233,6 @@ public final class AgentsAsyncClient {
     }
 
     /**
-     * Uploads a file for use by other operations.
-     *
-     * @param file The file data, in bytes.
-     * @param purpose The intended purpose of the uploaded file. Use `assistants` for Agents and Message files, `vision`
-     * for Agents image file inputs, `batch` for Batch API, and `fine-tune` for Fine-tuning.
-     * @param filename The name of the file.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws HttpResponseException thrown if the request is rejected by server.
-     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return represents an agent that can call the model and use tools on successful completion of {@link Mono}.
-     */
-    @Generated
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<OpenAIFile> uploadFile(FileDetails file, FilePurpose purpose, String filename) {
-        // Generated convenience method for uploadFileWithResponse
-        RequestOptions requestOptions = new RequestOptions();
-        UploadFileRequest uploadFileRequestObj = new UploadFileRequest(file, purpose).setFilename(filename);
-        BinaryData uploadFileRequest = new MultipartFormDataHelper(requestOptions)
-            .serializeFileField("file", uploadFileRequestObj.getFile().getContent(),
-                uploadFileRequestObj.getFile().getContentType(), uploadFileRequestObj.getFile().getFilename())
-            .serializeTextField("purpose", Objects.toString(uploadFileRequestObj.getPurpose()))
-            .serializeTextField("filename", uploadFileRequestObj.getFilename())
-            .end()
-            .getRequestBody();
-        return uploadFileWithResponse(uploadFileRequest, requestOptions).flatMap(FluxUtil::toMono)
-            .map(protocolMethodData -> protocolMethodData.toObject(OpenAIFile.class));
-    }
-
-    /**
-     * Uploads a file for use by other operations.
-     *
-     * @param file The file data, in bytes.
-     * @param purpose The intended purpose of the uploaded file. Use `assistants` for Agents and Message files, `vision`
-     * for Agents image file inputs, `batch` for Batch API, and `fine-tune` for Fine-tuning.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws HttpResponseException thrown if the request is rejected by server.
-     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return represents an agent that can call the model and use tools on successful completion of {@link Mono}.
-     */
-    @Generated
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<OpenAIFile> uploadFile(FileDetails file, FilePurpose purpose) {
-        // Generated convenience method for uploadFileWithResponse
-        RequestOptions requestOptions = new RequestOptions();
-        UploadFileRequest uploadFileRequestObj = new UploadFileRequest(file, purpose);
-        BinaryData uploadFileRequest = new MultipartFormDataHelper(requestOptions)
-            .serializeFileField("file", uploadFileRequestObj.getFile().getContent(),
-                uploadFileRequestObj.getFile().getContentType(), uploadFileRequestObj.getFile().getFilename())
-            .serializeTextField("purpose", Objects.toString(uploadFileRequestObj.getPurpose()))
-            .serializeTextField("filename", uploadFileRequestObj.getFilename())
-            .end()
-            .getRequestBody();
-        return uploadFileWithResponse(uploadFileRequest, requestOptions).flatMap(FluxUtil::toMono)
-            .map(protocolMethodData -> protocolMethodData.toObject(OpenAIFile.class));
-    }
-
-    /**
      * Delete a previously uploaded file.
      *
      * @param fileId The ID of the file to delete.
@@ -4290,15 +4284,14 @@ public final class AgentsAsyncClient {
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return represent a byte array on successful completion of {@link Mono}.
+     * @return the response body on successful completion of {@link Mono}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<byte[]> getFileContent(String fileId) {
+    public Mono<BinaryData> getFileContent(String fileId) {
         // Generated convenience method for getFileContentWithResponse
         RequestOptions requestOptions = new RequestOptions();
-        return getFileContentWithResponse(fileId, requestOptions).flatMap(FluxUtil::toMono)
-            .map(protocolMethodData -> protocolMethodData.toObject(byte[].class));
+        return getFileContentWithResponse(fileId, requestOptions).flatMap(FluxUtil::toMono);
     }
 
     /**
@@ -4869,5 +4862,32 @@ public final class AgentsAsyncClient {
         return listVectorStoreFileBatchFilesWithResponse(vectorStoreId, batchId, requestOptions)
             .flatMap(FluxUtil::toMono)
             .map(protocolMethodData -> protocolMethodData.toObject(OpenAIPageableListOfVectorStoreFile.class));
+    }
+
+    /**
+     * Uploads a file for use by other operations.
+     *
+     * @param body Multipart body.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return represents an agent that can call the model and use tools on successful completion of {@link Mono}.
+     */
+    @Generated
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<OpenAIFile> uploadFile(UploadFileRequest body) {
+        // Generated convenience method for uploadFileWithResponse
+        RequestOptions requestOptions = new RequestOptions();
+        return uploadFileWithResponse(new MultipartFormDataHelper(requestOptions)
+            .serializeFileField("file", body.getFile().getContent(), body.getFile().getContentType(),
+                body.getFile().getFilename())
+            .serializeTextField("purpose", Objects.toString(body.getPurpose()))
+            .serializeTextField("filename", body.getFilename())
+            .end()
+            .getRequestBody(), requestOptions).flatMap(FluxUtil::toMono)
+                .map(protocolMethodData -> protocolMethodData.toObject(OpenAIFile.class));
     }
 }

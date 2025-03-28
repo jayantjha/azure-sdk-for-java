@@ -20,22 +20,16 @@ public final class MicrosoftFabricToolDefinition extends ToolDefinition {
      * The object type.
      */
     @Generated
-    private String type = "fabric_aiskill";
-
-    /*
-     * The list of connections used by the Microsoft Fabric tool.
-     */
-    @Generated
-    private final ToolConnectionList fabricAiskill;
+    private String type = "fabric_dataagent";
 
     /**
      * Creates an instance of MicrosoftFabricToolDefinition class.
      *
-     * @param fabricAiskill the fabricAiskill value to set.
+     * @param fabricDataagent the fabricDataagent value to set.
      */
     @Generated
-    public MicrosoftFabricToolDefinition(ToolConnectionList fabricAiskill) {
-        this.fabricAiskill = fabricAiskill;
+    public MicrosoftFabricToolDefinition(ToolConnectionList fabricDataagent) {
+        this.fabricDataagent = fabricDataagent;
     }
 
     /**
@@ -50,23 +44,13 @@ public final class MicrosoftFabricToolDefinition extends ToolDefinition {
     }
 
     /**
-     * Get the fabricAiskill property: The list of connections used by the Microsoft Fabric tool.
-     *
-     * @return the fabricAiskill value.
-     */
-    @Generated
-    public ToolConnectionList getFabricAiskill() {
-        return this.fabricAiskill;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Generated
     @Override
     public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
         jsonWriter.writeStartObject();
-        jsonWriter.writeJsonField("fabric_aiskill", this.fabricAiskill);
+        jsonWriter.writeJsonField("fabric_dataagent", this.fabricDataagent);
         jsonWriter.writeStringField("type", this.type);
         return jsonWriter.writeEndObject();
     }
@@ -83,13 +67,13 @@ public final class MicrosoftFabricToolDefinition extends ToolDefinition {
     @Generated
     public static MicrosoftFabricToolDefinition fromJson(JsonReader jsonReader) throws IOException {
         return jsonReader.readObject(reader -> {
-            ToolConnectionList fabricAiskill = null;
-            String type = "fabric_aiskill";
+            ToolConnectionList fabricDataagent = null;
+            String type = "fabric_dataagent";
             while (reader.nextToken() != JsonToken.END_OBJECT) {
                 String fieldName = reader.getFieldName();
                 reader.nextToken();
-                if ("fabric_aiskill".equals(fieldName)) {
-                    fabricAiskill = ToolConnectionList.fromJson(reader);
+                if ("fabric_dataagent".equals(fieldName)) {
+                    fabricDataagent = ToolConnectionList.fromJson(reader);
                 } else if ("type".equals(fieldName)) {
                     type = reader.getString();
                 } else {
@@ -97,9 +81,25 @@ public final class MicrosoftFabricToolDefinition extends ToolDefinition {
                 }
             }
             MicrosoftFabricToolDefinition deserializedMicrosoftFabricToolDefinition
-                = new MicrosoftFabricToolDefinition(fabricAiskill);
+                = new MicrosoftFabricToolDefinition(fabricDataagent);
             deserializedMicrosoftFabricToolDefinition.type = type;
             return deserializedMicrosoftFabricToolDefinition;
         });
+    }
+
+    /*
+     * The list of connections used by the Microsoft Fabric tool.
+     */
+    @Generated
+    private final ToolConnectionList fabricDataagent;
+
+    /**
+     * Get the fabricDataagent property: The list of connections used by the Microsoft Fabric tool.
+     *
+     * @return the fabricDataagent value.
+     */
+    @Generated
+    public ToolConnectionList getFabricDataagent() {
+        return this.fabricDataagent;
     }
 }

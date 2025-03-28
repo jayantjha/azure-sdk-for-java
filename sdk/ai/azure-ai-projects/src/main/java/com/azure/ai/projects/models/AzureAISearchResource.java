@@ -23,7 +23,7 @@ public final class AzureAISearchResource implements JsonSerializable<AzureAISear
      * resource attached to the agent.
      */
     @Generated
-    private List<IndexResource> indexList;
+    private List<AISearchIndexResource> indexList;
 
     /**
      * Creates an instance of AzureAISearchResource class.
@@ -39,7 +39,7 @@ public final class AzureAISearchResource implements JsonSerializable<AzureAISear
      * @return the indexList value.
      */
     @Generated
-    public List<IndexResource> getIndexList() {
+    public List<AISearchIndexResource> getIndexList() {
         return this.indexList;
     }
 
@@ -51,7 +51,7 @@ public final class AzureAISearchResource implements JsonSerializable<AzureAISear
      * @return the AzureAISearchResource object itself.
      */
     @Generated
-    public AzureAISearchResource setIndexList(List<IndexResource> indexList) {
+    public AzureAISearchResource setIndexList(List<AISearchIndexResource> indexList) {
         this.indexList = indexList;
         return this;
     }
@@ -83,7 +83,8 @@ public final class AzureAISearchResource implements JsonSerializable<AzureAISear
                 String fieldName = reader.getFieldName();
                 reader.nextToken();
                 if ("indexes".equals(fieldName)) {
-                    List<IndexResource> indexList = reader.readArray(reader1 -> IndexResource.fromJson(reader1));
+                    List<AISearchIndexResource> indexList
+                        = reader.readArray(reader1 -> AISearchIndexResource.fromJson(reader1));
                     deserializedAzureAISearchResource.indexList = indexList;
                 } else {
                     reader.skipChildren();

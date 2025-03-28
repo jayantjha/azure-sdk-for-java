@@ -37,10 +37,10 @@ public final class AgentsNamedToolChoiceType extends ExpandableStringEnum<Agents
     public static final AgentsNamedToolChoiceType BING_GROUNDING = fromString("bing_grounding");
 
     /**
-     * Tool type `fabric_aiskill`.
+     * Tool type `fabric_dataagent`.
      */
     @Generated
-    public static final AgentsNamedToolChoiceType MICROSOFT_FABRIC = fromString("fabric_aiskill");
+    public static final AgentsNamedToolChoiceType MICROSOFT_FABRIC = fromString("fabric_dataagent");
 
     /**
      * Tool type `sharepoint_grounding`.
