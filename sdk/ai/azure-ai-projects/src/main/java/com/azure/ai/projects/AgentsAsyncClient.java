@@ -19,7 +19,6 @@ import com.azure.ai.projects.implementation.models.UpdateAgentRequest;
 import com.azure.ai.projects.implementation.models.UpdateMessageRequest;
 import com.azure.ai.projects.implementation.models.UpdateRunRequest;
 import com.azure.ai.projects.implementation.models.UpdateThreadRequest;
-import com.azure.ai.projects.implementation.models.UploadFileRequest;
 import com.azure.ai.projects.models.Agent;
 import com.azure.ai.projects.models.AgentDeletionStatus;
 import com.azure.ai.projects.models.AgentThread;
@@ -99,7 +98,7 @@ public final class AgentsAsyncClient {
     /**
      * Creates a new agent.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -160,9 +159,9 @@ public final class AgentsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -263,7 +262,7 @@ public final class AgentsAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -353,7 +352,7 @@ public final class AgentsAsyncClient {
     /**
      * Retrieves an existing agent.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -436,7 +435,7 @@ public final class AgentsAsyncClient {
     /**
      * Modifies an existing agent.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -497,9 +496,9 @@ public final class AgentsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -584,7 +583,7 @@ public final class AgentsAsyncClient {
     /**
      * Deletes an agent.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -613,7 +612,7 @@ public final class AgentsAsyncClient {
     /**
      * Creates a new thread. Threads contain messages and can be run by agents.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -680,9 +679,9 @@ public final class AgentsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -754,7 +753,7 @@ public final class AgentsAsyncClient {
     /**
      * Gets information about an existing thread.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -825,7 +824,7 @@ public final class AgentsAsyncClient {
     /**
      * Modifies an existing thread.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -874,9 +873,9 @@ public final class AgentsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -949,7 +948,7 @@ public final class AgentsAsyncClient {
     /**
      * Deletes an existing thread.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -978,7 +977,7 @@ public final class AgentsAsyncClient {
     /**
      * Creates a new message on a specified thread.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -1002,9 +1001,9 @@ public final class AgentsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -1083,7 +1082,7 @@ public final class AgentsAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -1150,7 +1149,7 @@ public final class AgentsAsyncClient {
     /**
      * Gets an existing message from an existing thread.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -1211,7 +1210,7 @@ public final class AgentsAsyncClient {
     /**
      * Modifies an existing message on an existing thread.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -1221,9 +1220,9 @@ public final class AgentsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -1296,7 +1295,7 @@ public final class AgentsAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -1348,9 +1347,9 @@ public final class AgentsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -1465,7 +1464,7 @@ public final class AgentsAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -1569,7 +1568,7 @@ public final class AgentsAsyncClient {
     /**
      * Gets an existing run from an existing thread.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -1666,7 +1665,7 @@ public final class AgentsAsyncClient {
     /**
      * Modifies an existing thread run.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -1676,9 +1675,9 @@ public final class AgentsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -1778,7 +1777,7 @@ public final class AgentsAsyncClient {
      * Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool outputs will have a
      * status of 'requires_action' with a required_action.type of 'submit_tool_outputs'.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -1792,9 +1791,9 @@ public final class AgentsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -1894,7 +1893,7 @@ public final class AgentsAsyncClient {
     /**
      * Cancels a run of an in progress thread.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -1992,7 +1991,7 @@ public final class AgentsAsyncClient {
     /**
      * Creates a new agent thread and immediately starts a run using that new thread.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2097,9 +2096,9 @@ public final class AgentsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2206,7 +2205,7 @@ public final class AgentsAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2282,7 +2281,7 @@ public final class AgentsAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2353,7 +2352,7 @@ public final class AgentsAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2390,7 +2389,7 @@ public final class AgentsAsyncClient {
     /**
      * Uploads a file for use by other operations.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2426,7 +2425,7 @@ public final class AgentsAsyncClient {
     /**
      * Delete a previously uploaded file.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2455,7 +2454,7 @@ public final class AgentsAsyncClient {
     /**
      * Returns information about a specific file. Does not retrieve file content.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2489,7 +2488,7 @@ public final class AgentsAsyncClient {
     /**
      * Retrieves the raw content of a specific file.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * BinaryData
@@ -2530,7 +2529,7 @@ public final class AgentsAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2585,7 +2584,7 @@ public final class AgentsAsyncClient {
     /**
      * Creates a vector store.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2614,9 +2613,9 @@ public final class AgentsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2665,7 +2664,7 @@ public final class AgentsAsyncClient {
     /**
      * Returns the vector store object matching the specified ID.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2713,7 +2712,7 @@ public final class AgentsAsyncClient {
     /**
      * The ID of the vector store to modify.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2728,9 +2727,9 @@ public final class AgentsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2781,7 +2780,7 @@ public final class AgentsAsyncClient {
     /**
      * Deletes the vector store object matching the specified ID.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2830,7 +2829,7 @@ public final class AgentsAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2878,7 +2877,7 @@ public final class AgentsAsyncClient {
     /**
      * Create a vector store file by attaching a file to a vector store.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2893,9 +2892,9 @@ public final class AgentsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2937,7 +2936,7 @@ public final class AgentsAsyncClient {
     /**
      * Retrieves a vector store file.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -2980,7 +2979,7 @@ public final class AgentsAsyncClient {
      * deleted.
      * To delete the file, use the delete file endpoint.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -3011,7 +3010,7 @@ public final class AgentsAsyncClient {
     /**
      * Create a vector store file batch.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -3030,9 +3029,9 @@ public final class AgentsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -3073,7 +3072,7 @@ public final class AgentsAsyncClient {
     /**
      * Retrieve a vector store file batch.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -3114,7 +3113,7 @@ public final class AgentsAsyncClient {
      * Cancel a vector store file batch. This attempts to cancel the processing of files in this batch as soon as
      * possible.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -3173,7 +3172,7 @@ public final class AgentsAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {

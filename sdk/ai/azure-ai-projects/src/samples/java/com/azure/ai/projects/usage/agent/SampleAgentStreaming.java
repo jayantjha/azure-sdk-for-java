@@ -43,7 +43,7 @@ public class SampleAgentStreaming {
 
         var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
-        Flux<BinaryData> streamingUpdates = agentsClient.createRunStreaming(createRunOptions);
+        //Flux<BinaryData> streamingUpdates = agentsClient.createRunStreaming(createRunOptions);
 
 //        streamingUpdates
 //            .map(binaryData -> {
@@ -144,6 +144,5 @@ public class SampleAgentStreaming {
         }
         Response<BinaryData> response = agentsClient.createRunWithResponse(threadId, createRunRequest, requestOptions);
 
-        return null;
     }
 }

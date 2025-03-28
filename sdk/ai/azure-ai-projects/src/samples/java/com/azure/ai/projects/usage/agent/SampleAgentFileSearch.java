@@ -23,10 +23,11 @@ public class SampleAgentFileSearch {
             .buildAgentsClient();
 
         OpenAIFile uploadedAgentFile = agentsClient.uploadFile(
-            new FileDetails(
-                BinaryData.fromString("The word `apple` uses the code 442345, while the word `banana` uses the code 673457."))
-                .setFilename("sample_file_for_upload.txt"),
-            FilePurpose.AGENTS);
+            new UploadFileRequest(
+                new FileDetails(
+                    BinaryData.fromString("The word `apple` uses the code 442345, while the word `banana` uses the code 673457."))
+                    .setFilename("sample_file_for_upload.txt"),
+                FilePurpose.AGENTS));
 
         VectorStore vectorStore = agentsClient.createVectorStore(
             List.of(uploadedAgentFile.getId()),

@@ -25,7 +25,7 @@ public class SampleAgentAzureAISearch {
 
         ToolResources toolResources = new ToolResources()
             .setAzureAISearch(new AzureAISearchResource()
-                .setIndexList(List.of(new IndexResource(aiSearchConnectionId, "sample_index"))));
+                .setIndexList(List.of(new AISearchIndexResource(aiSearchConnectionId, "sample_index"))));
 
         var agentName = "ai_search_example";
         var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")

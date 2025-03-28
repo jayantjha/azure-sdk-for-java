@@ -33,11 +33,11 @@ public class SampleAgentVectorStoreBatchFileSearch {
             null,"my_vector_store",
             null, null, null, null);
 
-        OpenAIFile uploadedAgentFile = agentsClient.uploadFile(
+        OpenAIFile uploadedAgentFile = agentsClient.uploadFile(new UploadFileRequest(
             new FileDetails(
                 BinaryData.fromFile(productFile))
                 .setFilename("sample_product_info.md"),
-            FilePurpose.AGENTS);
+            FilePurpose.AGENTS));
 
         VectorStoreFileBatch vectorStoreFileBatch = agentsClient.createVectorStoreFileBatch(
             vectorStore.getId(), List.of(uploadedAgentFile.getId()), null, null);

@@ -40,9 +40,9 @@ public class SampleAgentCodeInterpreterFileAttachment {
         Agent agent = agentsClient.createAgent(createAgentOptions);
 
         OpenAIFile uploadedFile = agentsClient.uploadFile(
-            new FileDetails(BinaryData.fromFile(htmlFile))
-                .setFilename("sample_test.html"),
-            FilePurpose.AGENTS);
+            new UploadFileRequest(
+                new FileDetails(BinaryData.fromFile(htmlFile)).setFilename("sample_test.html"),
+                FilePurpose.AGENTS));
 
         MessageAttachment messageAttachment = new MessageAttachment(
             List.of(BinaryData.fromObject(ciTool))
