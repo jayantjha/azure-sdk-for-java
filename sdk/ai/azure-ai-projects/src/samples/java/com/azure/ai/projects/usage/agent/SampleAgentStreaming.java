@@ -69,7 +69,7 @@ public class SampleAgentStreaming {
                     }
                 }
             ).blockLast();
-            
+
             System.out.println();
         }
         catch (Exception ex) {
@@ -80,37 +80,5 @@ public class SampleAgentStreaming {
             agentsClient.deleteThread(thread.getId());
             agentsClient.deleteAgent(agent.getId());
         }
-    }
-
-    void createRunStreaming(AgentsClient agentsClient, CreateRunOptions options) {
-        RequestOptions requestOptions = new RequestOptions();
-        String threadId = options.getThreadId();
-        List<RunAdditionalFieldList> include = options.getInclude();
-        CreateRunRequest createRunRequestObj
-            = new CreateRunRequest(options.getAssistantId()).setModel(options.getModel())
-            .setInstructions(options.getInstructions())
-            .setAdditionalInstructions(options.getAdditionalInstructions())
-            .setAdditionalMessages(options.getAdditionalMessages())
-            .setTools(options.getTools())
-            .setStream(true)
-            .setTemperature(options.getTemperature())
-            .setTopP(options.getTopP())
-            .setMaxPromptTokens(options.getMaxPromptTokens())
-            .setMaxCompletionTokens(options.getMaxCompletionTokens())
-            .setTruncationStrategy(options.getTruncationStrategy())
-            .setToolChoice(options.getToolChoice())
-            .setResponseFormat(options.getResponseFormat())
-            .setParallelToolCalls(options.isParallelToolCalls())
-            .setMetadata(options.getMetadata());
-        BinaryData createRunRequest = BinaryData.fromObject(createRunRequestObj);
-        if (include != null) {
-            requestOptions.addQueryParam("include[]",
-                include.stream()
-                    .map(paramItemValue -> Objects.toString(paramItemValue, ""))
-                    .collect(Collectors.joining(",")),
-                false);
-        }
-        Response<BinaryData> response = agentsClient.createRunWithResponse(threadId, createRunRequest, requestOptions);
-
     }
 }
