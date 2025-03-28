@@ -4,6 +4,8 @@ import com.azure.ai.projects.AIProjectClientBuilder;
 import com.azure.ai.projects.AgentsClient;
 import com.azure.ai.projects.implementation.models.CreateRunRequest;
 import com.azure.ai.projects.models.*;
+import com.azure.ai.projects.models.streaming.StreamMessageUpdate;
+import com.azure.ai.projects.models.streaming.StreamUpdate;
 import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.BinaryData;
@@ -43,69 +45,35 @@ public class SampleAgentStreaming {
 
         var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
-        //Flux<BinaryData> streamingUpdates = agentsClient.createRunStreaming(createRunOptions);
-
-//        streamingUpdates
-//            .map(binaryData -> {
-//                // Deserialize the binary data to a StreamingUpdate object
-//                // This assumes you have a similar class structure in Java
-//                return JsonSerializer.deserializeStreamingUpdate(binaryData);
-//            })
-//            .subscribe(streamingUpdate -> {
-//                if (streamingUpdate.getUpdateKind() == StreamingUpdateReason.RUN_CREATED) {
-//                    System.out.println("--- Run started! ---");
-//                } else if (streamingUpdate instanceof MessageContentUpdate) {
-//                    MessageContentUpdate contentUpdate = (MessageContentUpdate) streamingUpdate;
-//                    System.out.print(contentUpdate.getText());
-//                    if (contentUpdate.getImageFileId() != null) {
-//                        System.out.println("[Image content file ID: " + contentUpdate.getImageFileId() + "]");
-//                    }
-//                }
-//            });
-
-
-
-
-
-        // ---------------------- usual code --------------------
-
-        //run agent
-        var threadRun = agentsClient.createRun(createRunOptions);
 
         try {
-            do {
-                Thread.sleep(500);
-                threadRun = agentsClient.getRun(thread.getId(), threadRun.getId());
-            }
-            while (
-                threadRun.getStatus() == RunStatus.QUEUED
-                    || threadRun.getStatus() == RunStatus.IN_PROGRESS
-                    || threadRun.getStatus() == RunStatus.REQUIRES_ACTION);
+            Flux<StreamUpdate> streamingUpdates = agentsClient.createRunStreaming(createRunOptions);
 
-            if (threadRun.getStatus() == RunStatus.FAILED) {
-                System.out.println(threadRun.getLastError().getMessage());
-            }
-
-            var runMessages = agentsClient.listMessages(thread.getId());
-            for (ThreadMessage message : runMessages.getData())
-            {
-                System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
-                for (MessageContent contentItem : message.getContent())
-                {
-                    if (contentItem instanceof MessageTextContent)
-                    {
-                        System.out.print((((MessageTextContent) contentItem).getText().getValue()));
+            streamingUpdates.doOnNext(
+                streamUpdate -> {
+                    if (streamUpdate.getKind() == AgentStreamEvent.THREAD_RUN_CREATED) {
+                        System.out.println("----- Run started! -----");
                     }
-                    else if (contentItem instanceof MessageImageFileContent)
-                    {
-                        String imageFileId = (((MessageImageFileContent) contentItem).getImageFile().getFileId());
-                        System.out.print("Image from ID: " + imageFileId);
+                    else if (streamUpdate instanceof StreamMessageUpdate) {
+                        StreamMessageUpdate messageUpdate = (StreamMessageUpdate) streamUpdate;
+                        messageUpdate.getMessage().getDelta().getContent().stream().forEach(delta -> {
+                            if (delta instanceof MessageDeltaImageFileContent) {
+                                MessageDeltaImageFileContent imgContent = (MessageDeltaImageFileContent) delta;
+                                System.out.println("Image fileId: " + imgContent.getImageFile().getFileId());
+                            }
+                            else if (delta instanceof MessageDeltaTextContent) {
+                                MessageDeltaTextContent textContent = (MessageDeltaTextContent) delta;
+                                System.out.print(textContent.getText().getValue());
+                            }
+                        });
                     }
-                    System.out.println();
                 }
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            ).blockLast();
+            
+            System.out.println();
+        }
+        catch (Exception ex) {
+            throw ex;
         }
         finally {
             //cleanup
