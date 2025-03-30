@@ -4809,4 +4809,18 @@ public final class AgentsClient {
         AgentServerSentEvents eventStream = new AgentServerSentEvents(response);
         return eventStream.getEvents();
     }
+
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    public Flux<StreamUpdate> submitToolOutputsToRunStreaming(String threadId, String runId, List<ToolOutput> toolOutputs) {
+        // Generated convenience method for submitToolOutputsToRunWithResponse
+        RequestOptions requestOptions = new RequestOptions();
+        SubmitToolOutputsToRunRequest submitToolOutputsToRunRequestObj = new SubmitToolOutputsToRunRequest(toolOutputs)
+            .setStream(true);
+        BinaryData submitToolOutputsToRunRequest = BinaryData.fromObject(submitToolOutputsToRunRequestObj);
+        Flux<ByteBuffer> response = submitToolOutputsToRunWithResponse(threadId, runId, submitToolOutputsToRunRequest, requestOptions)
+            .getValue().toFluxByteBuffer();
+
+        AgentServerSentEvents eventStream = new AgentServerSentEvents(response);
+        return eventStream.getEvents();
+    }
 }

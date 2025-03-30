@@ -6,8 +6,10 @@ import com.azure.ai.projects.models.*;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 
@@ -55,26 +57,27 @@ public class SampleAgentFunctions {
                                 "description", "The city and state, e.g. San Francisco, CA")
                         ),
                         "required", new String[] {"location"}))
-            )
+            ).setDescription("Get the nickname of a city")
         );
 
         Function<RequiredToolCall, ToolOutput> getResolvedToolOutput = toolCall -> {
             if (toolCall instanceof RequiredFunctionToolCall) {
                 var functionToolCall = (RequiredFunctionToolCall)toolCall;
-                if (functionToolCall.getFunction().getName().equals("getUserFavoriteCity"))
+                String functionName = functionToolCall.getFunction().getName();
+                if (functionName.equals("getUserFavoriteCity"))
                     return new ToolOutput().setToolCallId(functionToolCall.getId())
                         .setOutput(getUserFavoriteCity.get());
-
-                try {
-                    JsonMapper jsonMapper = new JsonMapper();
-                    JsonNode rootNode = jsonMapper.readTree(functionToolCall.getFunction().getArguments());
-                    if (functionToolCall.getFunction().getName().equals("getCityNickname")) {
-
+                else if (functionName.equals("getCityNickname")) {
+                    String args = functionToolCall.getFunction().getArguments();
+                    try {
+                        JsonNode root = new JsonMapper().readTree(args);
+                        String location = String.valueOf(root.get("location").asText());
+                        return new ToolOutput().setToolCallId(functionToolCall.getId())
+                            .setOutput(getCityNickname.apply(location));
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
                     }
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
                 }
-
             }
             return null;
         };
@@ -92,7 +95,7 @@ public class SampleAgentFunctions {
         var createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
-            "What's my favorite city?");
+            "What's the nickname of my favorite city?");
 
         //run agent
         var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
