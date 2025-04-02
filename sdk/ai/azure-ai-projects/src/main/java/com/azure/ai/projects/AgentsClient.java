@@ -4773,6 +4773,18 @@ public final class AgentsClient {
             .getRequestBody(), requestOptions).getValue().toObject(OpenAIFile.class);
     }
 
+    /**
+     * Creates a new streaming run for an agent thread.
+     *
+     * @param options Options for createRun API.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return data representing a single evaluation run of an agent thread.
+     */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public Flux<StreamUpdate> createRunStreaming(CreateRunOptions options) {
         // Generated convenience method for createRunWithResponse
@@ -4810,6 +4822,22 @@ public final class AgentsClient {
         return eventStream.getEvents();
     }
 
+    /**
+     * Submits outputs from tools as requested by tool calls in a run with streaming updates.
+     * Runs that need submitted tool outputs will have a status of 'requires_action'
+     * with a required_action.type of 'submit_tool_outputs'.
+     *
+     * @param threadId Identifier of the thread.
+     * @param runId Identifier of the run.
+     * @param toolOutputs A list of tools for which the outputs are being submitted.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return data representing a single evaluation run of an agent thread.
+     */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public Flux<StreamUpdate> submitToolOutputsToRunStreaming(String threadId, String runId,
         List<ToolOutput> toolOutputs) {

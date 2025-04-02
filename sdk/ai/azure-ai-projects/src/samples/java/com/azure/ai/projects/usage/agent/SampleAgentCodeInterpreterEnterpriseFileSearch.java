@@ -8,6 +8,7 @@ import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class SampleAgentCodeInterpreterEnterpriseFileSearch {
@@ -22,12 +23,12 @@ public class SampleAgentCodeInterpreterEnterpriseFileSearch {
             .credential(new DefaultAzureCredentialBuilder().build())
             .buildAgentsClient();
 
-        var agentName = "code_interpreter_enterprise_file_search_example";
-        var ciTool = new CodeInterpreterToolDefinition();
-        var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+        String agentName = "code_interpreter_enterprise_file_search_example";
+        CodeInterpreterToolDefinition ciTool = new CodeInterpreterToolDefinition();
+        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You are a helpful agent")
-            .setTools(List.of(ciTool));
+            .setTools(Arrays.asList(ciTool));
         Agent agent = agentsClient.createAgent(createAgentOptions);
 
         String dataUri = Configuration.getGlobalConfiguration().get("DATA_URI", "");
@@ -35,23 +36,23 @@ public class SampleAgentCodeInterpreterEnterpriseFileSearch {
             dataUri, VectorStoreDataSourceAssetType.URI_ASSET);
 
         MessageAttachment messageAttachment =  new MessageAttachment(
-            List.of(BinaryData.fromObject(ciTool))
+            Arrays.asList(BinaryData.fromObject(ciTool))
         ).setDataSource(vectorStoreDataSource);
 
-        var thread = agentsClient.createThread();
+        AgentThread thread = agentsClient.createThread();
 
-        var createdMessage = agentsClient.createMessage(
+        ThreadMessage createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "What does the attachment say?",
-            List.of(messageAttachment),
+            Arrays.asList(messageAttachment),
             null
         );
 
         //run agent
-        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
-        var threadRun = agentsClient.createRun(createRunOptions);
+        ThreadRun threadRun = agentsClient.createRun(createRunOptions);
 
         try {
             do {
@@ -67,7 +68,7 @@ public class SampleAgentCodeInterpreterEnterpriseFileSearch {
                 System.out.println(threadRun.getLastError().getMessage());
             }
 
-            var runMessages = agentsClient.listMessages(thread.getId());
+            OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
             for (ThreadMessage message : runMessages.getData())
             {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));

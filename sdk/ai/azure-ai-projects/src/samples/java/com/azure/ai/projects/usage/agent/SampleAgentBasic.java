@@ -7,6 +7,7 @@ import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 public final class SampleAgentBasic {
@@ -21,23 +22,23 @@ public final class SampleAgentBasic {
             .credential(new DefaultAzureCredentialBuilder().build())
             .buildAgentsClient();
 
-        var agentName = "basic_example";
-        var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+        String agentName = "basic_example";
+        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You are a helpful agent")
-            .setTools(List.of(new CodeInterpreterToolDefinition()));
+            .setTools(Arrays.asList(new CodeInterpreterToolDefinition()));
         Agent agent = agentsClient.createAgent(createAgentOptions);
 
-        var thread = agentsClient.createThread();
-        var createdMessage = agentsClient.createMessage(
+        AgentThread thread = agentsClient.createThread();
+        ThreadMessage createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "I need to solve the equation `3x + 11 = 14`. Can you help me?");
 
         //run agent
-        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
-        var threadRun = agentsClient.createRun(createRunOptions);
+        ThreadRun threadRun = agentsClient.createRun(createRunOptions);
 
         try {
             do {
@@ -53,7 +54,7 @@ public final class SampleAgentBasic {
                 System.out.println(threadRun.getLastError().getMessage());
             }
 
-            var runMessages = agentsClient.listMessages(thread.getId());
+            OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
             for (ThreadMessage message : runMessages.getData())
             {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));

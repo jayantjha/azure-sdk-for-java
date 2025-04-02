@@ -10,7 +10,10 @@ import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -26,27 +29,27 @@ public final class SampleAgentAdditionalMessage {
             .credential(new DefaultAzureCredentialBuilder().build())
             .buildAgentsClient();
 
-        var agentName = "additional_message_example";
-        var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+        String agentName = "additional_message_example";
+        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You are a personal electronics tutor. Write and run code to answer questions.")
-            .setTools(List.of(new CodeInterpreterToolDefinition()));
+            .setTools(Arrays.asList(new CodeInterpreterToolDefinition()));
         Agent agent = agentsClient.createAgent(createAgentOptions);
 
-        var thread = agentsClient.createThread();
-        var createdMessage = agentsClient.createMessage(
+        AgentThread thread = agentsClient.createThread();
+        ThreadMessage createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "What is the impedance formula?");
 
         //run agent
-        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
-            .setAdditionalMessages(List.of(new ThreadMessageOptions(
+        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+            .setAdditionalMessages(Arrays.asList(new ThreadMessageOptions(
                 MessageRole.AGENT, "E=mc^2"
             ), new ThreadMessageOptions(
                 MessageRole.USER, "What is the impedance formula?"
             )));
-        var threadRun = agentsClient.createRun(createRunOptions);
+        ThreadRun threadRun = agentsClient.createRun(createRunOptions);
 
         try {
             do {
@@ -62,7 +65,7 @@ public final class SampleAgentAdditionalMessage {
                 System.out.println(threadRun.getLastError().getMessage());
             }
 
-            var runMessages = agentsClient.listMessages(thread.getId());
+            OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
             for (ThreadMessage message : runMessages.getData())
             {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));

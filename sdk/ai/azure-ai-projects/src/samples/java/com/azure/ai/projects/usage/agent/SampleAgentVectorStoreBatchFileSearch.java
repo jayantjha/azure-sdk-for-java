@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 
 public class SampleAgentVectorStoreBatchFileSearch {
@@ -27,7 +28,7 @@ public class SampleAgentVectorStoreBatchFileSearch {
             .credential(new DefaultAzureCredentialBuilder().build())
             .buildAgentsClient();
 
-        var productFile = getFile("product_info_1.md");
+        Path productFile = getFile("product_info_1.md");
 
         VectorStore vectorStore = agentsClient.createVectorStore(
             null,"my_vector_store",
@@ -40,29 +41,29 @@ public class SampleAgentVectorStoreBatchFileSearch {
             FilePurpose.AGENTS));
 
         VectorStoreFileBatch vectorStoreFileBatch = agentsClient.createVectorStoreFileBatch(
-            vectorStore.getId(), List.of(uploadedAgentFile.getId()), null, null);
+            vectorStore.getId(), Arrays.asList(uploadedAgentFile.getId()), null, null);
 
         FileSearchToolResource fileSearchToolResource = new FileSearchToolResource()
-            .setVectorStoreIds(List.of(vectorStore.getId()));
+            .setVectorStoreIds(Arrays.asList(vectorStore.getId()));
 
-        var agentName = "vector_store_batch_file_search_example";
-        var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+        String agentName = "vector_store_batch_file_search_example";
+        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You are a helpful agent")
-            .setTools(List.of(new FileSearchToolDefinition()))
+            .setTools(Arrays.asList(new FileSearchToolDefinition()))
             .setToolResources(new ToolResources().setFileSearch(fileSearchToolResource));
         Agent agent = agentsClient.createAgent(createAgentOptions);
 
-        var thread = agentsClient.createThread();
-        var createdMessage = agentsClient.createMessage(
+        AgentThread thread = agentsClient.createThread();
+        ThreadMessage createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "What feature does Smart Eyewear offer?");
 
         //run agent
-        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
-        var threadRun = agentsClient.createRun(createRunOptions);
+        ThreadRun threadRun = agentsClient.createRun(createRunOptions);
 
         try {
             do {
@@ -78,7 +79,7 @@ public class SampleAgentVectorStoreBatchFileSearch {
                 System.out.println(threadRun.getLastError().getMessage());
             }
 
-            var runMessages = agentsClient.listMessages(thread.getId());
+            OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
             for (ThreadMessage message : runMessages.getData())
             {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));

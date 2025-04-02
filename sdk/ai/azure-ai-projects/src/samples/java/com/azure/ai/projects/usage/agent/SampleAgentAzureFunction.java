@@ -11,6 +11,8 @@ import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,17 +28,17 @@ public class SampleAgentAzureFunction {
             .credential(new DefaultAzureCredentialBuilder().build())
             .buildAgentsClient();
 
-        var storageQueueUri = Configuration.getGlobalConfiguration().get("STORAGE_QUEUE_URI", "");
+        String storageQueueUri = Configuration.getGlobalConfiguration().get("STORAGE_QUEUE_URI", "");
         String azureFunctionName = Configuration.getGlobalConfiguration().get("AZURE_FUNCTION_NAME", "");
 
         FunctionDefinition fnDef = new FunctionDefinition(
             azureFunctionName,
             BinaryData.fromObject(
-                Map.of(
+                mapOf(
                     "type", "object",
-                    "properties", Map.of(
+                    "properties", mapOf(
                         "location",
-                        Map.of("type", "string", "description", "The location to look up")
+                        mapOf("type", "string", "description", "The location to look up")
                     ),
                     "required", new String[] {"location"}
                 )
@@ -49,28 +51,28 @@ public class SampleAgentAzureFunction {
         );
         AzureFunctionToolDefinition azureFnTool = new AzureFunctionToolDefinition(azureFnDef);
 
-        var agentName = "azure_function_example";
+        String agentName = "azure_function_example";
         RequestOptions requestOptions = new RequestOptions()
             .setHeader(HttpHeaderName.fromString("x-ms-enable-preview"), "true");
         CreateAgentRequest createAgentRequestObj = new CreateAgentRequest("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You are a helpful agent. Use the provided function any time "
                 + "you are asked with the weather of any location")
-            .setTools(List.of(azureFnTool));
+            .setTools(Arrays.asList(azureFnTool));
         BinaryData createAgentRequest = BinaryData.fromObject(createAgentRequestObj);
         Agent agent = agentsClient.createAgentWithResponse(createAgentRequest, requestOptions)
             .getValue().toObject(Agent.class);
 
-        var thread = agentsClient.createThread();
-        var createdMessage = agentsClient.createMessage(
+        AgentThread thread = agentsClient.createThread();
+        ThreadMessage createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "What is the weather in Seattle, WA?");
 
         //run agent
-        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
-        var threadRun = agentsClient.createRun(createRunOptions);
+        ThreadRun threadRun = agentsClient.createRun(createRunOptions);
 
         try {
             do {
@@ -86,7 +88,7 @@ public class SampleAgentAzureFunction {
                 System.out.println(threadRun.getLastError().getMessage());
             }
 
-            var runMessages = agentsClient.listMessages(thread.getId());
+            OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
             for (ThreadMessage message : runMessages.getData())
             {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
@@ -112,5 +114,17 @@ public class SampleAgentAzureFunction {
             agentsClient.deleteThread(thread.getId());
             agentsClient.deleteAgent(agent.getId());
         }
+    }
+
+    // Use "Map.of" if available
+    @SuppressWarnings("unchecked")
+    private static <T> Map<String, T> mapOf(Object... inputs) {
+        Map<String, T> map = new HashMap<>();
+        for (int i = 0; i < inputs.length; i += 2) {
+            String key = (String) inputs[i];
+            T value = (T) inputs[i + 1];
+            map.put(key, value);
+        }
+        return map;
     }
 }

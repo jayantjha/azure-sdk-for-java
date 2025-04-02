@@ -7,6 +7,7 @@ import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.json.JsonProviders;
+import com.azure.json.JsonReader;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -16,7 +17,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SampleAgentOpenApi {
 
@@ -30,8 +34,8 @@ public class SampleAgentOpenApi {
             .credential(new DefaultAzureCredentialBuilder().build())
             .buildAgentsClient();
 
-        var filePath = getFile("weather_openapi.json");
-        var reader = JsonProviders.createReader(Files.readString(filePath));
+        Path filePath = getFile("weather_openapi.json");
+        JsonReader reader = JsonProviders.createReader(Files.readAllBytes(filePath));
 
         OpenApiAnonymousAuthDetails oaiAuth = new OpenApiAnonymousAuthDetails();
         OpenApiToolDefinition openApiTool = new OpenApiToolDefinition(new OpenApiFunctionDefinition(
@@ -40,23 +44,23 @@ public class SampleAgentOpenApi {
             oaiAuth
         ));
 
-        var agentName = "openAPI_example";
-        var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+        String agentName = "openAPI_example";
+        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You are a helpful agent")
-            .setTools(List.of(openApiTool));
+            .setTools(Arrays.asList(openApiTool));
         Agent agent = agentsClient.createAgent(createAgentOptions);
 
-        var thread = agentsClient.createThread();
-        var createdMessage = agentsClient.createMessage(
+        AgentThread thread = agentsClient.createThread();
+        ThreadMessage createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "What's the weather in seattle?");
 
         //run agent
-        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
-        var threadRun = agentsClient.createRun(createRunOptions);
+        ThreadRun threadRun = agentsClient.createRun(createRunOptions);
 
         try {
             do {
@@ -72,7 +76,7 @@ public class SampleAgentOpenApi {
                 System.out.println(threadRun.getLastError().getMessage());
             }
 
-            var runMessages = agentsClient.listMessages(thread.getId());
+            OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
             for (ThreadMessage message : runMessages.getData())
             {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
@@ -108,5 +112,4 @@ public class SampleAgentOpenApi {
         File file = new File(resource.toURI());
         return file.toPath();
     }
-
 }

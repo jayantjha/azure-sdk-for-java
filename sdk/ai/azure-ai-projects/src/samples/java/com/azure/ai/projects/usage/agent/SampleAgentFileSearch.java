@@ -8,6 +8,7 @@ import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class SampleAgentFileSearch {
@@ -30,7 +31,7 @@ public class SampleAgentFileSearch {
                 FilePurpose.AGENTS));
 
         VectorStore vectorStore = agentsClient.createVectorStore(
-            List.of(uploadedAgentFile.getId()),
+            Arrays.asList(uploadedAgentFile.getId()),
             "my_vector_store",
             null, null, null, null);
 
@@ -41,26 +42,26 @@ public class SampleAgentFileSearch {
         while (vectorStore.getStatus() == VectorStoreStatus.IN_PROGRESS);
 
         FileSearchToolResource fileSearchToolResource = new FileSearchToolResource()
-            .setVectorStoreIds(List.of(vectorStore.getId()));
+            .setVectorStoreIds(Arrays.asList(vectorStore.getId()));
 
-        var agentName = "file_search_example";
-        var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+        String agentName = "file_search_example";
+        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You are a helpful agent that can help fetch data from files you know about.")
-            .setTools(List.of(new FileSearchToolDefinition()))
+            .setTools(Arrays.asList(new FileSearchToolDefinition()))
             .setToolResources(new ToolResources().setFileSearch(fileSearchToolResource));
         Agent agent = agentsClient.createAgent(createAgentOptions);
 
-        var thread = agentsClient.createThread();
-        var createdMessage = agentsClient.createMessage(
+        AgentThread thread = agentsClient.createThread();
+        ThreadMessage createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "Can you give me the documented codes for 'banana' and 'orange'?");
 
         //run agent
-        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
-        var threadRun = agentsClient.createRun(createRunOptions);
+        ThreadRun threadRun = agentsClient.createRun(createRunOptions);
 
         try {
             do {
@@ -76,7 +77,7 @@ public class SampleAgentFileSearch {
                 System.out.println(threadRun.getLastError().getMessage());
             }
 
-            var runMessages = agentsClient.listMessages(thread.getId());
+            OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
             for (ThreadMessage message : runMessages.getData())
             {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));

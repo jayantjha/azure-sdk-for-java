@@ -1,6 +1,9 @@
 package com.azure.ai.projects;
 
 import com.azure.ai.projects.generated.AIProjectClientTestBase;
+import com.azure.ai.projects.implementation.models.GetConnectionResponse;
+import com.azure.ai.projects.implementation.models.GetWorkspaceResponse;
+import com.azure.ai.projects.implementation.models.ListConnectionsResponse;
 import com.azure.ai.projects.models.ConnectionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,19 +19,19 @@ class ConnectionsClientTest extends AIProjectClientTestBase {
 
     @Test
     void getWorkspace() {
-        var workspace = connectionsClient.getWorkspace();
+        GetWorkspaceResponse workspace = connectionsClient.getWorkspace();
         assertNotNull(workspace);
     }
 
     @Test
     void listConnections() {
-        var connections = connectionsClient.listConnections();
+        ListConnectionsResponse connections = connectionsClient.listConnections();
         assertNotNull(connections);
     }
 
     @Test
     void getConnection() {
-        var connection = connectionsClient.getConnection("jayant-hub-2aqa-connection-AISearch");
+        GetConnectionResponse connection = connectionsClient.getConnection("jayant-hub-2aqa-connection-AISearch");
         assertNotNull(connection);
     }
 }

@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -29,14 +30,14 @@ public class SampleAgentCodeInterpreterFileAttachment {
             .credential(new DefaultAzureCredentialBuilder().build())
             .buildAgentsClient();
 
-        var htmlFile = getFile("sample_test.html");
+        Path htmlFile = getFile("sample_test.html");
 
-        var agentName = "code_interpreter_file_attachment_example";
-        var ciTool = new CodeInterpreterToolDefinition();
-        var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+        String agentName = "code_interpreter_file_attachment_example";
+        CodeInterpreterToolDefinition ciTool = new CodeInterpreterToolDefinition();
+        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You are a helpful agent")
-            .setTools(List.of(ciTool));
+            .setTools(Arrays.asList(ciTool));
         Agent agent = agentsClient.createAgent(createAgentOptions);
 
         OpenAIFile uploadedFile = agentsClient.uploadFile(
@@ -45,24 +46,24 @@ public class SampleAgentCodeInterpreterFileAttachment {
                 FilePurpose.AGENTS));
 
         MessageAttachment messageAttachment = new MessageAttachment(
-            List.of(BinaryData.fromObject(ciTool))
+            Arrays.asList(BinaryData.fromObject(ciTool))
         ).setFileId(uploadedFile.getId());
 
-        var thread = agentsClient.createThread();
+        AgentThread thread = agentsClient.createThread();
         assertNotNull(thread);
-        var createdMessage = agentsClient.createMessage(
+        ThreadMessage createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "What does the attachment say?",
-            List.of(messageAttachment),
+            Arrays.asList(messageAttachment),
             null
         );
         assertNotNull(createdMessage);
 
         //run agent
-        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
-        var threadRun = agentsClient.createRun(createRunOptions);
+        ThreadRun threadRun = agentsClient.createRun(createRunOptions);
         assertNotNull(threadRun);
 
         try {
@@ -79,7 +80,7 @@ public class SampleAgentCodeInterpreterFileAttachment {
                 System.out.println(threadRun.getLastError().getMessage());
             }
 
-            var runMessages = agentsClient.listMessages(thread.getId());
+            OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
             for (ThreadMessage message : runMessages.getData())
             {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));

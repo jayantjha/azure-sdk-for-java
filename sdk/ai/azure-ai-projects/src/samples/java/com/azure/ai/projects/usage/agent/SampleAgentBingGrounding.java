@@ -7,6 +7,7 @@ import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class SampleAgentBingGrounding {
@@ -23,26 +24,26 @@ public class SampleAgentBingGrounding {
 
         String bingConnectionId = Configuration.getGlobalConfiguration().get("BING_CONNECTION_ID", "");
         ToolConnectionList toolConnectionList = new ToolConnectionList()
-            .setConnectionList(List.of(new ToolConnection(bingConnectionId)));
+            .setConnectionList(Arrays.asList(new ToolConnection(bingConnectionId)));
         BingGroundingToolDefinition bingGroundingTool = new BingGroundingToolDefinition(toolConnectionList);
 
-        var agentName = "bing_grounding_example";
-        var createAgentOptions = new CreateAgentOptions("gpt-35-turbo")
+        String agentName = "bing_grounding_example";
+        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-35-turbo")
             .setName(agentName)
             .setInstructions("You are a helpful agent")
-            .setTools(List.of(bingGroundingTool));
+            .setTools(Arrays.asList(bingGroundingTool));
         Agent agent = agentsClient.createAgent(createAgentOptions);
 
-        var thread = agentsClient.createThread();
-        var createdMessage = agentsClient.createMessage(
+        AgentThread thread = agentsClient.createThread();
+        ThreadMessage createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "How does wikipedia explain Euler's Identity?");
 
         //run agent
-        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
-        var threadRun = agentsClient.createRun(createRunOptions);
+        ThreadRun threadRun = agentsClient.createRun(createRunOptions);
 
         try {
             do {
@@ -58,7 +59,7 @@ public class SampleAgentBingGrounding {
                 System.out.println(threadRun.getLastError().getMessage());
             }
 
-            var runMessages = agentsClient.listMessages(thread.getId());
+            OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
             for (ThreadMessage message : runMessages.getData())
             {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));

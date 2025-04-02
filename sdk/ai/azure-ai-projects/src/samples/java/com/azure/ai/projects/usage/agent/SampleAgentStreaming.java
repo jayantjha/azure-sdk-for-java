@@ -14,6 +14,7 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -30,20 +31,20 @@ public class SampleAgentStreaming {
             .credential(new DefaultAzureCredentialBuilder().build())
             .buildAgentsClient();
 
-        var agentName = "agent_streaming_example";
-        var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+        String agentName = "agent_streaming_example";
+        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You politely help with math questions. Use the code interpreter tool when asked to visualize numbers.")
-            .setTools(List.of(new CodeInterpreterToolDefinition()));
+            .setTools(Arrays.asList(new CodeInterpreterToolDefinition()));
         Agent agent = agentsClient.createAgent(createAgentOptions);
 
-        var thread = agentsClient.createThread();
-        var createdMessage = agentsClient.createMessage(
+        AgentThread thread = agentsClient.createThread();
+        ThreadMessage createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "Hi, Assistant! Draw a graph for a line with a slope of 4 and y-intercept of 9.");
 
-        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
 
         try {

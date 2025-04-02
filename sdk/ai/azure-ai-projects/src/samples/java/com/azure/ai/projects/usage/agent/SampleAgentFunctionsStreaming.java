@@ -16,9 +16,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -37,7 +35,7 @@ public class SampleAgentFunctionsStreaming {
             .buildAgentsClient();
 
         // function tool definitions
-        var getUserFavoriteCityTool = new FunctionToolDefinition(
+        FunctionToolDefinition getUserFavoriteCityTool = new FunctionToolDefinition(
             new FunctionDefinition(
                 "getUserFavoriteCity",
                 BinaryData.fromObject(
@@ -45,14 +43,14 @@ public class SampleAgentFunctionsStreaming {
                 )).setDescription("Gets the user's favorite city.")
         );
 
-        var getCityNicknameTool = new FunctionToolDefinition(
+        FunctionToolDefinition getCityNicknameTool = new FunctionToolDefinition(
             new FunctionDefinition(
                 "getCityNickname",
                 BinaryData.fromObject(
-                    Map.of(
+                    mapOf(
                         "type", "object",
-                        "properties", Map.of(
-                            "location", Map.of(
+                        "properties", mapOf(
+                            "location", mapOf(
                                 "type", "string",
                                 "description", "The city and state, e.g. San Francisco, CA")
                         ),
@@ -60,17 +58,17 @@ public class SampleAgentFunctionsStreaming {
             ).setDescription("Gets the nickname of a city, e.g. 'LA' for 'Los Angeles, CA'.")
         );
 
-        var getCurrentWeatherAtLocationTool = new FunctionToolDefinition(
+        FunctionToolDefinition getCurrentWeatherAtLocationTool = new FunctionToolDefinition(
             new FunctionDefinition(
                 "getCurrentWeatherAtLocation",
                 BinaryData.fromObject(
-                    Map.of(
+                    mapOf(
                         "type", "object",
-                        "properties", Map.of(
-                            "location", Map.of(
+                        "properties", mapOf(
+                            "location", mapOf(
                                 "type", "string",
                                 "description", "The city and state, e.g. San Francisco, CA"),
-                            "unit", Map.of(
+                            "unit", mapOf(
                                 "type", "string",
                                 "description", "temperature unit as c or f",
                                 "enum", new String[] {"c", "f"})),
@@ -103,7 +101,7 @@ public class SampleAgentFunctionsStreaming {
         Function<RequiredToolCall, ToolOutput> getResolvedToolOutput = toolCall -> {
             if (toolCall instanceof RequiredFunctionToolCall) {
                 try {
-                    var functionToolCall = (RequiredFunctionToolCall) toolCall;
+                    RequiredFunctionToolCall functionToolCall = (RequiredFunctionToolCall) toolCall;
                     String functionName = functionToolCall.getFunction().getName();
                     if (functionName.equals("getUserFavoriteCity"))
                         return new ToolOutput().setToolCallId(functionToolCall.getId())
@@ -133,23 +131,23 @@ public class SampleAgentFunctionsStreaming {
             return null;
         };
 
-        var agentName = "functions_streaming_example";
-        var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+        String agentName = "functions_streaming_example";
+        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You are a weather bot. Use the provided functions to help answer questions. "
                 + "Customize your responses to the user's preferences as much as possible and use friendly "
                 + "nicknames for cities whenever possible.")
-            .setTools(List.of(getUserFavoriteCityTool, getCityNicknameTool, getCurrentWeatherAtLocationTool));
+            .setTools(Arrays.asList(getUserFavoriteCityTool, getCityNicknameTool, getCurrentWeatherAtLocationTool));
         Agent agent = agentsClient.createAgent(createAgentOptions);
 
-        var thread = agentsClient.createThread();
-        var createdMessage = agentsClient.createMessage(
+        AgentThread thread = agentsClient.createThread();
+        ThreadMessage createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "What's the weather like in my favorite city?");
 
         //run agent
-        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
 
         try {
@@ -168,7 +166,7 @@ public class SampleAgentFunctionsStreaming {
                         while (streamRun.get().getStatus() == RunStatus.REQUIRES_ACTION) {
                             List<ToolOutput> toolOutputs = new ArrayList<>();
 
-                            var submitToolsOutputAction = (SubmitToolOutputsAction)(streamRun.get().getRequiredAction());
+                            SubmitToolOutputsAction submitToolsOutputAction = (SubmitToolOutputsAction)(streamRun.get().getRequiredAction());
                             for (RequiredToolCall toolCall : submitToolsOutputAction.getSubmitToolOutputs().getToolCalls()) {
                                 toolOutputs.add(getResolvedToolOutput.apply(toolCall));
                             }
@@ -221,5 +219,17 @@ public class SampleAgentFunctionsStreaming {
                 System.out.print(textContent.getText().getValue());
             }
         });
+    }
+
+    // Use "Map.of" if available
+    @SuppressWarnings("unchecked")
+    private static <T> Map<String, T> mapOf(Object... inputs) {
+        Map<String, T> map = new HashMap<>();
+        for (int i = 0; i < inputs.length; i += 2) {
+            String key = (String) inputs[i];
+            T value = (T) inputs[i + 1];
+            map.put(key, value);
+        }
+        return map;
     }
 }

@@ -7,6 +7,7 @@ import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class SampleAgentAzureAISearch {
@@ -25,26 +26,26 @@ public class SampleAgentAzureAISearch {
 
         ToolResources toolResources = new ToolResources()
             .setAzureAISearch(new AzureAISearchResource()
-                .setIndexList(List.of(new AISearchIndexResource(aiSearchConnectionId, "sample_index"))));
+                .setIndexList(Arrays.asList(new AISearchIndexResource(aiSearchConnectionId, "sample_index"))));
 
-        var agentName = "ai_search_example";
-        var createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+        String agentName = "ai_search_example";
+        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You are a helpful agent")
-            .setTools(List.of(new AzureAISearchToolDefinition()))
+            .setTools(Arrays.asList(new AzureAISearchToolDefinition()))
             .setToolResources(toolResources);
         Agent agent = agentsClient.createAgent(createAgentOptions);
 
-        var thread = agentsClient.createThread();
-        var createdMessage = agentsClient.createMessage(
+        AgentThread thread = agentsClient.createThread();
+        ThreadMessage createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "Hello, send an email with the datetime and weather information in New York?");
 
         //run agent
-        var createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
-        var threadRun = agentsClient.createRun(createRunOptions);
+        ThreadRun threadRun = agentsClient.createRun(createRunOptions);
 
         try {
             do {
@@ -60,7 +61,7 @@ public class SampleAgentAzureAISearch {
                 System.out.println(threadRun.getLastError().getMessage());
             }
 
-            var runMessages = agentsClient.listMessages(thread.getId());
+            OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
             for (ThreadMessage message : runMessages.getData())
             {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));

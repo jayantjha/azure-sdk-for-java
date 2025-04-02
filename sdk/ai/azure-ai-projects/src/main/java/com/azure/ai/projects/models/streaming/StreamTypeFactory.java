@@ -42,6 +42,13 @@ import static com.azure.ai.projects.models.AgentStreamEvent.THREAD_RUN_STEP_IN_P
 public final class StreamTypeFactory {
 
     /**
+     * Default constructor for creating a new instance of StreamTypeFactory.
+     */
+    public StreamTypeFactory() {
+        // Default constructor
+    }
+
+    /**
      * Deserializes the server sent event into the appropriate type.
      *
      * @param eventName The name of the event.
