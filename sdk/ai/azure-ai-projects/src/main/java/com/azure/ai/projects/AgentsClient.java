@@ -72,7 +72,6 @@ import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.BinaryData;
 import reactor.core.publisher.Flux;
-
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
@@ -230,12 +229,12 @@ public final class AgentsClient {
      * </pre>
      *
      * @param createAgentRequest The createAgentRequest parameter.
-     * @param requestOptions     The options to configure the HTTP request before HTTP client sends it.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return represents an agent that can call the model and use tools along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -338,10 +337,10 @@ public final class AgentsClient {
      *
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return a list of agents that were previously created along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -417,13 +416,13 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param assistantId    Identifier of the agent.
+     * @param assistantId Identifier of the agent.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return represents an agent that can call the model and use tools along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -562,19 +561,19 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param assistantId        The ID of the agent to modify.
+     * @param assistantId The ID of the agent to modify.
      * @param updateAgentRequest The updateAgentRequest parameter.
-     * @param requestOptions     The options to configure the HTTP request before HTTP client sends it.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return represents an agent that can call the model and use tools along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> updateAgentWithResponse(String assistantId, BinaryData updateAgentRequest,
-                                                        RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         return this.serviceClient.updateAgentWithResponse(assistantId, updateAgentRequest, requestOptions);
     }
 
@@ -592,13 +591,13 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param assistantId    Identifier of the agent.
+     * @param assistantId Identifier of the agent.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return the status of an agent deletion operation along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -732,17 +731,17 @@ public final class AgentsClient {
      * </pre>
      *
      * @param createThreadRequest The createThreadRequest parameter.
-     * @param requestOptions      The options to configure the HTTP request before HTTP client sends it.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return information about a single thread associated with an agent along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> createThreadWithResponse(BinaryData createThreadRequest,
-                                                         RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         return this.serviceClient.createThreadWithResponse(createThreadRequest, requestOptions);
     }
 
@@ -802,13 +801,13 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param threadId       Identifier of the thread.
+     * @param threadId Identifier of the thread.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return information about an existing thread along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -923,19 +922,19 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param threadId            The ID of the thread to modify.
+     * @param threadId The ID of the thread to modify.
      * @param updateThreadRequest The updateThreadRequest parameter.
-     * @param requestOptions      The options to configure the HTTP request before HTTP client sends it.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return information about a single thread associated with an agent along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> updateThreadWithResponse(String threadId, BinaryData updateThreadRequest,
-                                                         RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         return this.serviceClient.updateThreadWithResponse(threadId, updateThreadRequest, requestOptions);
     }
 
@@ -953,13 +952,13 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param threadId       Identifier of the thread.
+     * @param threadId Identifier of the thread.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return the status of a thread deletion operation along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -1037,19 +1036,19 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param threadId             Identifier of the thread.
+     * @param threadId Identifier of the thread.
      * @param createMessageRequest The createMessageRequest parameter.
-     * @param requestOptions       The options to configure the HTTP request before HTTP client sends it.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return a single, existing message within an agent thread along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> createMessageWithResponse(String threadId, BinaryData createMessageRequest,
-                                                          RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         return this.serviceClient.createMessageWithResponse(threadId, createMessageRequest, requestOptions);
     }
 
@@ -1123,13 +1122,13 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param threadId       Identifier of the thread.
+     * @param threadId Identifier of the thread.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return a list of messages that exist on a thread along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -1181,19 +1180,19 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param threadId       Identifier of the thread.
-     * @param messageId      Identifier of the message.
+     * @param threadId Identifier of the thread.
+     * @param messageId Identifier of the message.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return an existing message from an existing thread along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> getMessageWithResponse(String threadId, String messageId,
-                                                       RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         return this.serviceClient.getMessageWithResponse(threadId, messageId, requestOptions);
     }
 
@@ -1253,20 +1252,20 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param threadId             Identifier of the thread.
-     * @param messageId            Identifier of the message.
+     * @param threadId Identifier of the thread.
+     * @param messageId Identifier of the message.
      * @param updateMessageRequest The updateMessageRequest parameter.
-     * @param requestOptions       The options to configure the HTTP request before HTTP client sends it.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return a single, existing message within an agent thread along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> updateMessageWithResponse(String threadId, String messageId,
-                                                          BinaryData updateMessageRequest, RequestOptions requestOptions) {
+        BinaryData updateMessageRequest, RequestOptions requestOptions) {
         return this.serviceClient.updateMessageWithResponse(threadId, messageId, updateMessageRequest, requestOptions);
     }
 
@@ -1415,19 +1414,19 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param threadId         Identifier of the thread.
+     * @param threadId Identifier of the thread.
      * @param createRunRequest The createRunRequest parameter.
-     * @param requestOptions   The options to configure the HTTP request before HTTP client sends it.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return data representing a single evaluation run of an agent thread along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> createRunWithResponse(String threadId, BinaryData createRunRequest,
-                                                      RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         return this.serviceClient.createRunWithResponse(threadId, createRunRequest, requestOptions);
     }
 
@@ -1537,13 +1536,13 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param threadId       Identifier of the thread.
+     * @param threadId Identifier of the thread.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return a list of runs for a specified thread along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -1632,14 +1631,14 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param threadId       Identifier of the thread.
-     * @param runId          Identifier of the run.
+     * @param threadId Identifier of the thread.
+     * @param runId Identifier of the run.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return an existing run from an existing thread along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -1740,20 +1739,20 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param threadId         Identifier of the thread.
-     * @param runId            Identifier of the run.
+     * @param threadId Identifier of the thread.
+     * @param runId Identifier of the run.
      * @param updateRunRequest The updateRunRequest parameter.
-     * @param requestOptions   The options to configure the HTTP request before HTTP client sends it.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return data representing a single evaluation run of an agent thread along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> updateRunWithResponse(String threadId, String runId, BinaryData updateRunRequest,
-                                                      RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         return this.serviceClient.updateRunWithResponse(threadId, runId, updateRunRequest, requestOptions);
     }
 
@@ -1855,20 +1854,20 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param threadId                      Identifier of the thread.
-     * @param runId                         Identifier of the run.
+     * @param threadId Identifier of the thread.
+     * @param runId Identifier of the run.
      * @param submitToolOutputsToRunRequest The submitToolOutputsToRunRequest parameter.
-     * @param requestOptions                The options to configure the HTTP request before HTTP client sends it.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return data representing a single evaluation run of an agent thread along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> submitToolOutputsToRunWithResponse(String threadId, String runId,
-                                                                   BinaryData submitToolOutputsToRunRequest, RequestOptions requestOptions) {
+        BinaryData submitToolOutputsToRunRequest, RequestOptions requestOptions) {
         return this.serviceClient.submitToolOutputsToRunWithResponse(threadId, runId, submitToolOutputsToRunRequest,
             requestOptions);
     }
@@ -1954,14 +1953,14 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param threadId       Identifier of the thread.
-     * @param runId          Identifier of the run.
+     * @param threadId Identifier of the thread.
+     * @param runId Identifier of the run.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return data representing a single evaluation run of an agent thread along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -2158,17 +2157,17 @@ public final class AgentsClient {
      * </pre>
      *
      * @param createThreadAndRunRequest The createThreadAndRunRequest parameter.
-     * @param requestOptions            The options to configure the HTTP request before HTTP client sends it.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return data representing a single evaluation run of an agent thread along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> createThreadAndRunWithResponse(BinaryData createThreadAndRunRequest,
-                                                               RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         return this.serviceClient.createThreadAndRunWithResponse(createThreadAndRunRequest, requestOptions);
     }
 
@@ -2220,20 +2219,20 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param threadId       Identifier of the thread.
-     * @param runId          Identifier of the run.
-     * @param stepId         Identifier of the run step.
+     * @param threadId Identifier of the thread.
+     * @param runId Identifier of the run.
+     * @param stepId Identifier of the run step.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return a single run step from a thread run along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> getRunStepWithResponse(String threadId, String runId, String stepId,
-                                                       RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         return this.serviceClient.getRunStepWithResponse(threadId, runId, stepId, requestOptions);
     }
 
@@ -2304,14 +2303,14 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param threadId       Identifier of the thread.
-     * @param runId          Identifier of the run.
+     * @param threadId Identifier of the thread.
+     * @param runId Identifier of the run.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return a list of run steps from a thread run along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -2353,10 +2352,10 @@ public final class AgentsClient {
      *
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return a list of previously uploaded files along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -2383,13 +2382,13 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param body           Multipart body.
+     * @param body Multipart body.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return represents an agent that can call the model and use tools along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -2413,13 +2412,13 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param fileId         The ID of the file to delete.
+     * @param fileId The ID of the file to delete.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return a status response from a file deletion operation along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -2446,13 +2445,13 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param fileId         The ID of the file to retrieve.
+     * @param fileId The ID of the file to retrieve.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return represents an agent that can call the model and use tools along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -2470,13 +2469,13 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param fileId         The ID of the file to retrieve.
+     * @param fileId The ID of the file to retrieve.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return the response body along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -2544,10 +2543,10 @@ public final class AgentsClient {
      *
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return the response data for a requested list of items along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -2620,18 +2619,18 @@ public final class AgentsClient {
      * </pre>
      *
      * @param createVectorStoreRequest The createVectorStoreRequest parameter.
-     * @param requestOptions           The options to configure the HTTP request before HTTP client sends it.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return a vector store is a collection of processed files can be used by the `file_search` tool along with
      * {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> createVectorStoreWithResponse(BinaryData createVectorStoreRequest,
-                                                              RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         return this.serviceClient.createVectorStoreWithResponse(createVectorStoreRequest, requestOptions);
     }
 
@@ -2668,14 +2667,14 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param vectorStoreId  Identifier of the vector store.
+     * @param vectorStoreId Identifier of the vector store.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return a vector store is a collection of processed files can be used by the `file_search` tool along with
      * {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -2733,20 +2732,20 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param vectorStoreId            Identifier of the vector store.
+     * @param vectorStoreId Identifier of the vector store.
      * @param modifyVectorStoreRequest The modifyVectorStoreRequest parameter.
-     * @param requestOptions           The options to configure the HTTP request before HTTP client sends it.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return a vector store is a collection of processed files can be used by the `file_search` tool along with
      * {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> modifyVectorStoreWithResponse(String vectorStoreId, BinaryData modifyVectorStoreRequest,
-                                                              RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         return this.serviceClient.modifyVectorStoreWithResponse(vectorStoreId, modifyVectorStoreRequest,
             requestOptions);
     }
@@ -2765,13 +2764,13 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param vectorStoreId  Identifier of the vector store.
+     * @param vectorStoreId Identifier of the vector store.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return response object for deleting a vector store along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -2830,13 +2829,13 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param vectorStoreId  Identifier of the vector store.
+     * @param vectorStoreId Identifier of the vector store.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return the response data for a requested list of items along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -2885,19 +2884,19 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param vectorStoreId                Identifier of the vector store.
+     * @param vectorStoreId Identifier of the vector store.
      * @param createVectorStoreFileRequest The createVectorStoreFileRequest parameter.
-     * @param requestOptions               The options to configure the HTTP request before HTTP client sends it.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return description of a file attached to a vector store along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> createVectorStoreFileWithResponse(String vectorStoreId,
-                                                                  BinaryData createVectorStoreFileRequest, RequestOptions requestOptions) {
+        BinaryData createVectorStoreFileRequest, RequestOptions requestOptions) {
         return this.serviceClient.createVectorStoreFileWithResponse(vectorStoreId, createVectorStoreFileRequest,
             requestOptions);
     }
@@ -2926,19 +2925,19 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param vectorStoreId  Identifier of the vector store.
-     * @param fileId         Identifier of the file.
+     * @param vectorStoreId Identifier of the vector store.
+     * @param fileId Identifier of the file.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return description of a file attached to a vector store along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> getVectorStoreFileWithResponse(String vectorStoreId, String fileId,
-                                                               RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         return this.serviceClient.getVectorStoreFileWithResponse(vectorStoreId, fileId, requestOptions);
     }
 
@@ -2958,19 +2957,19 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param vectorStoreId  Identifier of the vector store.
-     * @param fileId         Identifier of the file.
+     * @param vectorStoreId Identifier of the vector store.
+     * @param fileId Identifier of the file.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return response object for deleting a vector store file relationship along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> deleteVectorStoreFileWithResponse(String vectorStoreId, String fileId,
-                                                                  RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         return this.serviceClient.deleteVectorStoreFileWithResponse(vectorStoreId, fileId, requestOptions);
     }
 
@@ -3018,19 +3017,19 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param vectorStoreId                     Identifier of the vector store.
+     * @param vectorStoreId Identifier of the vector store.
      * @param createVectorStoreFileBatchRequest The createVectorStoreFileBatchRequest parameter.
-     * @param requestOptions                    The options to configure the HTTP request before HTTP client sends it.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return a batch of files attached to a vector store along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> createVectorStoreFileBatchWithResponse(String vectorStoreId,
-                                                                       BinaryData createVectorStoreFileBatchRequest, RequestOptions requestOptions) {
+        BinaryData createVectorStoreFileBatchRequest, RequestOptions requestOptions) {
         return this.serviceClient.createVectorStoreFileBatchWithResponse(vectorStoreId,
             createVectorStoreFileBatchRequest, requestOptions);
     }
@@ -3058,19 +3057,19 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param vectorStoreId  Identifier of the vector store.
-     * @param batchId        Identifier of the file batch.
+     * @param vectorStoreId Identifier of the vector store.
+     * @param batchId Identifier of the file batch.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return a batch of files attached to a vector store along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> getVectorStoreFileBatchWithResponse(String vectorStoreId, String batchId,
-                                                                    RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         return this.serviceClient.getVectorStoreFileBatchWithResponse(vectorStoreId, batchId, requestOptions);
     }
 
@@ -3098,19 +3097,19 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param vectorStoreId  Identifier of the vector store.
-     * @param batchId        Identifier of the file batch.
+     * @param vectorStoreId Identifier of the vector store.
+     * @param batchId Identifier of the file batch.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return a batch of files attached to a vector store along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> cancelVectorStoreFileBatchWithResponse(String vectorStoreId, String batchId,
-                                                                       RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         return this.serviceClient.cancelVectorStoreFileBatchWithResponse(vectorStoreId, batchId, requestOptions);
     }
 
@@ -3165,19 +3164,19 @@ public final class AgentsClient {
      * }
      * </pre>
      *
-     * @param vectorStoreId  Identifier of the vector store.
-     * @param batchId        Identifier of the file batch.
+     * @param vectorStoreId Identifier of the vector store.
+     * @param batchId Identifier of the file batch.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
      * @return the response data for a requested list of items along with {@link Response}.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> listVectorStoreFileBatchFilesWithResponse(String vectorStoreId, String batchId,
-                                                                          RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         return this.serviceClient.listVectorStoreFileBatchFilesWithResponse(vectorStoreId, batchId, requestOptions);
     }
 
@@ -3186,12 +3185,12 @@ public final class AgentsClient {
      *
      * @param options Options for createAgent API.
      * @return represents an agent that can call the model and use tools.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3214,23 +3213,23 @@ public final class AgentsClient {
     /**
      * Gets a list of agents that were previously created.
      *
-     * @param limit  A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default
-     *               is 20.
-     * @param order  Sort order by the created_at timestamp of the objects. asc for ascending order and desc for
-     *               descending order.
-     * @param after  A cursor for use in pagination. after is an object ID that defines your place in the list. For
-     *               instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
-     *               include after=obj_foo in order to fetch the next page of the list.
+     * @param limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default
+     * is 20.
+     * @param order Sort order by the created_at timestamp of the objects. asc for ascending order and desc for
+     * descending order.
+     * @param after A cursor for use in pagination. after is an object ID that defines your place in the list. For
+     * instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
+     * include after=obj_foo in order to fetch the next page of the list.
      * @param before A cursor for use in pagination. before is an object ID that defines your place in the list. For
-     *               instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
-     *               include before=obj_foo in order to fetch the previous page of the list.
+     * instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
+     * include before=obj_foo in order to fetch the previous page of the list.
      * @return a list of agents that were previously created.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3256,11 +3255,11 @@ public final class AgentsClient {
      * Gets a list of agents that were previously created.
      *
      * @return a list of agents that were previously created.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3275,12 +3274,12 @@ public final class AgentsClient {
      *
      * @param assistantId Identifier of the agent.
      * @return represents an agent that can call the model and use tools.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3295,12 +3294,12 @@ public final class AgentsClient {
      *
      * @param options Options for updateAgent API.
      * @return represents an agent that can call the model and use tools.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3328,12 +3327,12 @@ public final class AgentsClient {
      *
      * @param assistantId Identifier of the agent.
      * @return the status of an agent deletion operation.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3346,27 +3345,27 @@ public final class AgentsClient {
     /**
      * Creates a new thread. Threads contain messages and can be run by agents.
      *
-     * @param messages      The initial messages to associate with the new thread.
+     * @param messages The initial messages to associate with the new thread.
      * @param toolResources A set of resources that are made available to the agent's tools in this thread. The
-     *                      resources are specific to the
-     *                      type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool
-     *                      requires
-     *                      a list of vector store IDs.
-     * @param metadata      A set of up to 16 key/value pairs that can be attached to an object, used for storing additional
-     *                      information about that object in a structured format. Keys may be up to 64 characters in length and values may be
-     *                      up to 512 characters in length.
+     * resources are specific to the
+     * type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool
+     * requires
+     * a list of vector store IDs.
+     * @param metadata A set of up to 16 key/value pairs that can be attached to an object, used for storing additional
+     * information about that object in a structured format. Keys may be up to 64 characters in length and values may be
+     * up to 512 characters in length.
      * @return information about a single thread associated with an agent.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public AgentThread createThread(List<ThreadMessageOptions> messages, ToolResources toolResources,
-                                    Map<String, String> metadata) {
+        Map<String, String> metadata) {
         // Generated convenience method for createThreadWithResponse
         RequestOptions requestOptions = new RequestOptions();
         CreateThreadRequest createThreadRequestObj
@@ -3379,11 +3378,11 @@ public final class AgentsClient {
      * Creates a new thread. Threads contain messages and can be run by agents.
      *
      * @return information about a single thread associated with an agent.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3400,12 +3399,12 @@ public final class AgentsClient {
      *
      * @param threadId Identifier of the thread.
      * @return information about an existing thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3418,22 +3417,22 @@ public final class AgentsClient {
     /**
      * Modifies an existing thread.
      *
-     * @param threadId      The ID of the thread to modify.
+     * @param threadId The ID of the thread to modify.
      * @param toolResources A set of resources that are made available to the agent's tools in this thread. The
-     *                      resources are specific to the
-     *                      type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool
-     *                      requires
-     *                      a list of vector store IDs.
-     * @param metadata      A set of up to 16 key/value pairs that can be attached to an object, used for storing additional
-     *                      information about that object in a structured format. Keys may be up to 64 characters in length and values may be
-     *                      up to 512 characters in length.
+     * resources are specific to the
+     * type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool
+     * requires
+     * a list of vector store IDs.
+     * @param metadata A set of up to 16 key/value pairs that can be attached to an object, used for storing additional
+     * information about that object in a structured format. Keys may be up to 64 characters in length and values may be
+     * up to 512 characters in length.
      * @return information about a single thread associated with an agent.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3452,12 +3451,12 @@ public final class AgentsClient {
      *
      * @param threadId The ID of the thread to modify.
      * @return information about a single thread associated with an agent.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3475,12 +3474,12 @@ public final class AgentsClient {
      *
      * @param threadId Identifier of the thread.
      * @return the status of a thread deletion operation.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3493,32 +3492,32 @@ public final class AgentsClient {
     /**
      * Creates a new message on a specified thread.
      *
-     * @param threadId    Identifier of the thread.
-     * @param role        The role of the entity that is creating the message. Allowed values include:
-     *                    - `user`: Indicates the message is sent by an actual user and should be used in most
-     *                    cases to represent user-generated messages.
-     *                    - `assistant`: Indicates the message is generated by the agent. Use this value to insert
-     *                    messages from the agent into the
-     *                    conversation.
-     * @param content     The textual content of the initial message. Currently, robust input including images and annotated
-     *                    text may only be provided via
-     *                    a separate call to the create message API.
+     * @param threadId Identifier of the thread.
+     * @param role The role of the entity that is creating the message. Allowed values include:
+     * - `user`: Indicates the message is sent by an actual user and should be used in most
+     * cases to represent user-generated messages.
+     * - `assistant`: Indicates the message is generated by the agent. Use this value to insert
+     * messages from the agent into the
+     * conversation.
+     * @param content The textual content of the initial message. Currently, robust input including images and annotated
+     * text may only be provided via
+     * a separate call to the create message API.
      * @param attachments A list of files attached to the message, and the tools they should be added to.
-     * @param metadata    A set of up to 16 key/value pairs that can be attached to an object, used for storing additional
-     *                    information about that object in a structured format. Keys may be up to 64 characters in length and values may be
-     *                    up to 512 characters in length.
+     * @param metadata A set of up to 16 key/value pairs that can be attached to an object, used for storing additional
+     * information about that object in a structured format. Keys may be up to 64 characters in length and values may be
+     * up to 512 characters in length.
      * @return a single, existing message within an agent thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public ThreadMessage createMessage(String threadId, MessageRole role, String content,
-                                       List<MessageAttachment> attachments, Map<String, String> metadata) {
+        List<MessageAttachment> attachments, Map<String, String> metadata) {
         // Generated convenience method for createMessageWithResponse
         RequestOptions requestOptions = new RequestOptions();
         CreateMessageRequest createMessageRequestObj
@@ -3532,22 +3531,22 @@ public final class AgentsClient {
      * Creates a new message on a specified thread.
      *
      * @param threadId Identifier of the thread.
-     * @param role     The role of the entity that is creating the message. Allowed values include:
-     *                 - `user`: Indicates the message is sent by an actual user and should be used in most
-     *                 cases to represent user-generated messages.
-     *                 - `assistant`: Indicates the message is generated by the agent. Use this value to insert
-     *                 messages from the agent into the
-     *                 conversation.
-     * @param content  The textual content of the initial message. Currently, robust input including images and annotated
-     *                 text may only be provided via
-     *                 a separate call to the create message API.
+     * @param role The role of the entity that is creating the message. Allowed values include:
+     * - `user`: Indicates the message is sent by an actual user and should be used in most
+     * cases to represent user-generated messages.
+     * - `assistant`: Indicates the message is generated by the agent. Use this value to insert
+     * messages from the agent into the
+     * conversation.
+     * @param content The textual content of the initial message. Currently, robust input including images and annotated
+     * text may only be provided via
+     * a separate call to the create message API.
      * @return a single, existing message within an agent thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3564,29 +3563,29 @@ public final class AgentsClient {
      * Gets a list of messages that exist on a thread.
      *
      * @param threadId Identifier of the thread.
-     * @param runId    Filter messages by the run ID that generated them.
-     * @param limit    A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default
-     *                 is 20.
-     * @param order    Sort order by the created_at timestamp of the objects. asc for ascending order and desc for
-     *                 descending order.
-     * @param after    A cursor for use in pagination. after is an object ID that defines your place in the list. For
-     *                 instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
-     *                 include after=obj_foo in order to fetch the next page of the list.
-     * @param before   A cursor for use in pagination. before is an object ID that defines your place in the list. For
-     *                 instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
-     *                 include before=obj_foo in order to fetch the previous page of the list.
+     * @param runId Filter messages by the run ID that generated them.
+     * @param limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default
+     * is 20.
+     * @param order Sort order by the created_at timestamp of the objects. asc for ascending order and desc for
+     * descending order.
+     * @param after A cursor for use in pagination. after is an object ID that defines your place in the list. For
+     * instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
+     * include after=obj_foo in order to fetch the next page of the list.
+     * @param before A cursor for use in pagination. before is an object ID that defines your place in the list. For
+     * instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
+     * include before=obj_foo in order to fetch the previous page of the list.
      * @return a list of messages that exist on a thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public OpenAIPageableListOfThreadMessage listMessages(String threadId, String runId, Integer limit,
-                                                          ListSortOrder order, String after, String before) {
+        ListSortOrder order, String after, String before) {
         // Generated convenience method for listMessagesWithResponse
         RequestOptions requestOptions = new RequestOptions();
         if (runId != null) {
@@ -3613,12 +3612,12 @@ public final class AgentsClient {
      *
      * @param threadId Identifier of the thread.
      * @return a list of messages that exist on a thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3632,15 +3631,15 @@ public final class AgentsClient {
     /**
      * Gets an existing message from an existing thread.
      *
-     * @param threadId  Identifier of the thread.
+     * @param threadId Identifier of the thread.
      * @param messageId Identifier of the message.
      * @return an existing message from an existing thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3653,18 +3652,18 @@ public final class AgentsClient {
     /**
      * Modifies an existing message on an existing thread.
      *
-     * @param threadId  Identifier of the thread.
+     * @param threadId Identifier of the thread.
      * @param messageId Identifier of the message.
-     * @param metadata  A set of up to 16 key/value pairs that can be attached to an object, used for storing additional
-     *                  information about that object in a structured format. Keys may be up to 64 characters in length and values may be
-     *                  up to 512 characters in length.
+     * @param metadata A set of up to 16 key/value pairs that can be attached to an object, used for storing additional
+     * information about that object in a structured format. Keys may be up to 64 characters in length and values may be
+     * up to 512 characters in length.
      * @return a single, existing message within an agent thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3680,15 +3679,15 @@ public final class AgentsClient {
     /**
      * Modifies an existing message on an existing thread.
      *
-     * @param threadId  Identifier of the thread.
+     * @param threadId Identifier of the thread.
      * @param messageId Identifier of the message.
      * @return a single, existing message within an agent thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3706,12 +3705,12 @@ public final class AgentsClient {
      *
      * @param options Options for createRun API.
      * @return data representing a single evaluation run of an agent thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3722,20 +3721,20 @@ public final class AgentsClient {
         List<RunAdditionalFieldList> include = options.getInclude();
         CreateRunRequest createRunRequestObj
             = new CreateRunRequest(options.getAssistantId()).setModel(options.getModel())
-            .setInstructions(options.getInstructions())
-            .setAdditionalInstructions(options.getAdditionalInstructions())
-            .setAdditionalMessages(options.getAdditionalMessages())
-            .setTools(options.getTools())
-            .setStream(options.isStream())
-            .setTemperature(options.getTemperature())
-            .setTopP(options.getTopP())
-            .setMaxPromptTokens(options.getMaxPromptTokens())
-            .setMaxCompletionTokens(options.getMaxCompletionTokens())
-            .setTruncationStrategy(options.getTruncationStrategy())
-            .setToolChoice(options.getToolChoice())
-            .setResponseFormat(options.getResponseFormat())
-            .setParallelToolCalls(options.isParallelToolCalls())
-            .setMetadata(options.getMetadata());
+                .setInstructions(options.getInstructions())
+                .setAdditionalInstructions(options.getAdditionalInstructions())
+                .setAdditionalMessages(options.getAdditionalMessages())
+                .setTools(options.getTools())
+                .setStream(options.isStream())
+                .setTemperature(options.getTemperature())
+                .setTopP(options.getTopP())
+                .setMaxPromptTokens(options.getMaxPromptTokens())
+                .setMaxCompletionTokens(options.getMaxCompletionTokens())
+                .setTruncationStrategy(options.getTruncationStrategy())
+                .setToolChoice(options.getToolChoice())
+                .setResponseFormat(options.getResponseFormat())
+                .setParallelToolCalls(options.isParallelToolCalls())
+                .setMetadata(options.getMetadata());
         BinaryData createRunRequest = BinaryData.fromObject(createRunRequestObj);
         if (include != null) {
             requestOptions.addQueryParam("include[]",
@@ -3751,28 +3750,28 @@ public final class AgentsClient {
      * Gets a list of runs for a specified thread.
      *
      * @param threadId Identifier of the thread.
-     * @param limit    A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default
-     *                 is 20.
-     * @param order    Sort order by the created_at timestamp of the objects. asc for ascending order and desc for
-     *                 descending order.
-     * @param after    A cursor for use in pagination. after is an object ID that defines your place in the list. For
-     *                 instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
-     *                 include after=obj_foo in order to fetch the next page of the list.
-     * @param before   A cursor for use in pagination. before is an object ID that defines your place in the list. For
-     *                 instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
-     *                 include before=obj_foo in order to fetch the previous page of the list.
+     * @param limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default
+     * is 20.
+     * @param order Sort order by the created_at timestamp of the objects. asc for ascending order and desc for
+     * descending order.
+     * @param after A cursor for use in pagination. after is an object ID that defines your place in the list. For
+     * instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
+     * include after=obj_foo in order to fetch the next page of the list.
+     * @param before A cursor for use in pagination. before is an object ID that defines your place in the list. For
+     * instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
+     * include before=obj_foo in order to fetch the previous page of the list.
      * @return a list of runs for a specified thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public OpenAIPageableListOfThreadRun listRuns(String threadId, Integer limit, ListSortOrder order, String after,
-                                                  String before) {
+        String before) {
         // Generated convenience method for listRunsWithResponse
         RequestOptions requestOptions = new RequestOptions();
         if (limit != null) {
@@ -3795,12 +3794,12 @@ public final class AgentsClient {
      *
      * @param threadId Identifier of the thread.
      * @return a list of runs for a specified thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3814,14 +3813,14 @@ public final class AgentsClient {
      * Gets an existing run from an existing thread.
      *
      * @param threadId Identifier of the thread.
-     * @param runId    Identifier of the run.
+     * @param runId Identifier of the run.
      * @return an existing run from an existing thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3835,17 +3834,17 @@ public final class AgentsClient {
      * Modifies an existing thread run.
      *
      * @param threadId Identifier of the thread.
-     * @param runId    Identifier of the run.
+     * @param runId Identifier of the run.
      * @param metadata A set of up to 16 key/value pairs that can be attached to an object, used for storing additional
-     *                 information about that object in a structured format. Keys may be up to 64 characters in length and values may be
-     *                 up to 512 characters in length.
+     * information about that object in a structured format. Keys may be up to 64 characters in length and values may be
+     * up to 512 characters in length.
      * @return data representing a single evaluation run of an agent thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3862,14 +3861,14 @@ public final class AgentsClient {
      * Modifies an existing thread run.
      *
      * @param threadId Identifier of the thread.
-     * @param runId    Identifier of the run.
+     * @param runId Identifier of the run.
      * @return data representing a single evaluation run of an agent thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3886,23 +3885,23 @@ public final class AgentsClient {
      * Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool outputs will have a
      * status of 'requires_action' with a required_action.type of 'submit_tool_outputs'.
      *
-     * @param threadId    Identifier of the thread.
-     * @param runId       Identifier of the run.
+     * @param threadId Identifier of the thread.
+     * @param runId Identifier of the run.
      * @param toolOutputs A list of tools for which the outputs are being submitted.
-     * @param stream      If true, returns a stream of events that happen during the Run as server-sent events, terminating
-     *                    when the run enters a terminal state.
+     * @param stream If true, returns a stream of events that happen during the Run as server-sent events, terminating
+     * when the run enters a terminal state.
      * @return data representing a single evaluation run of an agent thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public ThreadRun submitToolOutputsToRun(String threadId, String runId, List<ToolOutput> toolOutputs,
-                                            Boolean stream) {
+        Boolean stream) {
         // Generated convenience method for submitToolOutputsToRunWithResponse
         RequestOptions requestOptions = new RequestOptions();
         SubmitToolOutputsToRunRequest submitToolOutputsToRunRequestObj
@@ -3917,16 +3916,16 @@ public final class AgentsClient {
      * Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool outputs will have a
      * status of 'requires_action' with a required_action.type of 'submit_tool_outputs'.
      *
-     * @param threadId    Identifier of the thread.
-     * @param runId       Identifier of the run.
+     * @param threadId Identifier of the thread.
+     * @param runId Identifier of the run.
      * @param toolOutputs A list of tools for which the outputs are being submitted.
      * @return data representing a single evaluation run of an agent thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3944,14 +3943,14 @@ public final class AgentsClient {
      * Cancels a run of an in progress thread.
      *
      * @param threadId Identifier of the thread.
-     * @param runId    Identifier of the run.
+     * @param runId Identifier of the run.
      * @return data representing a single evaluation run of an agent thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3966,12 +3965,12 @@ public final class AgentsClient {
      *
      * @param options Options for createThreadAndRun API.
      * @return data representing a single evaluation run of an agent thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -3980,20 +3979,20 @@ public final class AgentsClient {
         RequestOptions requestOptions = new RequestOptions();
         CreateThreadAndRunRequest createThreadAndRunRequestObj
             = new CreateThreadAndRunRequest(options.getAssistantId()).setThread(options.getThread())
-            .setModel(options.getModel())
-            .setInstructions(options.getInstructions())
-            .setTools(options.getTools())
-            .setToolResources(options.getToolResources())
-            .setStream(options.isStream())
-            .setTemperature(options.getTemperature())
-            .setTopP(options.getTopP())
-            .setMaxPromptTokens(options.getMaxPromptTokens())
-            .setMaxCompletionTokens(options.getMaxCompletionTokens())
-            .setTruncationStrategy(options.getTruncationStrategy())
-            .setToolChoice(options.getToolChoice())
-            .setResponseFormat(options.getResponseFormat())
-            .setParallelToolCalls(options.isParallelToolCalls())
-            .setMetadata(options.getMetadata());
+                .setModel(options.getModel())
+                .setInstructions(options.getInstructions())
+                .setTools(options.getTools())
+                .setToolResources(options.getToolResources())
+                .setStream(options.isStream())
+                .setTemperature(options.getTemperature())
+                .setTopP(options.getTopP())
+                .setMaxPromptTokens(options.getMaxPromptTokens())
+                .setMaxCompletionTokens(options.getMaxCompletionTokens())
+                .setTruncationStrategy(options.getTruncationStrategy())
+                .setToolChoice(options.getToolChoice())
+                .setResponseFormat(options.getResponseFormat())
+                .setParallelToolCalls(options.isParallelToolCalls())
+                .setMetadata(options.getMetadata());
         BinaryData createThreadAndRunRequest = BinaryData.fromObject(createThreadAndRunRequestObj);
         return createThreadAndRunWithResponse(createThreadAndRunRequest, requestOptions).getValue()
             .toObject(ThreadRun.class);
@@ -4003,18 +4002,18 @@ public final class AgentsClient {
      * Gets a single run step from a thread run.
      *
      * @param threadId Identifier of the thread.
-     * @param runId    Identifier of the run.
-     * @param stepId   Identifier of the run step.
-     * @param include  A list of additional fields to include in the response.
-     *                 Currently the only supported value is `step_details.tool_calls[*].file_search.results[*].content` to fetch the
-     *                 file search result content.
+     * @param runId Identifier of the run.
+     * @param stepId Identifier of the run step.
+     * @param include A list of additional fields to include in the response.
+     * Currently the only supported value is `step_details.tool_calls[*].file_search.results[*].content` to fetch the
+     * file search result content.
      * @return a single run step from a thread run.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4035,15 +4034,15 @@ public final class AgentsClient {
      * Gets a single run step from a thread run.
      *
      * @param threadId Identifier of the thread.
-     * @param runId    Identifier of the run.
-     * @param stepId   Identifier of the run step.
+     * @param runId Identifier of the run.
+     * @param stepId Identifier of the run step.
      * @return a single run step from a thread run.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4057,32 +4056,32 @@ public final class AgentsClient {
      * Gets a list of run steps from a thread run.
      *
      * @param threadId Identifier of the thread.
-     * @param runId    Identifier of the run.
-     * @param include  A list of additional fields to include in the response.
-     *                 Currently the only supported value is `step_details.tool_calls[*].file_search.results[*].content` to fetch the
-     *                 file search result content.
-     * @param limit    A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default
-     *                 is 20.
-     * @param order    Sort order by the created_at timestamp of the objects. asc for ascending order and desc for
-     *                 descending order.
-     * @param after    A cursor for use in pagination. after is an object ID that defines your place in the list. For
-     *                 instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
-     *                 include after=obj_foo in order to fetch the next page of the list.
-     * @param before   A cursor for use in pagination. before is an object ID that defines your place in the list. For
-     *                 instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
-     *                 include before=obj_foo in order to fetch the previous page of the list.
+     * @param runId Identifier of the run.
+     * @param include A list of additional fields to include in the response.
+     * Currently the only supported value is `step_details.tool_calls[*].file_search.results[*].content` to fetch the
+     * file search result content.
+     * @param limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default
+     * is 20.
+     * @param order Sort order by the created_at timestamp of the objects. asc for ascending order and desc for
+     * descending order.
+     * @param after A cursor for use in pagination. after is an object ID that defines your place in the list. For
+     * instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
+     * include after=obj_foo in order to fetch the next page of the list.
+     * @param before A cursor for use in pagination. before is an object ID that defines your place in the list. For
+     * instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
+     * include before=obj_foo in order to fetch the previous page of the list.
      * @return a list of run steps from a thread run.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public OpenAIPageableListOfRunStep listRunSteps(String threadId, String runId, List<RunAdditionalFieldList> include,
-                                                    Integer limit, ListSortOrder order, String after, String before) {
+        Integer limit, ListSortOrder order, String after, String before) {
         // Generated convenience method for listRunStepsWithResponse
         RequestOptions requestOptions = new RequestOptions();
         if (include != null) {
@@ -4112,14 +4111,14 @@ public final class AgentsClient {
      * Gets a list of run steps from a thread run.
      *
      * @param threadId Identifier of the thread.
-     * @param runId    Identifier of the run.
+     * @param runId Identifier of the run.
      * @return a list of run steps from a thread run.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4135,12 +4134,12 @@ public final class AgentsClient {
      *
      * @param purpose The purpose of the file.
      * @return a list of previously uploaded files.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4157,11 +4156,11 @@ public final class AgentsClient {
      * Gets a list of previously uploaded files.
      *
      * @return a list of previously uploaded files.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4176,12 +4175,12 @@ public final class AgentsClient {
      *
      * @param fileId The ID of the file to delete.
      * @return a status response from a file deletion operation.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4196,12 +4195,12 @@ public final class AgentsClient {
      *
      * @param fileId The ID of the file to retrieve.
      * @return represents an agent that can call the model and use tools.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4216,12 +4215,12 @@ public final class AgentsClient {
      *
      * @param fileId The ID of the file to retrieve.
      * @return the response.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4234,28 +4233,28 @@ public final class AgentsClient {
     /**
      * Returns a list of vector stores.
      *
-     * @param limit  A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default
-     *               is 20.
-     * @param order  Sort order by the created_at timestamp of the objects. asc for ascending order and desc for
-     *               descending order.
-     * @param after  A cursor for use in pagination. after is an object ID that defines your place in the list. For
-     *               instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
-     *               include after=obj_foo in order to fetch the next page of the list.
+     * @param limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default
+     * is 20.
+     * @param order Sort order by the created_at timestamp of the objects. asc for ascending order and desc for
+     * descending order.
+     * @param after A cursor for use in pagination. after is an object ID that defines your place in the list. For
+     * instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
+     * include after=obj_foo in order to fetch the next page of the list.
      * @param before A cursor for use in pagination. before is an object ID that defines your place in the list. For
-     *               instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
-     *               include before=obj_foo in order to fetch the previous page of the list.
+     * instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
+     * include before=obj_foo in order to fetch the previous page of the list.
      * @return the response data for a requested list of items.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public OpenAIPageableListOfVectorStore listVectorStores(Integer limit, ListSortOrder order, String after,
-                                                            String before) {
+        String before) {
         // Generated convenience method for listVectorStoresWithResponse
         RequestOptions requestOptions = new RequestOptions();
         if (limit != null) {
@@ -4277,11 +4276,11 @@ public final class AgentsClient {
      * Returns a list of vector stores.
      *
      * @return the response data for a requested list of items.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4294,30 +4293,30 @@ public final class AgentsClient {
     /**
      * Creates a vector store.
      *
-     * @param fileIds            A list of file IDs that the vector store should use. Useful for tools like `file_search` that can
-     *                           access files.
-     * @param name               The name of the vector store.
+     * @param fileIds A list of file IDs that the vector store should use. Useful for tools like `file_search` that can
+     * access files.
+     * @param name The name of the vector store.
      * @param storeConfiguration The vector store configuration, used when vector store is created from Azure asset
-     *                           URIs.
-     * @param expiresAfter       Details on when this vector store expires.
-     * @param chunkingStrategy   The chunking strategy used to chunk the file(s). If not set, will use the auto strategy.
-     *                           Only applicable if file_ids is non-empty.
-     * @param metadata           A set of up to 16 key/value pairs that can be attached to an object, used for storing additional
-     *                           information about that object in a structured format. Keys may be up to 64 characters in length and values may be
-     *                           up to 512 characters in length.
+     * URIs.
+     * @param expiresAfter Details on when this vector store expires.
+     * @param chunkingStrategy The chunking strategy used to chunk the file(s). If not set, will use the auto strategy.
+     * Only applicable if file_ids is non-empty.
+     * @param metadata A set of up to 16 key/value pairs that can be attached to an object, used for storing additional
+     * information about that object in a structured format. Keys may be up to 64 characters in length and values may be
+     * up to 512 characters in length.
      * @return a vector store is a collection of processed files can be used by the `file_search` tool.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public VectorStore createVectorStore(List<String> fileIds, String name, VectorStoreConfiguration storeConfiguration,
-                                         VectorStoreExpirationPolicy expiresAfter, VectorStoreChunkingStrategyRequest chunkingStrategy,
-                                         Map<String, String> metadata) {
+        VectorStoreExpirationPolicy expiresAfter, VectorStoreChunkingStrategyRequest chunkingStrategy,
+        Map<String, String> metadata) {
         // Generated convenience method for createVectorStoreWithResponse
         RequestOptions requestOptions = new RequestOptions();
         CreateVectorStoreRequest createVectorStoreRequestObj = new CreateVectorStoreRequest().setFileIds(fileIds)
@@ -4335,11 +4334,11 @@ public final class AgentsClient {
      * Creates a vector store.
      *
      * @return a vector store is a collection of processed files can be used by the `file_search` tool.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4357,12 +4356,12 @@ public final class AgentsClient {
      *
      * @param vectorStoreId Identifier of the vector store.
      * @return a vector store is a collection of processed files can be used by the `file_search` tool.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4376,23 +4375,23 @@ public final class AgentsClient {
      * The ID of the vector store to modify.
      *
      * @param vectorStoreId Identifier of the vector store.
-     * @param name          The name of the vector store.
-     * @param expiresAfter  Details on when this vector store expires.
-     * @param metadata      A set of up to 16 key/value pairs that can be attached to an object, used for storing additional
-     *                      information about that object in a structured format. Keys may be up to 64 characters in length and values may be
-     *                      up to 512 characters in length.
+     * @param name The name of the vector store.
+     * @param expiresAfter Details on when this vector store expires.
+     * @param metadata A set of up to 16 key/value pairs that can be attached to an object, used for storing additional
+     * information about that object in a structured format. Keys may be up to 64 characters in length and values may be
+     * up to 512 characters in length.
      * @return a vector store is a collection of processed files can be used by the `file_search` tool.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public VectorStore modifyVectorStore(String vectorStoreId, String name, VectorStoreExpirationPolicy expiresAfter,
-                                         Map<String, String> metadata) {
+        Map<String, String> metadata) {
         // Generated convenience method for modifyVectorStoreWithResponse
         RequestOptions requestOptions = new RequestOptions();
         ModifyVectorStoreRequest modifyVectorStoreRequestObj
@@ -4407,12 +4406,12 @@ public final class AgentsClient {
      *
      * @param vectorStoreId Identifier of the vector store.
      * @return a vector store is a collection of processed files can be used by the `file_search` tool.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4430,12 +4429,12 @@ public final class AgentsClient {
      *
      * @param vectorStoreId Identifier of the vector store.
      * @return response object for deleting a vector store.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4450,29 +4449,29 @@ public final class AgentsClient {
      * Returns a list of vector store files.
      *
      * @param vectorStoreId Identifier of the vector store.
-     * @param filter        Filter by file status.
-     * @param limit         A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default
-     *                      is 20.
-     * @param order         Sort order by the created_at timestamp of the objects. asc for ascending order and desc for
-     *                      descending order.
-     * @param after         A cursor for use in pagination. after is an object ID that defines your place in the list. For
-     *                      instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
-     *                      include after=obj_foo in order to fetch the next page of the list.
-     * @param before        A cursor for use in pagination. before is an object ID that defines your place in the list. For
-     *                      instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
-     *                      include before=obj_foo in order to fetch the previous page of the list.
+     * @param filter Filter by file status.
+     * @param limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default
+     * is 20.
+     * @param order Sort order by the created_at timestamp of the objects. asc for ascending order and desc for
+     * descending order.
+     * @param after A cursor for use in pagination. after is an object ID that defines your place in the list. For
+     * instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
+     * include after=obj_foo in order to fetch the next page of the list.
+     * @param before A cursor for use in pagination. before is an object ID that defines your place in the list. For
+     * instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
+     * include before=obj_foo in order to fetch the previous page of the list.
      * @return the response data for a requested list of items.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public OpenAIPageableListOfVectorStoreFile listVectorStoreFiles(String vectorStoreId,
-                                                                    VectorStoreFileStatusFilter filter, Integer limit, ListSortOrder order, String after, String before) {
+        VectorStoreFileStatusFilter filter, Integer limit, ListSortOrder order, String after, String before) {
         // Generated convenience method for listVectorStoreFilesWithResponse
         RequestOptions requestOptions = new RequestOptions();
         if (filter != null) {
@@ -4499,12 +4498,12 @@ public final class AgentsClient {
      *
      * @param vectorStoreId Identifier of the vector store.
      * @return the response data for a requested list of items.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4518,28 +4517,28 @@ public final class AgentsClient {
     /**
      * Create a vector store file by attaching a file to a vector store.
      *
-     * @param vectorStoreId    Identifier of the vector store.
-     * @param fileId           Identifier of the file.
-     * @param dataSource       Azure asset ID.
+     * @param vectorStoreId Identifier of the vector store.
+     * @param fileId Identifier of the file.
+     * @param dataSource Azure asset ID.
      * @param chunkingStrategy The chunking strategy used to chunk the file(s). If not set, will use the auto strategy.
      * @return description of a file attached to a vector store.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public VectorStoreFile createVectorStoreFile(String vectorStoreId, String fileId, VectorStoreDataSource dataSource,
-                                                 VectorStoreChunkingStrategyRequest chunkingStrategy) {
+        VectorStoreChunkingStrategyRequest chunkingStrategy) {
         // Generated convenience method for createVectorStoreFileWithResponse
         RequestOptions requestOptions = new RequestOptions();
         CreateVectorStoreFileRequest createVectorStoreFileRequestObj
             = new CreateVectorStoreFileRequest().setFileId(fileId)
-            .setDataSource(dataSource)
-            .setChunkingStrategy(chunkingStrategy);
+                .setDataSource(dataSource)
+                .setChunkingStrategy(chunkingStrategy);
         BinaryData createVectorStoreFileRequest = BinaryData.fromObject(createVectorStoreFileRequestObj);
         return createVectorStoreFileWithResponse(vectorStoreId, createVectorStoreFileRequest, requestOptions).getValue()
             .toObject(VectorStoreFile.class);
@@ -4550,12 +4549,12 @@ public final class AgentsClient {
      *
      * @param vectorStoreId Identifier of the vector store.
      * @return description of a file attached to a vector store.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4572,14 +4571,14 @@ public final class AgentsClient {
      * Retrieves a vector store file.
      *
      * @param vectorStoreId Identifier of the vector store.
-     * @param fileId        Identifier of the file.
+     * @param fileId Identifier of the file.
      * @return description of a file attached to a vector store.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4596,14 +4595,14 @@ public final class AgentsClient {
      * To delete the file, use the delete file endpoint.
      *
      * @param vectorStoreId Identifier of the vector store.
-     * @param fileId        Identifier of the file.
+     * @param fileId Identifier of the file.
      * @return response object for deleting a vector store file relationship.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4617,28 +4616,28 @@ public final class AgentsClient {
     /**
      * Create a vector store file batch.
      *
-     * @param vectorStoreId    Identifier of the vector store.
-     * @param fileIds          List of file identifiers.
-     * @param dataSources      List of Azure assets.
+     * @param vectorStoreId Identifier of the vector store.
+     * @param fileIds List of file identifiers.
+     * @param dataSources List of Azure assets.
      * @param chunkingStrategy The chunking strategy used to chunk the file(s). If not set, will use the auto strategy.
      * @return a batch of files attached to a vector store.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public VectorStoreFileBatch createVectorStoreFileBatch(String vectorStoreId, List<String> fileIds,
-                                                           List<VectorStoreDataSource> dataSources, VectorStoreChunkingStrategyRequest chunkingStrategy) {
+        List<VectorStoreDataSource> dataSources, VectorStoreChunkingStrategyRequest chunkingStrategy) {
         // Generated convenience method for createVectorStoreFileBatchWithResponse
         RequestOptions requestOptions = new RequestOptions();
         CreateVectorStoreFileBatchRequest createVectorStoreFileBatchRequestObj
             = new CreateVectorStoreFileBatchRequest().setFileIds(fileIds)
-            .setDataSources(dataSources)
-            .setChunkingStrategy(chunkingStrategy);
+                .setDataSources(dataSources)
+                .setChunkingStrategy(chunkingStrategy);
         BinaryData createVectorStoreFileBatchRequest = BinaryData.fromObject(createVectorStoreFileBatchRequestObj);
         return createVectorStoreFileBatchWithResponse(vectorStoreId, createVectorStoreFileBatchRequest, requestOptions)
             .getValue()
@@ -4650,12 +4649,12 @@ public final class AgentsClient {
      *
      * @param vectorStoreId Identifier of the vector store.
      * @return a batch of files attached to a vector store.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4674,14 +4673,14 @@ public final class AgentsClient {
      * Retrieve a vector store file batch.
      *
      * @param vectorStoreId Identifier of the vector store.
-     * @param batchId       Identifier of the file batch.
+     * @param batchId Identifier of the file batch.
      * @return a batch of files attached to a vector store.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4697,14 +4696,14 @@ public final class AgentsClient {
      * possible.
      *
      * @param vectorStoreId Identifier of the vector store.
-     * @param batchId       Identifier of the file batch.
+     * @param batchId Identifier of the file batch.
      * @return a batch of files attached to a vector store.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4719,30 +4718,30 @@ public final class AgentsClient {
      * Returns a list of vector store files in a batch.
      *
      * @param vectorStoreId Identifier of the vector store.
-     * @param batchId       Identifier of the file batch.
-     * @param filter        Filter by file status.
-     * @param limit         A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default
-     *                      is 20.
-     * @param order         Sort order by the created_at timestamp of the objects. asc for ascending order and desc for
-     *                      descending order.
-     * @param after         A cursor for use in pagination. after is an object ID that defines your place in the list. For
-     *                      instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
-     *                      include after=obj_foo in order to fetch the next page of the list.
-     * @param before        A cursor for use in pagination. before is an object ID that defines your place in the list. For
-     *                      instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
-     *                      include before=obj_foo in order to fetch the previous page of the list.
+     * @param batchId Identifier of the file batch.
+     * @param filter Filter by file status.
+     * @param limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default
+     * is 20.
+     * @param order Sort order by the created_at timestamp of the objects. asc for ascending order and desc for
+     * descending order.
+     * @param after A cursor for use in pagination. after is an object ID that defines your place in the list. For
+     * instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
+     * include after=obj_foo in order to fetch the next page of the list.
+     * @param before A cursor for use in pagination. before is an object ID that defines your place in the list. For
+     * instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
+     * include before=obj_foo in order to fetch the previous page of the list.
      * @return the response data for a requested list of items.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public OpenAIPageableListOfVectorStoreFile listVectorStoreFileBatchFiles(String vectorStoreId, String batchId,
-                                                                             VectorStoreFileStatusFilter filter, Integer limit, ListSortOrder order, String after, String before) {
+        VectorStoreFileStatusFilter filter, Integer limit, ListSortOrder order, String after, String before) {
         // Generated convenience method for listVectorStoreFileBatchFilesWithResponse
         RequestOptions requestOptions = new RequestOptions();
         if (filter != null) {
@@ -4768,14 +4767,14 @@ public final class AgentsClient {
      * Returns a list of vector store files in a batch.
      *
      * @param vectorStoreId Identifier of the vector store.
-     * @param batchId       Identifier of the file batch.
+     * @param batchId Identifier of the file batch.
      * @return the response data for a requested list of items.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4791,12 +4790,12 @@ public final class AgentsClient {
      *
      * @param body Multipart body.
      * @return represents an agent that can call the model and use tools.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4817,12 +4816,12 @@ public final class AgentsClient {
      *
      * @param options Options for createRun API.
      * @return data representing a single evaluation run of an agent thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Flux<StreamUpdate> createRunStreaming(CreateRunOptions options) {
@@ -4832,20 +4831,20 @@ public final class AgentsClient {
         List<RunAdditionalFieldList> include = options.getInclude();
         CreateRunRequest createRunRequestObj
             = new CreateRunRequest(options.getAssistantId()).setModel(options.getModel())
-            .setInstructions(options.getInstructions())
-            .setAdditionalInstructions(options.getAdditionalInstructions())
-            .setAdditionalMessages(options.getAdditionalMessages())
-            .setTools(options.getTools())
-            .setStream(true)
-            .setTemperature(options.getTemperature())
-            .setTopP(options.getTopP())
-            .setMaxPromptTokens(options.getMaxPromptTokens())
-            .setMaxCompletionTokens(options.getMaxCompletionTokens())
-            .setTruncationStrategy(options.getTruncationStrategy())
-            .setToolChoice(options.getToolChoice())
-            .setResponseFormat(options.getResponseFormat())
-            .setParallelToolCalls(options.isParallelToolCalls())
-            .setMetadata(options.getMetadata());
+                .setInstructions(options.getInstructions())
+                .setAdditionalInstructions(options.getAdditionalInstructions())
+                .setAdditionalMessages(options.getAdditionalMessages())
+                .setTools(options.getTools())
+                .setStream(true)
+                .setTemperature(options.getTemperature())
+                .setTopP(options.getTopP())
+                .setMaxPromptTokens(options.getMaxPromptTokens())
+                .setMaxCompletionTokens(options.getMaxCompletionTokens())
+                .setTruncationStrategy(options.getTruncationStrategy())
+                .setToolChoice(options.getToolChoice())
+                .setResponseFormat(options.getResponseFormat())
+                .setParallelToolCalls(options.isParallelToolCalls())
+                .setMetadata(options.getMetadata());
         BinaryData createRunRequest = BinaryData.fromObject(createRunRequestObj);
         if (include != null) {
             requestOptions.addQueryParam("include[]",
@@ -4866,20 +4865,20 @@ public final class AgentsClient {
      * Runs that need submitted tool outputs will have a status of 'requires_action'
      * with a required_action.type of 'submit_tool_outputs'.
      *
-     * @param threadId    Identifier of the thread.
-     * @param runId       Identifier of the run.
+     * @param threadId Identifier of the thread.
+     * @param runId Identifier of the run.
      * @param toolOutputs A list of tools for which the outputs are being submitted.
      * @return data representing a single evaluation run of an agent thread.
-     * @throws IllegalArgumentException      thrown if parameters fail the validation.
-     * @throws HttpResponseException         thrown if the request is rejected by server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException     thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException     thrown if the request is rejected by server on status code 409.
-     * @throws RuntimeException              all other wrapped checked exceptions if the request fails to be sent.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Flux<StreamUpdate> submitToolOutputsToRunStreaming(String threadId, String runId,
-                                                              List<ToolOutput> toolOutputs) {
+        List<ToolOutput> toolOutputs) {
         // Generated convenience method for submitToolOutputsToRunWithResponse
         RequestOptions requestOptions = new RequestOptions();
         SubmitToolOutputsToRunRequest submitToolOutputsToRunRequestObj
@@ -4887,8 +4886,8 @@ public final class AgentsClient {
         BinaryData submitToolOutputsToRunRequest = BinaryData.fromObject(submitToolOutputsToRunRequestObj);
         Flux<ByteBuffer> response
             = submitToolOutputsToRunWithResponse(threadId, runId, submitToolOutputsToRunRequest, requestOptions)
-            .getValue()
-            .toFluxByteBuffer();
+                .getValue()
+                .toFluxByteBuffer();
 
         AgentServerSentEvents eventStream = new AgentServerSentEvents(response);
         return eventStream.getEvents();

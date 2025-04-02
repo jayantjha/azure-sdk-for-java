@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 package com.azure.ai.projects.usage.agent;
 
 import com.azure.ai.projects.AIProjectClientBuilder;
@@ -24,7 +26,6 @@ import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
@@ -40,47 +41,26 @@ public class SampleAgentCodeInterpreterFileAttachment {
 
     @Test
     void codeInterpreterFileAttachmentExample() throws FileNotFoundException, URISyntaxException {
-        AgentsClient agentsClient
-            = new AIProjectClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
-            .subscriptionId(Configuration.getGlobalConfiguration().get("SUBSCRIPTIONID", "subscriptionid"))
-            .resourceGroupName(Configuration.getGlobalConfiguration().get("RESOURCEGROUPNAME", "resourcegroupname"))
-            .projectName(Configuration.getGlobalConfiguration().get("PROJECTNAME", "projectname"))
-            .credential(new DefaultAzureCredentialBuilder().build())
-            .buildAgentsClient();
+        AgentsClient agentsClient = new AIProjectClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint")).subscriptionId(Configuration.getGlobalConfiguration().get("SUBSCRIPTIONID", "subscriptionid")).resourceGroupName(Configuration.getGlobalConfiguration().get("RESOURCEGROUPNAME", "resourcegroupname")).projectName(Configuration.getGlobalConfiguration().get("PROJECTNAME", "projectname")).credential(new DefaultAzureCredentialBuilder().build()).buildAgentsClient();
 
         Path htmlFile = getFile("sample_test.html");
 
         String agentName = "code_interpreter_file_attachment_example";
         CodeInterpreterToolDefinition ciTool = new CodeInterpreterToolDefinition();
-        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
-            .setName(agentName)
-            .setInstructions("You are a helpful agent")
-            .setTools(Arrays.asList(ciTool));
+        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini").setName(agentName).setInstructions("You are a helpful agent").setTools(Arrays.asList(ciTool));
         Agent agent = agentsClient.createAgent(createAgentOptions);
 
-        OpenAIFile uploadedFile = agentsClient.uploadFile(
-            new UploadFileRequest(
-                new FileDetails(BinaryData.fromFile(htmlFile)).setFilename("sample_test.html"),
-                FilePurpose.AGENTS));
+        OpenAIFile uploadedFile = agentsClient.uploadFile(new UploadFileRequest(new FileDetails(BinaryData.fromFile(htmlFile)).setFilename("sample_test.html"), FilePurpose.AGENTS));
 
-        MessageAttachment messageAttachment = new MessageAttachment(
-            Arrays.asList(BinaryData.fromObject(ciTool))
-        ).setFileId(uploadedFile.getId());
+        MessageAttachment messageAttachment = new MessageAttachment(Arrays.asList(BinaryData.fromObject(ciTool))).setFileId(uploadedFile.getId());
 
         AgentThread thread = agentsClient.createThread();
         assertNotNull(thread);
-        ThreadMessage createdMessage = agentsClient.createMessage(
-            thread.getId(),
-            MessageRole.USER,
-            "What does the attachment say?",
-            Arrays.asList(messageAttachment),
-            null
-        );
+        ThreadMessage createdMessage = agentsClient.createMessage(thread.getId(), MessageRole.USER, "What does the attachment say?", Arrays.asList(messageAttachment), null);
         assertNotNull(createdMessage);
 
         //run agent
-        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
-            .setAdditionalInstructions("");
+        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId()).setAdditionalInstructions("");
         ThreadRun threadRun = agentsClient.createRun(createRunOptions);
         assertNotNull(threadRun);
 
@@ -88,11 +68,7 @@ public class SampleAgentCodeInterpreterFileAttachment {
             do {
                 Thread.sleep(500);
                 threadRun = agentsClient.getRun(thread.getId(), threadRun.getId());
-            }
-            while (
-                threadRun.getStatus() == RunStatus.QUEUED
-                    || threadRun.getStatus() == RunStatus.IN_PROGRESS
-                    || threadRun.getStatus() == RunStatus.REQUIRES_ACTION);
+            } while (threadRun.getStatus() == RunStatus.QUEUED || threadRun.getStatus() == RunStatus.IN_PROGRESS || threadRun.getStatus() == RunStatus.REQUIRES_ACTION);
 
             if (threadRun.getStatus() == RunStatus.FAILED) {
                 System.out.println(threadRun.getLastError().getMessage());
