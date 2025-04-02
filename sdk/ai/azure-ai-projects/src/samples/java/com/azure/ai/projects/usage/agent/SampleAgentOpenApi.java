@@ -1,8 +1,24 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 package com.azure.ai.projects.usage.agent;
 
 import com.azure.ai.projects.AIProjectClientBuilder;
 import com.azure.ai.projects.AgentsClient;
-import com.azure.ai.projects.models.*;
+import com.azure.ai.projects.models.Agent;
+import com.azure.ai.projects.models.AgentThread;
+import com.azure.ai.projects.models.CreateAgentOptions;
+import com.azure.ai.projects.models.CreateRunOptions;
+import com.azure.ai.projects.models.MessageContent;
+import com.azure.ai.projects.models.MessageImageFileContent;
+import com.azure.ai.projects.models.MessageRole;
+import com.azure.ai.projects.models.MessageTextContent;
+import com.azure.ai.projects.models.OpenAIPageableListOfThreadMessage;
+import com.azure.ai.projects.models.OpenApiAnonymousAuthDetails;
+import com.azure.ai.projects.models.OpenApiFunctionDefinition;
+import com.azure.ai.projects.models.OpenApiToolDefinition;
+import com.azure.ai.projects.models.RunStatus;
+import com.azure.ai.projects.models.ThreadMessage;
+import com.azure.ai.projects.models.ThreadRun;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
@@ -18,9 +34,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class SampleAgentOpenApi {
 
@@ -77,17 +90,12 @@ public class SampleAgentOpenApi {
             }
 
             OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
-            for (ThreadMessage message : runMessages.getData())
-            {
+            for (ThreadMessage message : runMessages.getData()) {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
-                for (MessageContent contentItem : message.getContent())
-                {
-                    if (contentItem instanceof MessageTextContent)
-                    {
+                for (MessageContent contentItem : message.getContent()) {
+                    if (contentItem instanceof MessageTextContent) {
                         System.out.print((((MessageTextContent) contentItem).getText().getValue()));
-                    }
-                    else if (contentItem instanceof MessageImageFileContent)
-                    {
+                    } else if (contentItem instanceof MessageImageFileContent) {
                         String imageFileId = (((MessageImageFileContent) contentItem).getImageFile().getFileId());
                         System.out.print("Image from ID: " + imageFileId);
                     }
@@ -96,8 +104,7 @@ public class SampleAgentOpenApi {
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
-        }
-        finally {
+        } finally {
             //cleanup
             agentsClient.deleteThread(thread.getId());
             agentsClient.deleteAgent(agent.getId());

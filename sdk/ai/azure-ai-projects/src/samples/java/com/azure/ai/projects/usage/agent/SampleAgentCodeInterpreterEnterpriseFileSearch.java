@@ -1,15 +1,31 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 package com.azure.ai.projects.usage.agent;
 
 import com.azure.ai.projects.AIProjectClientBuilder;
 import com.azure.ai.projects.AgentsClient;
-import com.azure.ai.projects.models.*;
+import com.azure.ai.projects.models.Agent;
+import com.azure.ai.projects.models.AgentThread;
+import com.azure.ai.projects.models.CodeInterpreterToolDefinition;
+import com.azure.ai.projects.models.CreateAgentOptions;
+import com.azure.ai.projects.models.CreateRunOptions;
+import com.azure.ai.projects.models.MessageAttachment;
+import com.azure.ai.projects.models.MessageContent;
+import com.azure.ai.projects.models.MessageImageFileContent;
+import com.azure.ai.projects.models.MessageRole;
+import com.azure.ai.projects.models.MessageTextContent;
+import com.azure.ai.projects.models.OpenAIPageableListOfThreadMessage;
+import com.azure.ai.projects.models.RunStatus;
+import com.azure.ai.projects.models.ThreadMessage;
+import com.azure.ai.projects.models.ThreadRun;
+import com.azure.ai.projects.models.VectorStoreDataSource;
+import com.azure.ai.projects.models.VectorStoreDataSourceAssetType;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class SampleAgentCodeInterpreterEnterpriseFileSearch {
 
@@ -35,7 +51,7 @@ public class SampleAgentCodeInterpreterEnterpriseFileSearch {
         VectorStoreDataSource vectorStoreDataSource = new VectorStoreDataSource(
             dataUri, VectorStoreDataSourceAssetType.URI_ASSET);
 
-        MessageAttachment messageAttachment =  new MessageAttachment(
+        MessageAttachment messageAttachment = new MessageAttachment(
             Arrays.asList(BinaryData.fromObject(ciTool))
         ).setDataSource(vectorStoreDataSource);
 
@@ -69,17 +85,12 @@ public class SampleAgentCodeInterpreterEnterpriseFileSearch {
             }
 
             OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
-            for (ThreadMessage message : runMessages.getData())
-            {
+            for (ThreadMessage message : runMessages.getData()) {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
-                for (MessageContent contentItem : message.getContent())
-                {
-                    if (contentItem instanceof MessageTextContent)
-                    {
+                for (MessageContent contentItem : message.getContent()) {
+                    if (contentItem instanceof MessageTextContent) {
                         System.out.print((((MessageTextContent) contentItem).getText().getValue()));
-                    }
-                    else if (contentItem instanceof MessageImageFileContent)
-                    {
+                    } else if (contentItem instanceof MessageImageFileContent) {
                         String imageFileId = (((MessageImageFileContent) contentItem).getImageFile().getFileId());
                         System.out.print("Image from ID: " + imageFileId);
                     }
@@ -88,8 +99,7 @@ public class SampleAgentCodeInterpreterEnterpriseFileSearch {
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
-        }
-        finally {
+        } finally {
             //cleanup
             agentsClient.deleteThread(thread.getId());
             agentsClient.deleteAgent(agent.getId());

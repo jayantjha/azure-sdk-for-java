@@ -1,19 +1,39 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 package com.azure.ai.projects.usage.agent;
 
 import com.azure.ai.projects.AIProjectClientBuilder;
 import com.azure.ai.projects.AgentsClient;
-import com.azure.ai.projects.models.*;
+import com.azure.ai.projects.models.Agent;
+import com.azure.ai.projects.models.AgentThread;
+import com.azure.ai.projects.models.CreateAgentOptions;
+import com.azure.ai.projects.models.CreateRunOptions;
+import com.azure.ai.projects.models.FunctionDefinition;
+import com.azure.ai.projects.models.FunctionToolDefinition;
+import com.azure.ai.projects.models.MessageContent;
+import com.azure.ai.projects.models.MessageImageFileContent;
+import com.azure.ai.projects.models.MessageRole;
+import com.azure.ai.projects.models.MessageTextContent;
+import com.azure.ai.projects.models.OpenAIPageableListOfThreadMessage;
+import com.azure.ai.projects.models.RequiredFunctionToolCall;
+import com.azure.ai.projects.models.RequiredToolCall;
+import com.azure.ai.projects.models.RunStatus;
+import com.azure.ai.projects.models.SubmitToolOutputsAction;
+import com.azure.ai.projects.models.ThreadMessage;
+import com.azure.ai.projects.models.ThreadRun;
+import com.azure.ai.projects.models.ToolOutput;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -54,13 +74,13 @@ public class SampleAgentFunctions {
                                 "type", "string",
                                 "description", "The city and state, e.g. San Francisco, CA")
                         ),
-                        "required", new String[] {"location"}))
+                        "required", new String[]{"location"}))
             ).setDescription("Get the nickname of a city")
         );
 
         Function<RequiredToolCall, ToolOutput> getResolvedToolOutput = toolCall -> {
             if (toolCall instanceof RequiredFunctionToolCall) {
-                RequiredFunctionToolCall functionToolCall = (RequiredFunctionToolCall)toolCall;
+                RequiredFunctionToolCall functionToolCall = (RequiredFunctionToolCall) toolCall;
                 String functionName = functionToolCall.getFunction().getName();
                 if (functionName.equals("getUserFavoriteCity"))
                     return new ToolOutput().setToolCallId(functionToolCall.getId())
@@ -106,7 +126,7 @@ public class SampleAgentFunctions {
                 threadRun = agentsClient.getRun(thread.getId(), threadRun.getId());
                 if (threadRun.getStatus() == RunStatus.REQUIRES_ACTION
                     && threadRun.getRequiredAction() instanceof SubmitToolOutputsAction) {
-                    SubmitToolOutputsAction submitToolsOutputAction = (SubmitToolOutputsAction)(threadRun.getRequiredAction());
+                    SubmitToolOutputsAction submitToolsOutputAction = (SubmitToolOutputsAction) (threadRun.getRequiredAction());
                     ArrayList<ToolOutput> toolOutputs = new ArrayList<ToolOutput>();
                     for (RequiredToolCall toolCall : submitToolsOutputAction.getSubmitToolOutputs().getToolCalls()) {
                         toolOutputs.add(getResolvedToolOutput.apply(toolCall));
@@ -124,17 +144,12 @@ public class SampleAgentFunctions {
             }
 
             OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
-            for (ThreadMessage message : runMessages.getData())
-            {
+            for (ThreadMessage message : runMessages.getData()) {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
-                for (MessageContent contentItem : message.getContent())
-                {
-                    if (contentItem instanceof MessageTextContent)
-                    {
+                for (MessageContent contentItem : message.getContent()) {
+                    if (contentItem instanceof MessageTextContent) {
                         System.out.print((((MessageTextContent) contentItem).getText().getValue()));
-                    }
-                    else if (contentItem instanceof MessageImageFileContent)
-                    {
+                    } else if (contentItem instanceof MessageImageFileContent) {
                         String imageFileId = (((MessageImageFileContent) contentItem).getImageFile().getFileId());
                         System.out.print("Image from ID: " + imageFileId);
                     }
@@ -143,8 +158,7 @@ public class SampleAgentFunctions {
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
-        }
-        finally {
+        } finally {
             //cleanup
             agentsClient.deleteThread(thread.getId());
             agentsClient.deleteAgent(agent.getId());

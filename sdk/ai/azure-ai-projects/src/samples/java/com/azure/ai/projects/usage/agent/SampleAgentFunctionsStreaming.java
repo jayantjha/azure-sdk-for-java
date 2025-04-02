@@ -1,8 +1,26 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 package com.azure.ai.projects.usage.agent;
 
 import com.azure.ai.projects.AIProjectClientBuilder;
 import com.azure.ai.projects.AgentsClient;
-import com.azure.ai.projects.models.*;
+import com.azure.ai.projects.models.Agent;
+import com.azure.ai.projects.models.AgentStreamEvent;
+import com.azure.ai.projects.models.AgentThread;
+import com.azure.ai.projects.models.CreateAgentOptions;
+import com.azure.ai.projects.models.CreateRunOptions;
+import com.azure.ai.projects.models.FunctionDefinition;
+import com.azure.ai.projects.models.FunctionToolDefinition;
+import com.azure.ai.projects.models.MessageDeltaImageFileContent;
+import com.azure.ai.projects.models.MessageDeltaTextContent;
+import com.azure.ai.projects.models.MessageRole;
+import com.azure.ai.projects.models.RequiredFunctionToolCall;
+import com.azure.ai.projects.models.RequiredToolCall;
+import com.azure.ai.projects.models.RunStatus;
+import com.azure.ai.projects.models.SubmitToolOutputsAction;
+import com.azure.ai.projects.models.ThreadMessage;
+import com.azure.ai.projects.models.ThreadRun;
+import com.azure.ai.projects.models.ToolOutput;
 import com.azure.ai.projects.models.streaming.StreamMessageUpdate;
 import com.azure.ai.projects.models.streaming.StreamRequiredAction;
 import com.azure.ai.projects.models.streaming.StreamThreadRunCreation;
@@ -16,7 +34,11 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -54,7 +76,7 @@ public class SampleAgentFunctionsStreaming {
                                 "type", "string",
                                 "description", "The city and state, e.g. San Francisco, CA")
                         ),
-                        "required", new String[] {"location"}))
+                        "required", new String[]{"location"}))
             ).setDescription("Gets the nickname of a city, e.g. 'LA' for 'Los Angeles, CA'.")
         );
 
@@ -71,8 +93,8 @@ public class SampleAgentFunctionsStreaming {
                             "unit", mapOf(
                                 "type", "string",
                                 "description", "temperature unit as c or f",
-                                "enum", new String[] {"c", "f"})),
-                        "required", new String[] {"location", "unit"}))
+                                "enum", new String[]{"c", "f"})),
+                        "required", new String[]{"location", "unit"}))
             ).setDescription("Gets the current weather at a provided location.")
         );
 
@@ -103,10 +125,10 @@ public class SampleAgentFunctionsStreaming {
                 try {
                     RequiredFunctionToolCall functionToolCall = (RequiredFunctionToolCall) toolCall;
                     String functionName = functionToolCall.getFunction().getName();
-                    if (functionName.equals("getUserFavoriteCity"))
+                    if (functionName.equals("getUserFavoriteCity")) {
                         return new ToolOutput().setToolCallId(functionToolCall.getId())
                             .setOutput(getUserFavoriteCity.get());
-                    else if (functionName.equals("getCityNickname")) {
+                    } else if (functionName.equals("getCityNickname")) {
                         String args = functionToolCall.getFunction().getArguments();
 
                         JsonNode root = new JsonMapper().readTree(args);
@@ -122,7 +144,6 @@ public class SampleAgentFunctionsStreaming {
                         String unit = String.valueOf(root.get("unit").asText());
                         return new ToolOutput().setToolCallId(functionToolCall.getId())
                             .setOutput(getCurrentWeatherAtLocation.apply(location, unit));
-
                     }
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
@@ -158,15 +179,14 @@ public class SampleAgentFunctionsStreaming {
                 streamUpdate -> {
                     if (streamUpdate.getKind() == AgentStreamEvent.THREAD_RUN_CREATED) {
                         System.out.println("----- Run started! -----");
-                    }
-                    else if (streamUpdate instanceof StreamRequiredAction) {
+                    } else if (streamUpdate instanceof StreamRequiredAction) {
                         StreamRequiredAction actionUpdate = (StreamRequiredAction) streamUpdate;
                         AtomicReference<ThreadRun> streamRun = new AtomicReference<>(actionUpdate.getMessage());
 
                         while (streamRun.get().getStatus() == RunStatus.REQUIRES_ACTION) {
                             List<ToolOutput> toolOutputs = new ArrayList<>();
 
-                            SubmitToolOutputsAction submitToolsOutputAction = (SubmitToolOutputsAction)(streamRun.get().getRequiredAction());
+                            SubmitToolOutputsAction submitToolsOutputAction = (SubmitToolOutputsAction) (streamRun.get().getRequiredAction());
                             for (RequiredToolCall toolCall : submitToolsOutputAction.getSubmitToolOutputs().getToolCalls()) {
                                 toolOutputs.add(getResolvedToolOutput.apply(toolCall));
                             }
@@ -178,18 +198,15 @@ public class SampleAgentFunctionsStreaming {
                             ).doOnNext(update -> {
                                 if (update instanceof StreamRequiredAction) {
                                     streamRun.set(((StreamRequiredAction) update).getMessage());
-                                }
-                                else if (update instanceof StreamMessageUpdate) {
+                                } else if (update instanceof StreamMessageUpdate) {
                                     StreamMessageUpdate messageUpdate = (StreamMessageUpdate) update;
                                     printStreamUpdate(messageUpdate);
-                                }
-                                else if (update.getKind() == AgentStreamEvent.THREAD_RUN_COMPLETED) {
+                                } else if (update.getKind() == AgentStreamEvent.THREAD_RUN_COMPLETED) {
                                     streamRun.set(((StreamThreadRunCreation) update).getMessage());
                                 }
                             }).blockLast();
                         }
-                    }
-                    else if (streamUpdate instanceof StreamMessageUpdate) {
+                    } else if (streamUpdate instanceof StreamMessageUpdate) {
                         StreamMessageUpdate messageUpdate = (StreamMessageUpdate) streamUpdate;
                         printStreamUpdate(messageUpdate);
                     }
@@ -197,11 +214,9 @@ public class SampleAgentFunctionsStreaming {
             ).blockLast();
 
             System.out.println();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw ex;
-        }
-        finally {
+        } finally {
             //cleanup
             agentsClient.deleteThread(thread.getId());
             agentsClient.deleteAgent(agent.getId());
@@ -213,8 +228,7 @@ public class SampleAgentFunctionsStreaming {
             if (delta instanceof MessageDeltaImageFileContent) {
                 MessageDeltaImageFileContent imgContent = (MessageDeltaImageFileContent) delta;
                 System.out.println("Image fileId: " + imgContent.getImageFile().getFileId());
-            }
-            else if (delta instanceof MessageDeltaTextContent) {
+            } else if (delta instanceof MessageDeltaTextContent) {
                 MessageDeltaTextContent textContent = (MessageDeltaTextContent) delta;
                 System.out.print(textContent.getText().getValue());
             }

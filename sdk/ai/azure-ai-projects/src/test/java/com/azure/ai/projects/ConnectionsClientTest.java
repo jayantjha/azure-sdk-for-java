@@ -1,14 +1,16 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 package com.azure.ai.projects;
 
 import com.azure.ai.projects.generated.AIProjectClientTestBase;
 import com.azure.ai.projects.implementation.models.GetConnectionResponse;
 import com.azure.ai.projects.implementation.models.GetWorkspaceResponse;
 import com.azure.ai.projects.implementation.models.ListConnectionsResponse;
-import com.azure.ai.projects.models.ConnectionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ConnectionsClientTest extends AIProjectClientTestBase {
 

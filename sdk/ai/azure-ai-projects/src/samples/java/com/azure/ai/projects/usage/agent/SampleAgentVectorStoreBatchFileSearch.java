@@ -1,8 +1,30 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 package com.azure.ai.projects.usage.agent;
 
 import com.azure.ai.projects.AIProjectClientBuilder;
 import com.azure.ai.projects.AgentsClient;
-import com.azure.ai.projects.models.*;
+import com.azure.ai.projects.models.Agent;
+import com.azure.ai.projects.models.AgentThread;
+import com.azure.ai.projects.models.CreateAgentOptions;
+import com.azure.ai.projects.models.CreateRunOptions;
+import com.azure.ai.projects.models.FileDetails;
+import com.azure.ai.projects.models.FilePurpose;
+import com.azure.ai.projects.models.FileSearchToolDefinition;
+import com.azure.ai.projects.models.FileSearchToolResource;
+import com.azure.ai.projects.models.MessageContent;
+import com.azure.ai.projects.models.MessageImageFileContent;
+import com.azure.ai.projects.models.MessageRole;
+import com.azure.ai.projects.models.MessageTextContent;
+import com.azure.ai.projects.models.OpenAIFile;
+import com.azure.ai.projects.models.OpenAIPageableListOfThreadMessage;
+import com.azure.ai.projects.models.RunStatus;
+import com.azure.ai.projects.models.ThreadMessage;
+import com.azure.ai.projects.models.ThreadRun;
+import com.azure.ai.projects.models.ToolResources;
+import com.azure.ai.projects.models.UploadFileRequest;
+import com.azure.ai.projects.models.VectorStore;
+import com.azure.ai.projects.models.VectorStoreFileBatch;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
@@ -14,10 +36,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.List;
 
 public class SampleAgentVectorStoreBatchFileSearch {
-
     @Test
     void vectorStoreBatchFileSearchExample() throws FileNotFoundException, URISyntaxException {
         AgentsClient agentsClient
@@ -31,7 +51,7 @@ public class SampleAgentVectorStoreBatchFileSearch {
         Path productFile = getFile("product_info_1.md");
 
         VectorStore vectorStore = agentsClient.createVectorStore(
-            null,"my_vector_store",
+            null, "my_vector_store",
             null, null, null, null);
 
         OpenAIFile uploadedAgentFile = agentsClient.uploadFile(new UploadFileRequest(
@@ -80,17 +100,12 @@ public class SampleAgentVectorStoreBatchFileSearch {
             }
 
             OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
-            for (ThreadMessage message : runMessages.getData())
-            {
+            for (ThreadMessage message : runMessages.getData()) {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
-                for (MessageContent contentItem : message.getContent())
-                {
-                    if (contentItem instanceof MessageTextContent)
-                    {
+                for (MessageContent contentItem : message.getContent()) {
+                    if (contentItem instanceof MessageTextContent) {
                         System.out.print((((MessageTextContent) contentItem).getText().getValue()));
-                    }
-                    else if (contentItem instanceof MessageImageFileContent)
-                    {
+                    } else if (contentItem instanceof MessageImageFileContent) {
                         String imageFileId = (((MessageImageFileContent) contentItem).getImageFile().getFileId());
                         System.out.print("Image from ID: " + imageFileId);
                     }
@@ -99,8 +114,7 @@ public class SampleAgentVectorStoreBatchFileSearch {
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
-        }
-        finally {
+        } finally {
             //cleanup
             agentsClient.deleteThread(thread.getId());
             agentsClient.deleteAgent(agent.getId());
