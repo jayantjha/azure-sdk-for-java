@@ -27,7 +27,7 @@ public final class AgentServerSentEvents {
 
     // Server sent events are divided by 2 CRLF or single LF character
     private static final int SSE_CHUNK_LINE_BREAK_COUNT_MARKER = 2;
-    
+
     private final ClientLogger logger = new ClientLogger(AgentServerSentEvents.class);
 
     /**

@@ -6,4 +6,3 @@
  * This package provides models for different types of stream events and updates.
  */
 package com.azure.ai.projects.models.streaming;
-
