@@ -85,10 +85,10 @@ class AgentsClientTest extends AIProjectClientTestBase {
         String agentName1 = "list_test_agent_1_" + UUID.randomUUID();
         String agentName2 = "list_test_agent_2_" + UUID.randomUUID();
 
-        CreateAgentOptions createAgentOptions1 = new CreateAgentOptions("gpt-4o-mini").setName(agentName1)
-            .setInstructions("Test agent 1");
-        CreateAgentOptions createAgentOptions2 = new CreateAgentOptions("gpt-4o-mini").setName(agentName2)
-            .setInstructions("Test agent 2");
+        CreateAgentOptions createAgentOptions1
+            = new CreateAgentOptions("gpt-4o-mini").setName(agentName1).setInstructions("Test agent 1");
+        CreateAgentOptions createAgentOptions2
+            = new CreateAgentOptions("gpt-4o-mini").setName(agentName2).setInstructions("Test agent 2");
 
         Agent agent1 = agentsClient.createAgent(createAgentOptions1);
         Agent agent2 = agentsClient.createAgent(createAgentOptions2);
@@ -122,18 +122,15 @@ class AgentsClientTest extends AIProjectClientTestBase {
         String originalName = "update_test_agent_" + UUID.randomUUID();
         String updatedName = "updated_agent_" + UUID.randomUUID();
 
-        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
-            .setName(originalName)
-            .setInstructions("Original instructions");
+        CreateAgentOptions createAgentOptions
+            = new CreateAgentOptions("gpt-4o-mini").setName(originalName).setInstructions("Original instructions");
 
         Agent agent = agentsClient.createAgent(createAgentOptions);
         assertNotNull(agent.getId());
         assertEquals(originalName, agent.getName());
 
         UpdateAgentOptions updateAgentOptions = new UpdateAgentOptions(agent.getId());
-        updateAgentOptions
-            .setName(updatedName)
-            .setInstructions("Updated instructions");
+        updateAgentOptions.setName(updatedName).setInstructions("Updated instructions");
 
         // Update the agent
         Agent updatedAgent = agentsClient.updateAgent(updateAgentOptions);
@@ -277,7 +274,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
 
         OpenAIFile uploadedAgentFile = agentsClient.uploadFile(new UploadFileRequest(new FileDetails(BinaryData
             .fromString("The word `apple` uses the code 442345, while the word `banana` uses the code 673457."))
-            .setFilename("sample_file_for_upload.txt"),
+                .setFilename("sample_file_for_upload.txt"),
             FilePurpose.AGENTS));
         assertNotNull(uploadedAgentFile);
         assertNotNull(uploadedAgentFile.getId());
@@ -317,8 +314,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
     void testFileOperations() {
         // Upload a file
         OpenAIFile uploadedFile = agentsClient.uploadFile(new UploadFileRequest(
-            new FileDetails(BinaryData.fromString("This is test file content"))
-                .setFilename("test_file.txt"),
+            new FileDetails(BinaryData.fromString("This is test file content")).setFilename("test_file.txt"),
             FilePurpose.AGENTS));
 
         assertNotNull(uploadedFile);

@@ -49,8 +49,8 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
 
         StepVerifier.create(agentsAsyncClient.createAgent(createAgentOptions)
             .flatMap(agent -> agentsAsyncClient.deleteAgent(agent.getId()))).assertNext(deletionStatus -> {
-            assertNotNull(deletionStatus);
-        }).verifyComplete();
+                assertNotNull(deletionStatus);
+            }).verifyComplete();
     }
 
     @Test
@@ -170,9 +170,9 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
                 // Get the run status
                 return agentsAsyncClient.getRun(threadId.get(), run.getId());
             })).assertNext(run -> {
-            assertNotNull(run);
-            assertNotNull(run.getStatus());
-        }).verifyComplete();
+                assertNotNull(run);
+                assertNotNull(run.getStatus());
+            }).verifyComplete();
     }
 
     @Test
@@ -187,32 +187,32 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
         String userMessage = "Write a hello world program in Python.";
 
         StepVerifier.create(
-                // Create an agent with code interpreter
-                createTestAgent(agentsAsyncClient, agentName).map(agent -> {
-                        agentId.set(agent.getId());
-                        return agent;
-                    })
-                    // Create a thread
-                    .flatMap(agent -> agentsAsyncClient.createThread())
-                    .map(thread -> {
-                        threadId.set(thread.getId());
-                        return thread;
-                    })
-                    // Add a message to the thread
-                    .flatMap(thread -> {
-                        return agentsAsyncClient.createMessage(thread.getId(), MessageRole.USER,
-                            "I need to solve the equation `3x + 11 = 14`. Can you help me?");
-                    })
-                    // Create a run
-                    .flatMap(message -> {
-                        CreateRunOptions runOptions
-                            = new CreateRunOptions(threadId.get(), agentId.get()).setAdditionalInstructions("");
-                        return agentsAsyncClient.createRun(runOptions);
-                    })
-                    .map(run -> {
-                        runId.set(run.getId());
-                        return run;
-                    }))
+            // Create an agent with code interpreter
+            createTestAgent(agentsAsyncClient, agentName).map(agent -> {
+                agentId.set(agent.getId());
+                return agent;
+            })
+                // Create a thread
+                .flatMap(agent -> agentsAsyncClient.createThread())
+                .map(thread -> {
+                    threadId.set(thread.getId());
+                    return thread;
+                })
+                // Add a message to the thread
+                .flatMap(thread -> {
+                    return agentsAsyncClient.createMessage(thread.getId(), MessageRole.USER,
+                        "I need to solve the equation `3x + 11 = 14`. Can you help me?");
+                })
+                // Create a run
+                .flatMap(message -> {
+                    CreateRunOptions runOptions
+                        = new CreateRunOptions(threadId.get(), agentId.get()).setAdditionalInstructions("");
+                    return agentsAsyncClient.createRun(runOptions);
+                })
+                .map(run -> {
+                    runId.set(run.getId());
+                    return run;
+                }))
 
             .expectNextCount(1)
             .verifyComplete();
