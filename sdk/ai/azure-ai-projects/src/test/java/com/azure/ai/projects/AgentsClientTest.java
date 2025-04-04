@@ -106,18 +106,26 @@ class AgentsClientTest extends AIProjectClientTestBase {
         String agentName = "basic_example";
         CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini").setName(agentName)
             .setInstructions("You are a helpful agent")
-            .setTools(Arrays.asList(new CodeInterpreterToolDefinition()));
+            .setTools(Arrays.asList(new CodeInterpreterToolDefinition()))
+            .setDescription("Test agent")
+            .setTemperature(0.5)
+            .setTopP(0.5);
         Agent agent = agentsClient.createAgent(createAgentOptions);
         assertNotNull(agent.getId());
         assertNotNull(agent.getName());
         assertEquals(agentName, agent.getName());
         assertNotNull(agent.getCreatedAt());
+        assertNotNull(agent.getMetadata());
+        assertNotNull(agent.getDescription());
+        assertNotNull(agent.getModel());
         assertEquals("You are a helpful agent", agent.getInstructions());
 
         Agent retrievedAgent = agentsClient.getAgent(agent.getId());
         assertNotNull(retrievedAgent);
         assertEquals(agent.getId(), retrievedAgent.getId());
         assertEquals(agent.getName(), retrievedAgent.getName());
+        assertEquals(agent.getDescription(), retrievedAgent.getDescription());
+        assertEquals(agent.getTopP(), retrievedAgent.getTopP());
 
         agentsClient.deleteAgent(agent.getId());
     }
