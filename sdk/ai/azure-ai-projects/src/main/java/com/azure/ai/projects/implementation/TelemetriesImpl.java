@@ -70,30 +70,30 @@ public final class TelemetriesImpl {
     @ServiceInterface(name = "AIProjectClientTelem")
     public interface TelemetriesService {
         @Get("/{appInsightsResourceUrl}")
-        @ExpectedResponses({200})
-        @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = {401})
-        @UnexpectedResponseExceptionType(value = ResourceNotFoundException.class, code = {404})
-        @UnexpectedResponseExceptionType(value = ResourceModifiedException.class, code = {409})
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = { 401 })
+        @UnexpectedResponseExceptionType(value = ResourceNotFoundException.class, code = { 404 })
+        @UnexpectedResponseExceptionType(value = ResourceModifiedException.class, code = { 409 })
         @UnexpectedResponseExceptionType(HttpResponseException.class)
         Mono<Response<BinaryData>> getAppInsights(@HostParam("endpoint") String endpoint,
-                                                  @HostParam("subscriptionId") String subscriptionId,
-                                                  @HostParam("resourceGroupName") String resourceGroupName, @HostParam("projectName") String projectName,
-                                                  @QueryParam("api-version") String apiVersion,
-                                                  @PathParam("appInsightsResourceUrl") String appInsightsResourceUrl, @HeaderParam("Accept") String accept,
-                                                  RequestOptions requestOptions, Context context);
+            @HostParam("subscriptionId") String subscriptionId,
+            @HostParam("resourceGroupName") String resourceGroupName, @HostParam("projectName") String projectName,
+            @QueryParam("api-version") String apiVersion,
+            @PathParam("appInsightsResourceUrl") String appInsightsResourceUrl, @HeaderParam("Accept") String accept,
+            RequestOptions requestOptions, Context context);
 
         @Get("/{appInsightsResourceUrl}")
-        @ExpectedResponses({200})
-        @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = {401})
-        @UnexpectedResponseExceptionType(value = ResourceNotFoundException.class, code = {404})
-        @UnexpectedResponseExceptionType(value = ResourceModifiedException.class, code = {409})
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = { 401 })
+        @UnexpectedResponseExceptionType(value = ResourceNotFoundException.class, code = { 404 })
+        @UnexpectedResponseExceptionType(value = ResourceModifiedException.class, code = { 409 })
         @UnexpectedResponseExceptionType(HttpResponseException.class)
         Response<BinaryData> getAppInsightsSync(@HostParam("endpoint") String endpoint,
-                                                @HostParam("subscriptionId") String subscriptionId,
-                                                @HostParam("resourceGroupName") String resourceGroupName, @HostParam("projectName") String projectName,
-                                                @QueryParam("api-version") String apiVersion,
-                                                @PathParam("appInsightsResourceUrl") String appInsightsResourceUrl, @HeaderParam("Accept") String accept,
-                                                RequestOptions requestOptions, Context context);
+            @HostParam("subscriptionId") String subscriptionId,
+            @HostParam("resourceGroupName") String resourceGroupName, @HostParam("projectName") String projectName,
+            @QueryParam("api-version") String apiVersion,
+            @PathParam("appInsightsResourceUrl") String appInsightsResourceUrl, @HeaderParam("Accept") String accept,
+            RequestOptions requestOptions, Context context);
     }
 
     /**
@@ -124,7 +124,7 @@ public final class TelemetriesImpl {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Response<BinaryData>> getAppInsightsWithResponseAsync(String appInsightsResourceUrl,
-                                                                      RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         final String accept = "application/json";
         return FluxUtil.withContext(context -> service.getAppInsights(this.client.getEndpoint(),
             this.client.getSubscriptionId(), this.client.getResourceGroupName(), this.client.getProjectName(),
@@ -158,7 +158,7 @@ public final class TelemetriesImpl {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> getAppInsightsWithResponse(String appInsightsResourceUrl,
-                                                           RequestOptions requestOptions) {
+        RequestOptions requestOptions) {
         final String accept = "application/json";
         return service.getAppInsightsSync(this.client.getEndpoint(), this.client.getSubscriptionId(),
             this.client.getResourceGroupName(), this.client.getProjectName(),

@@ -146,7 +146,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
         Agent agent2 = agentsClient.createAgent(createAgentOptions2);
 
         // List all agents
-        List<Agent> agentList = agentsClient.listAgents().getData().stream().toList();
+        List<Agent> agentList = agentsClient.listAgents().getData();
 
         // Verify the list contains our agents
         boolean foundAgent1 = false;
@@ -319,7 +319,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
 
         OpenAIFile uploadedAgentFile = agentsClient.uploadFile(new UploadFileRequest(new FileDetails(BinaryData
             .fromString("The word `apple` uses the code 442345, while the word `banana` uses the code 673457."))
-            .setFilename("sample_file_for_upload.txt"),
+                .setFilename("sample_file_for_upload.txt"),
             FilePurpose.AGENTS));
         assertNotNull(uploadedAgentFile);
         assertNotNull(uploadedAgentFile.getId());
@@ -339,7 +339,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
         assertEquals(VectorStoreStatus.COMPLETED, vectorStoreWithId.getStatus());
 
         // List vector stores
-        List<VectorStore> vectorStores = agentsClient.listVectorStores().getData().stream().toList();
+        List<VectorStore> vectorStores = agentsClient.listVectorStores().getData();
         assertFalse(vectorStores.isEmpty());
 
         // Test with file search tool
@@ -373,7 +373,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
         assertEquals(uploadedFile.getFilename(), retrievedFile.getFilename());
 
         // List files
-        List<OpenAIFile> files = agentsClient.listFiles().getData().stream().toList();
+        List<OpenAIFile> files = agentsClient.listFiles().getData();
         assertFalse(files.isEmpty());
         boolean foundFile = false;
         for (OpenAIFile file : files) {
@@ -403,7 +403,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
             "getCityNickname",
             BinaryData.fromObject(mapOf("type", "object", "properties",
                 mapOf("location", mapOf("type", "string", "description", "The city and state, e.g. San Francisco, CA")),
-                "required", new String[]{"location"}))).setDescription("Gets the nickname of a city."));
+                "required", new String[] { "location" }))).setDescription("Gets the nickname of a city."));
 
         String agentName = "functions_test_agent_" + UUID.randomUUID();
         CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini").setName(agentName)
@@ -659,7 +659,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
         // Upload file
         OpenAIFile uploadedFile = agentsClient.uploadFile(new UploadFileRequest(new FileDetails(BinaryData
             .fromString("<html><body><h1>Test Content</h1><p>This is sample data for testing.</p></body></html>"))
-            .setFilename("sample_test.html"),
+                .setFilename("sample_test.html"),
             FilePurpose.AGENTS));
         assertNotNull(uploadedFile);
 
@@ -877,16 +877,17 @@ class AgentsClientTest extends AIProjectClientTestBase {
             "getCityNickname",
             BinaryData.fromObject(mapOf("type", "object", "properties",
                 mapOf("location", mapOf("type", "string", "description", "The city and state, e.g. San Francisco, CA")),
-                "required", new String[]{"location"}))).setDescription("Gets the nickname of a city."));
+                "required", new String[] { "location" }))).setDescription("Gets the nickname of a city."));
 
-        FunctionToolDefinition getCurrentWeatherTool = new FunctionToolDefinition(
-            new FunctionDefinition("getCurrentWeatherAtLocation",
-                BinaryData.fromObject(mapOf("type", "object", "properties", mapOf("location",
+        FunctionToolDefinition getCurrentWeatherTool
+            = new FunctionToolDefinition(
+                new FunctionDefinition("getCurrentWeatherAtLocation",
+                    BinaryData.fromObject(mapOf("type", "object", "properties", mapOf("location",
                         mapOf("type", "string", "description", "The city and state, e.g. San Francisco, CA"), "unit",
                         mapOf("type", "string", "description", "temperature unit as c or f", "enum",
-                            new String[]{"c", "f"})),
-                    "required", new String[]{"location", "unit"})))
-                .setDescription("Gets the current weather at a provided location."));
+                            new String[] { "c", "f" })),
+                        "required", new String[] { "location", "unit" })))
+                            .setDescription("Gets the current weather at a provided location."));
 
         // Function implementations
         Supplier<String> getUserFavoriteCity = () -> "Seattle, WA";
@@ -1054,7 +1055,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
             FunctionDefinition functionDefinition = new FunctionDefinition(azureFunctionName,
                 BinaryData.fromObject(mapOf("type", "object", "properties",
                     mapOf("location", mapOf("type", "string", "description", "The location to look up")), "required",
-                    new String[]{"location"})));
+                    new String[] { "location" })));
 
             AzureFunctionDefinition azureFunctionDefinition = new AzureFunctionDefinition(functionDefinition,
                 new AzureFunctionBinding(new AzureFunctionStorageQueue(storageQueueUri, "agent-input")),
@@ -1129,13 +1130,11 @@ class AgentsClientTest extends AIProjectClientTestBase {
     void testCreateVector() {
         // Create a vector store with configuration
         String dataUri = Configuration.getGlobalConfiguration().get("DATA_URI", "");
-        VectorStoreConfiguration config = new VectorStoreConfiguration(Arrays.asList(
-            new VectorStoreDataSource(dataUri, VectorStoreDataSourceAssetType.URI_ASSET)
-        ));
+        VectorStoreConfiguration config = new VectorStoreConfiguration(
+            Arrays.asList(new VectorStoreDataSource(dataUri, VectorStoreDataSourceAssetType.URI_ASSET)));
 
         String vectorStoreName = "config_vector_test_" + UUID.randomUUID();
-        VectorStore vectorStore = agentsClient.createVectorStore(
-            null, vectorStoreName, config, null, null, null);
+        VectorStore vectorStore = agentsClient.createVectorStore(null, vectorStoreName, config, null, null, null);
 
         assertNotNull(vectorStore);
         assertNotNull(vectorStore.getId());
@@ -1148,23 +1147,19 @@ class AgentsClientTest extends AIProjectClientTestBase {
     @Test
     void testCreateVectorStoreFileBatch() throws InterruptedException {
         // Upload a file first
-        OpenAIFile uploadedFile = agentsClient.uploadFile(new UploadFileRequest(
-            new FileDetails(BinaryData.fromString("Content for vector store batch test"))
-                .setFilename("batch_test_file.txt"),
-            FilePurpose.AGENTS));
+        OpenAIFile uploadedFile = agentsClient.uploadFile(
+            new UploadFileRequest(new FileDetails(BinaryData.fromString("Content for vector store batch test"))
+                .setFilename("batch_test_file.txt"), FilePurpose.AGENTS));
         assertNotNull(uploadedFile);
 
         // Create empty vector store
-        VectorStore vectorStore = agentsClient.createVectorStore(
-            null, "file_batch_test_" + UUID.randomUUID(), null, null, null, null);
+        VectorStore vectorStore
+            = agentsClient.createVectorStore(null, "file_batch_test_" + UUID.randomUUID(), null, null, null, null);
         assertNotNull(vectorStore);
 
         // Create vector store file batch
-        VectorStoreFileBatch fileBatch = agentsClient.createVectorStoreFileBatch(
-            vectorStore.getId(),
-            Arrays.asList(uploadedFile.getId()),
-            null,
-            null);
+        VectorStoreFileBatch fileBatch = agentsClient.createVectorStoreFileBatch(vectorStore.getId(),
+            Arrays.asList(uploadedFile.getId()), null, null);
 
         assertNotNull(fileBatch);
         assertNotNull(fileBatch.getId());
@@ -1191,19 +1186,15 @@ class AgentsClientTest extends AIProjectClientTestBase {
         assertNotNull(thread);
 
         // Create first message and run
-        ThreadMessage message1 = agentsClient.createMessage(
-            thread.getId(), MessageRole.USER, "Question one");
-        ThreadRun run1 = agentsClient.createRun(
-            new CreateRunOptions(thread.getId(), ciAgent.getId()));
+        ThreadMessage message1 = agentsClient.createMessage(thread.getId(), MessageRole.USER, "Question one");
+        ThreadRun run1 = agentsClient.createRun(new CreateRunOptions(thread.getId(), ciAgent.getId()));
 
         // Create second message and run
-        ThreadMessage message2 = agentsClient.createMessage(
-            thread.getId(), MessageRole.USER, "Question two");
-        ThreadRun run2 = agentsClient.createRun(
-            new CreateRunOptions(thread.getId(), ciAgent.getId()));
+        ThreadMessage message2 = agentsClient.createMessage(thread.getId(), MessageRole.USER, "Question two");
+        ThreadRun run2 = agentsClient.createRun(new CreateRunOptions(thread.getId(), ciAgent.getId()));
 
         // List runs
-        List<ThreadRun> runs = agentsClient.listRuns(thread.getId()).getData().stream().toList();
+        List<ThreadRun> runs = agentsClient.listRuns(thread.getId()).getData();
 
         assertEquals(2, runs.size(), "Should have 2 runs in the thread");
 
@@ -1234,14 +1225,12 @@ class AgentsClientTest extends AIProjectClientTestBase {
         assertNotNull(thread);
 
         // Create message with a task that will take time to complete
-        ThreadMessage message = agentsClient.createMessage(
-            thread.getId(), MessageRole.USER,
+        ThreadMessage message = agentsClient.createMessage(thread.getId(), MessageRole.USER,
             "Please analyze the Fibonacci sequence and its relationship to the golden ratio. "
                 + "Provide detailed mathematical analysis with formulas and proofs.");
 
         // Start a run
-        ThreadRun run = agentsClient.createRun(
-            new CreateRunOptions(thread.getId(), ciAgent.getId()));
+        ThreadRun run = agentsClient.createRun(new CreateRunOptions(thread.getId(), ciAgent.getId()));
 
         assertNotNull(run);
 
@@ -1250,8 +1239,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
 
         // Verify cancellation
         assertNotNull(cancelledRun);
-        assertTrue(cancelledRun.getStatus() == RunStatus.CANCELLING
-                || cancelledRun.getStatus() == RunStatus.CANCELLED,
+        assertTrue(cancelledRun.getStatus() == RunStatus.CANCELLING || cancelledRun.getStatus() == RunStatus.CANCELLED,
             "Run should be cancelling or cancelled");
 
         // Verify final state after waiting
@@ -1309,8 +1297,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
         assertNotNull(thread);
 
         // Create message
-        ThreadMessage message = agentsClient.createMessage(
-            thread.getId(), MessageRole.USER, "Original message");
+        ThreadMessage message = agentsClient.createMessage(thread.getId(), MessageRole.USER, "Original message");
         assertNotNull(message);
 
         // Create metadata
@@ -1319,8 +1306,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
         metadata.put("version", "2");
 
         // Modify message
-        ThreadMessage modifiedMessage = agentsClient.updateMessage(
-            thread.getId(), message.getId(), metadata);
+        ThreadMessage modifiedMessage = agentsClient.updateMessage(thread.getId(), message.getId(), metadata);
 
         // Verify modification
         assertNotNull(modifiedMessage);
@@ -1345,8 +1331,8 @@ class AgentsClientTest extends AIProjectClientTestBase {
         assertNotNull(thread);
 
         // Add message
-        ThreadMessage message = agentsClient.createMessage(
-            thread.getId(), MessageRole.USER, "Please explain how rainbows form");
+        ThreadMessage message
+            = agentsClient.createMessage(thread.getId(), MessageRole.USER, "Please explain how rainbows form");
         assertNotNull(message);
 
         // Create run with streaming
@@ -1375,22 +1361,20 @@ class AgentsClientTest extends AIProjectClientTestBase {
     @Test
     void testSubmitToolOutputsToRunStreaming() {
         // Create agent with function tool
-        FunctionToolDefinition getWeatherTool = new FunctionToolDefinition(
-            new FunctionDefinition("getWeather",
-                BinaryData.fromObject(mapOf("type", "object", "properties",
-                    mapOf("location", mapOf("type", "string", "description", "The city name")),
-                    "required", new String[]{"location"})))
-                .setDescription("Get weather for a location"));
+        FunctionToolDefinition getWeatherTool = new FunctionToolDefinition(new FunctionDefinition("getWeather",
+            BinaryData.fromObject(mapOf("type", "object", "properties",
+                mapOf("location", mapOf("type", "string", "description", "The city name")), "required",
+                new String[] { "location" }))).setDescription("Get weather for a location"));
 
-        Agent functionAgent = agentsClient.createAgent(new CreateAgentOptions("gpt-4o-mini")
-            .setName("streaming_tool_test_" + UUID.randomUUID())
-            .setInstructions("You help with weather information")
-            .setTools(Arrays.asList(getWeatherTool)));
+        Agent functionAgent = agentsClient
+            .createAgent(new CreateAgentOptions("gpt-4o-mini").setName("streaming_tool_test_" + UUID.randomUUID())
+                .setInstructions("You help with weather information")
+                .setTools(Arrays.asList(getWeatherTool)));
 
         // Create thread
         AgentThread thread = agentsClient.createThread();
-        ThreadMessage message = agentsClient.createMessage(
-            thread.getId(), MessageRole.USER, "What's the weather in Paris?");
+        ThreadMessage message
+            = agentsClient.createMessage(thread.getId(), MessageRole.USER, "What's the weather in Paris?");
 
         // Create run
         ThreadRun run = agentsClient.createRun(new CreateRunOptions(thread.getId(), functionAgent.getId()));
@@ -1401,8 +1385,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
             do {
                 Thread.sleep(500);
                 run = agentsClient.getRun(thread.getId(), runId);
-            } while (run.getStatus() == RunStatus.QUEUED
-                || run.getStatus() == RunStatus.IN_PROGRESS);
+            } while (run.getStatus() == RunStatus.QUEUED || run.getStatus() == RunStatus.IN_PROGRESS);
 
             // If run requires action, submit tool outputs with streaming
             if (run.getStatus() == RunStatus.REQUIRES_ACTION
@@ -1415,8 +1398,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
                     if (call instanceof RequiredFunctionToolCall) {
                         RequiredFunctionToolCall functionCall = (RequiredFunctionToolCall) call;
                         if ("getWeather".equals(functionCall.getFunction().getName())) {
-                            outputs.add(new ToolOutput()
-                                .setToolCallId(functionCall.getId())
+                            outputs.add(new ToolOutput().setToolCallId(functionCall.getId())
                                 .setOutput("75°F and partly cloudy"));
                         }
                     }
@@ -1425,8 +1407,8 @@ class AgentsClientTest extends AIProjectClientTestBase {
                 AtomicBoolean receivedStreamUpdate = new AtomicBoolean(false);
 
                 // Submit tool outputs with streaming
-                Flux<StreamUpdate> streamingUpdates = agentsClient.submitToolOutputsToRunStreaming(
-                    thread.getId(), runId, outputs);
+                Flux<StreamUpdate> streamingUpdates
+                    = agentsClient.submitToolOutputsToRunStreaming(thread.getId(), runId, outputs);
 
                 streamingUpdates.doOnNext(update -> {
                     assertNotNull(update);
