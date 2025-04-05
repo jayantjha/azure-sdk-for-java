@@ -875,8 +875,7 @@ class AgentsClientTest extends AIProjectClientTestBase {
                 mapOf("location", mapOf("type", "string", "description", "The city and state, e.g. San Francisco, CA")),
                 "required", new String[]{"location"}))).setDescription("Gets the nickname of a city."));
 
-        FunctionToolDefinition getCurrentWeatherTool
-            = new FunctionToolDefinition(
+        FunctionToolDefinition getCurrentWeatherTool = new FunctionToolDefinition(
             new FunctionDefinition("getCurrentWeatherAtLocation",
                 BinaryData.fromObject(mapOf("type", "object", "properties", mapOf("location",
                         mapOf("type", "string", "description", "The city and state, e.g. San Francisco, CA"), "unit",

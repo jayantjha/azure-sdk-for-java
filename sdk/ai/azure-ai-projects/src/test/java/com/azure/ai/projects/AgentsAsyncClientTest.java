@@ -38,7 +38,6 @@ import com.azure.ai.projects.models.VectorStoreFileStatusFilter;
 import com.azure.ai.projects.models.VectorStoreStatus;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -81,7 +80,8 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
             .setTools(Arrays.asList(new CodeInterpreterToolDefinition()));
 
         StepVerifier.create(agentsAsyncClient.createAgent(createAgentOptions)
-            .flatMap(agent -> agentsAsyncClient.deleteAgent(agent.getId()))).assertNext(deletionStatus -> {
+            .flatMap(agent -> agentsAsyncClient.deleteAgent(agent.getId()))
+        ).assertNext(deletionStatus -> {
             assertNotNull(deletionStatus);
         }).verifyComplete();
     }
@@ -480,7 +480,8 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
                 // Create vector store with file ID
                 return agentsAsyncClient.createVectorStore(Arrays.asList(file.getId()), "my_vector_store_async", null,
                     null, null, null);
-            })).assertNext(vectorStore -> {
+            })
+        ).assertNext(vectorStore -> {
             assertNotNull(vectorStore);
             assertNotNull(vectorStore.getId());
             assertEquals("my_vector_store_async", vectorStore.getName());
@@ -488,14 +489,15 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
         }).verifyComplete();
 
         // Poll until vector store is complete
-        Mono<VectorStore> pollForCompletion
-            = agentsAsyncClient.getVectorStore(vectorStoreIdWithFileRef.get()).expand(vectorStore -> {
-            if (vectorStore.getStatus() == VectorStoreStatus.COMPLETED
-                || vectorStore.getStatus() == VectorStoreStatus.EXPIRED) {
-                return Mono.empty();
-            }
-            return Mono.delay(Duration.ofMillis(500)).then(agentsAsyncClient.getVectorStore(vectorStore.getId()));
-        }).last();
+        Mono<VectorStore> pollForCompletion = agentsAsyncClient
+            .getVectorStore(vectorStoreIdWithFileRef.get())
+            .expand(vectorStore -> {
+                if (vectorStore.getStatus() == VectorStoreStatus.COMPLETED
+                    || vectorStore.getStatus() == VectorStoreStatus.EXPIRED) {
+                    return Mono.empty();
+                }
+                return Mono.delay(Duration.ofMillis(500)).then(agentsAsyncClient.getVectorStore(vectorStore.getId()));
+            }).last();
 
         StepVerifier.create(pollForCompletion).assertNext(vectorStore -> {
             assertEquals(VectorStoreStatus.COMPLETED, vectorStore.getStatus());
@@ -606,7 +608,8 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
             }).flatMap(message -> {
                 // List messages
                 return agentsAsyncClient.listMessages(threadId.get());
-            })).assertNext(messageList -> {
+            })
+        ).assertNext(messageList -> {
             assertNotNull(messageList);
             assertEquals(2, messageList.getData().size());
             assertEquals(MessageRole.USER, messageList.getData().get(0).getRole());
@@ -633,7 +636,8 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
                 messageId.set(message.getId());
                 // Get the message
                 return agentsAsyncClient.getMessage(threadId.get(), message.getId());
-            })).assertNext(message -> {
+            })
+        ).assertNext(message -> {
             assertNotNull(message);
             assertEquals(messageId.get(), message.getId());
             assertEquals(MessageRole.USER, message.getRole());
@@ -663,9 +667,10 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
                 agentsAsyncClient.createAgent(new CreateAgentOptions("gpt-4o-mini").setName("tool_output_test_async")
                     .setInstructions("You help with weather information")
                     .setTools(Arrays.asList(getWeatherTool))).flatMap(agent -> {
-                    agentId.set(agent.getId());
-                    return agentsAsyncClient.createThread();
-                }).flatMap(thread -> {
+                        agentId.set(agent.getId());
+                        return agentsAsyncClient.createThread();
+                    }
+                ).flatMap(thread -> {
                     threadId.set(thread.getId());
                     return agentsAsyncClient.createMessage(thread.getId(), MessageRole.USER,
                         "What's the weather in Seattle?");
@@ -679,13 +684,14 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
         // Poll until we get REQUIRES_ACTION status or completion
         Mono<ThreadRun> waitForRequiresAction = Mono.defer(() -> agentsAsyncClient.getRun(threadId.get(),
             agentsAsyncClient.listRuns(threadId.get()).block().getData().get(0).getId())).expand(run -> {
-            if (run.getStatus() == RunStatus.REQUIRES_ACTION
-                || run.getStatus() == RunStatus.COMPLETED
-                || run.getStatus() == RunStatus.FAILED) {
-                return Mono.empty();
+                if (run.getStatus() == RunStatus.REQUIRES_ACTION
+                    || run.getStatus() == RunStatus.COMPLETED
+                    || run.getStatus() == RunStatus.FAILED) {
+                    return Mono.empty();
+                }
+                return Mono.delay(Duration.ofSeconds(1)).then(agentsAsyncClient.getRun(threadId.get(), run.getId()));
             }
-            return Mono.delay(Duration.ofSeconds(1)).then(agentsAsyncClient.getRun(threadId.get(), run.getId()));
-        }).filter(run -> run.getStatus() == RunStatus.REQUIRES_ACTION).next();
+        ).filter(run -> run.getStatus() == RunStatus.REQUIRES_ACTION).next();
 
         // Test submitting tool outputs when the run requires action
         StepVerifier.create(waitForRequiresAction.flatMap(run -> {
@@ -718,7 +724,6 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
     }
 
     @Test
-    @Disabled
     void testRunOperations() {
         AgentsAsyncClient agentsAsyncClient = getAIProjectClientBuilder().buildAgentsAsyncClient();
         AtomicReference<String> threadIdRef = new AtomicReference<>();
