@@ -20,7 +20,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import java.io.File;
@@ -1174,7 +1173,6 @@ class AgentsClientTest extends AIProjectClientTestBase {
     }
 
     @Test
-    @Disabled
     void testRunOperations() throws InterruptedException {
         // Create thread
         AgentThread thread = agentsClient.createThread();
