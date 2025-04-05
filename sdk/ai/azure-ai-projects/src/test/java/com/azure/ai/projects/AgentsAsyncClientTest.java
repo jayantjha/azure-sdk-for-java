@@ -66,10 +66,9 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
             .setTools(Arrays.asList(new CodeInterpreterToolDefinition()));
 
         StepVerifier.create(agentsAsyncClient.createAgent(createAgentOptions)
-            .flatMap(agent -> agentsAsyncClient.deleteAgent(agent.getId()))
-        ).assertNext(deletionStatus -> {
-            assertNotNull(deletionStatus);
-        }).verifyComplete();
+            .flatMap(agent -> agentsAsyncClient.deleteAgent(agent.getId()))).assertNext(deletionStatus -> {
+                assertNotNull(deletionStatus);
+            }).verifyComplete();
     }
 
     @Test
@@ -287,7 +286,7 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
                 // Upload file
                 FileDetails fileDetails = new FileDetails(BinaryData.fromString(
                     "<html><body><h1>Test Content</h1><p>This is sample data for testing.</p></body></html>"))
-                    .setFilename("sample_test_async.html");
+                        .setFilename("sample_test_async.html");
                 return agentsAsyncClient.uploadFile(new UploadFileRequest(fileDetails, FilePurpose.AGENTS));
             }).flatMap(file -> {
                 fileIdRef.set(file.getId());
@@ -391,12 +390,11 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
         AtomicReference<String> vectorStoreIdRef = new AtomicReference<>();
 
         StepVerifier.create(
-                // Upload a file
-                agentsAsyncClient.uploadFile(new UploadFileRequest(
-                    new FileDetails(BinaryData.fromString("Sample vector store content for async test"))
-                        .setFilename("vector_store_async_test.txt"),
-                    FilePurpose.AGENTS)
-                ).flatMap(file -> {
+            // Upload a file
+            agentsAsyncClient.uploadFile(new UploadFileRequest(
+                new FileDetails(BinaryData.fromString("Sample vector store content for async test"))
+                    .setFilename("vector_store_async_test.txt"),
+                FilePurpose.AGENTS)).flatMap(file -> {
                     fileIdRef.set(file.getId());
 
                     // Create vector store with file
@@ -433,23 +431,23 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
         AtomicReference<String> vectorStoreIdRef = new AtomicReference<>();
 
         StepVerifier.create(
-                // Upload a file
-                agentsAsyncClient.uploadFile(
-                        new UploadFileRequest(new FileDetails(BinaryData.fromString("File batch content for vector store test"))
-                            .setFilename("vector_store_batch_async_test.txt"), FilePurpose.AGENTS))
-                    .flatMap(file -> {
-                        fileIdRef.set(file.getId());
+            // Upload a file
+            agentsAsyncClient.uploadFile(
+                new UploadFileRequest(new FileDetails(BinaryData.fromString("File batch content for vector store test"))
+                    .setFilename("vector_store_batch_async_test.txt"), FilePurpose.AGENTS))
+                .flatMap(file -> {
+                    fileIdRef.set(file.getId());
 
-                        // Create empty vector store
-                        return agentsAsyncClient.createVectorStore(null, "async_vector_batch_test", null, null, null, null);
-                    })
-                    .flatMap(vectorStore -> {
-                        vectorStoreIdRef.set(vectorStore.getId());
+                    // Create empty vector store
+                    return agentsAsyncClient.createVectorStore(null, "async_vector_batch_test", null, null, null, null);
+                })
+                .flatMap(vectorStore -> {
+                    vectorStoreIdRef.set(vectorStore.getId());
 
-                        // Create vector store file batch
-                        return agentsAsyncClient.createVectorStoreFileBatch(vectorStore.getId(),
-                            Arrays.asList(fileIdRef.get()), null, null);
-                    }))
+                    // Create vector store file batch
+                    return agentsAsyncClient.createVectorStoreFileBatch(vectorStore.getId(),
+                        Arrays.asList(fileIdRef.get()), null, null);
+                }))
             .assertNext(batch -> {
                 assertNotNull(batch);
                 assertNotNull(batch.getId());
@@ -497,8 +495,7 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
                 assertEquals(2, messageList.getData().size());
                 assertEquals(MessageRole.USER, messageList.getData().get(0).getRole());
                 assertEquals(MessageRole.USER, messageList.getData().get(1).getRole());
-            }
-        ).verifyComplete();
+            }).verifyComplete();
 
         // Clean up
         StepVerifier.create(agentsAsyncClient.deleteThread(threadId.get())).expectNextCount(1).verifyComplete();
@@ -527,8 +524,7 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
                 assertTrue(message.getContent().get(0) instanceof MessageTextContent);
                 assertEquals("Test message for retrieval",
                     ((MessageTextContent) message.getContent().get(0)).getText().getValue());
-            }
-        ).verifyComplete();
+            }).verifyComplete();
 
         // Clean up
         StepVerifier.create(agentsAsyncClient.deleteThread(threadId.get())).expectNextCount(1).verifyComplete();
@@ -544,30 +540,29 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
         FunctionToolDefinition getWeatherTool = new FunctionToolDefinition(new FunctionDefinition("getWeather",
             BinaryData.fromObject(mapOf("type", "object", "properties",
                 mapOf("location", mapOf("type", "string", "description", "The city name")), "required",
-                new String[]{"location"}))).setDescription("Get weather for a location"));
+                new String[] { "location" }))).setDescription("Get weather for a location"));
 
         // Create agent with function tool
         StepVerifier.create(
-            agentsAsyncClient.createAgent(new CreateAgentOptions("gpt-4o-mini")
-                .setName("tool_output_test_async")
+            agentsAsyncClient.createAgent(new CreateAgentOptions("gpt-4o-mini").setName("tool_output_test_async")
                 .setInstructions("You help with weather information")
-                .setTools(Arrays.asList(getWeatherTool))
-            ).flatMap(agent -> {
-                agentId.set(agent.getId());
-                return agentsAsyncClient.createThread();
-            }).flatMap(thread -> {
-                threadId.set(thread.getId());
-                return agentsAsyncClient.createMessage(thread.getId(), MessageRole.USER,
-                    "What's the weather in Seattle?");
-            }).flatMap(message -> {
-                CreateRunOptions runOptions = new CreateRunOptions(threadId.get(), agentId.get());
-                return agentsAsyncClient.createRun(runOptions);
-            })
-        ).expectNextCount(1).verifyComplete();
+                .setTools(Arrays.asList(getWeatherTool))).flatMap(agent -> {
+                    agentId.set(agent.getId());
+                    return agentsAsyncClient.createThread();
+                }).flatMap(thread -> {
+                    threadId.set(thread.getId());
+                    return agentsAsyncClient.createMessage(thread.getId(), MessageRole.USER,
+                        "What's the weather in Seattle?");
+                }).flatMap(message -> {
+                    CreateRunOptions runOptions = new CreateRunOptions(threadId.get(), agentId.get());
+                    return agentsAsyncClient.createRun(runOptions);
+                }))
+            .expectNextCount(1)
+            .verifyComplete();
 
         // Poll until we get REQUIRES_ACTION status or completion
-        Mono<ThreadRun> waitForRequiresAction = Mono.defer(() -> agentsAsyncClient.getRun(threadId.get(), agentsAsyncClient.listRuns(threadId.get()).block().getData().get(0).getId()))
-            .expand(run -> {
+        Mono<ThreadRun> waitForRequiresAction = Mono.defer(() -> agentsAsyncClient.getRun(threadId.get(),
+            agentsAsyncClient.listRuns(threadId.get()).block().getData().get(0).getId())).expand(run -> {
                 if (run.getStatus() == RunStatus.REQUIRES_ACTION
                     || run.getStatus() == RunStatus.COMPLETED
                     || run.getStatus() == RunStatus.FAILED) {
@@ -614,27 +609,22 @@ public class AgentsAsyncClientTest extends AIProjectClientTestBase {
         AtomicReference<String> threadId = new AtomicReference<>();
         AtomicReference<String> agentId = new AtomicReference<>();
 
-        StepVerifier.create(createTestAgent(agentsAsyncClient, "list_runs_test_async")
-            .flatMap(agent -> {
-                agentId.set(agent.getId());
-                return agentsAsyncClient.createThread();
-            })
-            .flatMap(thread -> {
-                threadId.set(thread.getId());
-                return agentsAsyncClient.createMessage(thread.getId(), MessageRole.USER, "Simple question 1");
-            })
-            .flatMap(message -> {
-                CreateRunOptions runOptions = new CreateRunOptions(threadId.get(), agentId.get());
-                return agentsAsyncClient.createRun(runOptions);
-            })
-            .flatMap(run -> {
-                // List runs
-                return agentsAsyncClient.listRuns(threadId.get());
-            })).assertNext(runList -> {
-                assertNotNull(runList);
-                assertEquals(1, runList.getData().size());
-            }
-        ).verifyComplete();
+        StepVerifier.create(createTestAgent(agentsAsyncClient, "list_runs_test_async").flatMap(agent -> {
+            agentId.set(agent.getId());
+            return agentsAsyncClient.createThread();
+        }).flatMap(thread -> {
+            threadId.set(thread.getId());
+            return agentsAsyncClient.createMessage(thread.getId(), MessageRole.USER, "Simple question 1");
+        }).flatMap(message -> {
+            CreateRunOptions runOptions = new CreateRunOptions(threadId.get(), agentId.get());
+            return agentsAsyncClient.createRun(runOptions);
+        }).flatMap(run -> {
+            // List runs
+            return agentsAsyncClient.listRuns(threadId.get());
+        })).assertNext(runList -> {
+            assertNotNull(runList);
+            assertEquals(1, runList.getData().size());
+        }).verifyComplete();
 
         // Clean up
         StepVerifier
