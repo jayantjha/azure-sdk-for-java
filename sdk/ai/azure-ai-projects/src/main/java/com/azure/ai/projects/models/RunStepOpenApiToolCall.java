@@ -16,7 +16,7 @@ import java.util.Map;
  * executed OpenAPI operations.
  */
 @Immutable
-public final class RunStepOpenApiToolCall extends RunStepToolCall {
+public final class RunStepOpenAPIToolCall extends RunStepToolCall {
 
     /*
      * The object type.
@@ -58,7 +58,7 @@ public final class RunStepOpenApiToolCall extends RunStepToolCall {
      * @throws IOException If an error occurs while reading the RunStepOpenAPIToolCall.
      */
     @Generated
-    public static RunStepOpenApiToolCall fromJson(JsonReader jsonReader) throws IOException {
+    public static RunStepOpenAPIToolCall fromJson(JsonReader jsonReader) throws IOException {
         return jsonReader.readObject(reader -> {
             String id = null;
             Map<String, String> openAPI = null;
@@ -76,7 +76,7 @@ public final class RunStepOpenApiToolCall extends RunStepToolCall {
                     reader.skipChildren();
                 }
             }
-            RunStepOpenApiToolCall deserializedRunStepOpenAPIToolCall = new RunStepOpenApiToolCall(id, openAPI);
+            RunStepOpenAPIToolCall deserializedRunStepOpenAPIToolCall = new RunStepOpenAPIToolCall(id, openAPI);
             deserializedRunStepOpenAPIToolCall.type = type;
             return deserializedRunStepOpenAPIToolCall;
         });
@@ -89,18 +89,6 @@ public final class RunStepOpenApiToolCall extends RunStepToolCall {
     private final Map<String, String> openAPI;
 
     /**
-     * Creates an instance of RunStepOpenAPIToolCall class.
-     *
-     * @param id the id value to set.
-     * @param openAPI the openAPI value to set.
-     */
-    @Generated
-    private RunStepOpenApiToolCall(String id, Map<String, String> openAPI) {
-        super(id);
-        this.openAPI = openAPI;
-    }
-
-    /**
      * Get the openAPI property: Reserved for future use.
      *
      * @return the openAPI value.
@@ -108,5 +96,17 @@ public final class RunStepOpenApiToolCall extends RunStepToolCall {
     @Generated
     public Map<String, String> getOpenAPI() {
         return this.openAPI;
+    }
+
+    /**
+     * Creates an instance of RunStepOpenAPIToolCall class.
+     *
+     * @param id the id value to set.
+     * @param openAPI the openAPI value to set.
+     */
+    @Generated
+    private RunStepOpenAPIToolCall(String id, Map<String, String> openAPI) {
+        super(id);
+        this.openAPI = openAPI;
     }
 }
