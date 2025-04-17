@@ -19,6 +19,7 @@ import com.azure.ai.projects.models.RunStatus;
 import com.azure.ai.projects.models.ThreadMessage;
 import com.azure.ai.projects.models.ThreadMessageOptions;
 import com.azure.ai.projects.models.ThreadRun;
+import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.junit.jupiter.api.Test;
@@ -52,9 +53,9 @@ public final class AgentAdditionalMessageSample {
         //run agent
         CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalMessages(Arrays.asList(new ThreadMessageOptions(
-                MessageRole.AGENT, "E=mc^2"
+                MessageRole.AGENT, BinaryData.fromString("E=mc^2")
             ), new ThreadMessageOptions(
-                MessageRole.USER, "What is the impedance formula?"
+                MessageRole.USER, BinaryData.fromString("What is the impedance formula?")
             )));
         ThreadRun threadRun = agentsClient.createRun(createRunOptions);
 
