@@ -4,42 +4,37 @@ package com.azure.ai.projects.usage.agent;
 
 import com.azure.ai.projects.AIProjectClientBuilder;
 import com.azure.ai.projects.AgentsClient;
+import com.azure.ai.projects.implementation.models.CreateAgentRequest;
 import com.azure.ai.projects.models.Agent;
 import com.azure.ai.projects.models.AgentThread;
-import com.azure.ai.projects.models.CreateAgentOptions;
+import com.azure.ai.projects.models.AzureFunctionBinding;
+import com.azure.ai.projects.models.AzureFunctionDefinition;
+import com.azure.ai.projects.models.AzureFunctionStorageQueue;
+import com.azure.ai.projects.models.AzureFunctionToolDefinition;
 import com.azure.ai.projects.models.CreateRunOptions;
-import com.azure.ai.projects.models.FileDetails;
-import com.azure.ai.projects.models.FilePurpose;
-import com.azure.ai.projects.models.FileSearchToolDefinition;
-import com.azure.ai.projects.models.FileSearchToolResource;
+import com.azure.ai.projects.models.FunctionDefinition;
 import com.azure.ai.projects.models.MessageContent;
 import com.azure.ai.projects.models.MessageImageFileContent;
 import com.azure.ai.projects.models.MessageRole;
 import com.azure.ai.projects.models.MessageTextContent;
-import com.azure.ai.projects.models.OpenAIFile;
 import com.azure.ai.projects.models.OpenAIPageableListOfThreadMessage;
 import com.azure.ai.projects.models.RunStatus;
 import com.azure.ai.projects.models.ThreadMessage;
 import com.azure.ai.projects.models.ThreadRun;
-import com.azure.ai.projects.models.ToolResources;
-import com.azure.ai.projects.models.UploadFileRequest;
-import com.azure.ai.projects.models.VectorStore;
-import com.azure.ai.projects.models.VectorStoreFileBatch;
+import com.azure.core.http.HttpHeaderName;
+import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
-public class SampleAgentVectorStoreBatchFileSearch {
+public class AgentAzureFunctionSample {
+
     @Test
-    void vectorStoreBatchFileSearchExample() throws FileNotFoundException, URISyntaxException {
+    void azureFunctionExample() {
         AgentsClient agentsClient
             = new AIProjectClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
             .subscriptionId(Configuration.getGlobalConfiguration().get("SUBSCRIPTIONID", "subscriptionid"))
@@ -48,37 +43,46 @@ public class SampleAgentVectorStoreBatchFileSearch {
             .credential(new DefaultAzureCredentialBuilder().build())
             .buildAgentsClient();
 
-        Path productFile = getFile("product_info_1.md");
+        String storageQueueUri = Configuration.getGlobalConfiguration().get("STORAGE_QUEUE_URI", "");
+        String azureFunctionName = Configuration.getGlobalConfiguration().get("AZURE_FUNCTION_NAME", "");
 
-        VectorStore vectorStore = agentsClient.createVectorStore(
-            null, "my_vector_store",
-            null, null, null, null);
+        FunctionDefinition fnDef = new FunctionDefinition(
+            azureFunctionName,
+            BinaryData.fromObject(
+                mapOf(
+                    "type", "object",
+                    "properties", mapOf(
+                        "location",
+                        mapOf("type", "string", "description", "The location to look up")
+                    ),
+                    "required", new String[]{"location"}
+                )
+            )
+        );
+        AzureFunctionDefinition azureFnDef = new AzureFunctionDefinition(
+            fnDef,
+            new AzureFunctionBinding(new AzureFunctionStorageQueue(storageQueueUri, "agent-input")),
+            new AzureFunctionBinding(new AzureFunctionStorageQueue(storageQueueUri, "agent-output"))
+        );
+        AzureFunctionToolDefinition azureFnTool = new AzureFunctionToolDefinition(azureFnDef);
 
-        OpenAIFile uploadedAgentFile = agentsClient.uploadFile(new UploadFileRequest(
-            new FileDetails(
-                BinaryData.fromFile(productFile))
-                .setFilename("sample_product_info.md"),
-            FilePurpose.AGENTS));
-
-        VectorStoreFileBatch vectorStoreFileBatch = agentsClient.createVectorStoreFileBatch(
-            vectorStore.getId(), Arrays.asList(uploadedAgentFile.getId()), null, null);
-
-        FileSearchToolResource fileSearchToolResource = new FileSearchToolResource()
-            .setVectorStoreIds(Arrays.asList(vectorStore.getId()));
-
-        String agentName = "vector_store_batch_file_search_example";
-        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+        String agentName = "azure_function_example";
+        RequestOptions requestOptions = new RequestOptions()
+            .setHeader(HttpHeaderName.fromString("x-ms-enable-preview"), "true");
+        CreateAgentRequest createAgentRequestObj = new CreateAgentRequest("gpt-4o-mini")
             .setName(agentName)
-            .setInstructions("You are a helpful agent")
-            .setTools(Arrays.asList(new FileSearchToolDefinition()))
-            .setToolResources(new ToolResources().setFileSearch(fileSearchToolResource));
-        Agent agent = agentsClient.createAgent(createAgentOptions);
+            .setInstructions("You are a helpful agent. Use the provided function any time "
+                + "you are asked with the weather of any location")
+            .setTools(Arrays.asList(azureFnTool));
+        BinaryData createAgentRequest = BinaryData.fromObject(createAgentRequestObj);
+        Agent agent = agentsClient.createAgentWithResponse(createAgentRequest, requestOptions)
+            .getValue().toObject(Agent.class);
 
         AgentThread thread = agentsClient.createThread();
         ThreadMessage createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
-            "What feature does Smart Eyewear offer?");
+            "What is the weather in Seattle, WA?");
 
         //run agent
         CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
@@ -121,12 +125,15 @@ public class SampleAgentVectorStoreBatchFileSearch {
         }
     }
 
-    private Path getFile(String fileName) throws FileNotFoundException, URISyntaxException {
-        URL resource = getClass().getClassLoader().getResource(fileName);
-        if (resource == null) {
-            throw new FileNotFoundException("File not found");
+    // Use "Map.of" if available
+    @SuppressWarnings("unchecked")
+    private static <T> Map<String, T> mapOf(Object... inputs) {
+        Map<String, T> map = new HashMap<>();
+        for (int i = 0; i < inputs.length; i += 2) {
+            String key = (String) inputs[i];
+            T value = (T) inputs[i + 1];
+            map.put(key, value);
         }
-        File file = new File(resource.toURI());
-        return file.toPath();
+        return map;
     }
 }

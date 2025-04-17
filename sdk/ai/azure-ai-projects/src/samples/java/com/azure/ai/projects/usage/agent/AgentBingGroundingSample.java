@@ -6,10 +6,9 @@ import com.azure.ai.projects.AIProjectClientBuilder;
 import com.azure.ai.projects.AgentsClient;
 import com.azure.ai.projects.models.Agent;
 import com.azure.ai.projects.models.AgentThread;
+import com.azure.ai.projects.models.BingGroundingToolDefinition;
 import com.azure.ai.projects.models.CreateAgentOptions;
 import com.azure.ai.projects.models.CreateRunOptions;
-import com.azure.ai.projects.models.FileSearchToolDefinition;
-import com.azure.ai.projects.models.FileSearchToolResource;
 import com.azure.ai.projects.models.MessageContent;
 import com.azure.ai.projects.models.MessageImageFileContent;
 import com.azure.ai.projects.models.MessageRole;
@@ -18,21 +17,17 @@ import com.azure.ai.projects.models.OpenAIPageableListOfThreadMessage;
 import com.azure.ai.projects.models.RunStatus;
 import com.azure.ai.projects.models.ThreadMessage;
 import com.azure.ai.projects.models.ThreadRun;
-import com.azure.ai.projects.models.ToolResources;
-import com.azure.ai.projects.models.VectorStore;
-import com.azure.ai.projects.models.VectorStoreConfiguration;
-import com.azure.ai.projects.models.VectorStoreDataSource;
-import com.azure.ai.projects.models.VectorStoreDataSourceAssetType;
+import com.azure.ai.projects.models.ToolConnection;
+import com.azure.ai.projects.models.ToolConnectionList;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.junit.jupiter.api.Test;
-
 import java.util.Arrays;
 
-public class SampleAgentVectorStoreBatchEnterpriseFileSearch {
+public class AgentBingGroundingSample {
 
     @Test
-    void vectorStoreBatchEnterpriseFileSearchExample() {
+    void bingGroundingExample() {
         AgentsClient agentsClient
             = new AIProjectClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
             .subscriptionId(Configuration.getGlobalConfiguration().get("SUBSCRIPTIONID", "subscriptionid"))
@@ -41,35 +36,23 @@ public class SampleAgentVectorStoreBatchEnterpriseFileSearch {
             .credential(new DefaultAzureCredentialBuilder().build())
             .buildAgentsClient();
 
-        String dataUri = Configuration.getGlobalConfiguration().get("DATA_URI", "");
-        VectorStoreDataSource vectorStoreDataSource = new VectorStoreDataSource(
-            dataUri, VectorStoreDataSourceAssetType.URI_ASSET);
+        String bingConnectionId = Configuration.getGlobalConfiguration().get("BING_CONNECTION_ID", "");
+        ToolConnectionList toolConnectionList = new ToolConnectionList()
+            .setConnectionList(Arrays.asList(new ToolConnection(bingConnectionId)));
+        BingGroundingToolDefinition bingGroundingTool = new BingGroundingToolDefinition(toolConnectionList);
 
-        VectorStore vs = agentsClient.createVectorStore(
-            null, "sample_vector_store",
-            new VectorStoreConfiguration(Arrays.asList(vectorStoreDataSource)),
-            null, null, null
-        );
-
-        agentsClient.createVectorStoreFileBatch(vs.getId(),
-            null, Arrays.asList(vectorStoreDataSource), null);
-
-        FileSearchToolResource fileSearchToolResource = new FileSearchToolResource()
-            .setVectorStoreIds(Arrays.asList(vs.getId()));
-
-        String agentName = "vector_store_batch_enterprise_file_search_example";
-        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+        String agentName = "bing_grounding_example";
+        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-35-turbo")
             .setName(agentName)
             .setInstructions("You are a helpful agent")
-            .setTools(Arrays.asList(new FileSearchToolDefinition()))
-            .setToolResources(new ToolResources().setFileSearch(fileSearchToolResource));
+            .setTools(Arrays.asList(bingGroundingTool));
         Agent agent = agentsClient.createAgent(createAgentOptions);
 
         AgentThread thread = agentsClient.createThread();
         ThreadMessage createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
-            "What feature does Smart Eyewear offer?");
+            "How does wikipedia explain Euler's Identity?");
 
         //run agent
         CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())

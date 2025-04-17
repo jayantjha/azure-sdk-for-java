@@ -43,7 +43,7 @@ public final class RunStepOpenApiToolCall extends RunStepToolCall {
     public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
         jsonWriter.writeStartObject();
         jsonWriter.writeStringField("id", getId());
-        jsonWriter.writeMapField("openapi", this.openApi, (writer, element) -> writer.writeString(element));
+        jsonWriter.writeMapField("openapi", this.openAPI, (writer, element) -> writer.writeString(element));
         jsonWriter.writeStringField("type", this.type);
         return jsonWriter.writeEndObject();
     }
@@ -76,9 +76,9 @@ public final class RunStepOpenApiToolCall extends RunStepToolCall {
                     reader.skipChildren();
                 }
             }
-            RunStepOpenApiToolCall deserializedRunStepOpenApiToolCall = new RunStepOpenApiToolCall(id, openAPI);
-            deserializedRunStepOpenApiToolCall.type = type;
-            return deserializedRunStepOpenApiToolCall;
+            RunStepOpenApiToolCall deserializedRunStepOpenAPIToolCall = new RunStepOpenApiToolCall(id, openAPI);
+            deserializedRunStepOpenAPIToolCall.type = type;
+            return deserializedRunStepOpenAPIToolCall;
         });
     }
 
@@ -86,18 +86,18 @@ public final class RunStepOpenApiToolCall extends RunStepToolCall {
      * Reserved for future use.
      */
     @Generated
-    private final Map<String, String> openApi;
+    private final Map<String, String> openAPI;
 
     /**
      * Creates an instance of RunStepOpenAPIToolCall class.
      *
      * @param id the id value to set.
-     * @param openApi the openAPI value to set.
+     * @param openAPI the openAPI value to set.
      */
     @Generated
-    private RunStepOpenApiToolCall(String id, Map<String, String> openApi) {
+    private RunStepOpenApiToolCall(String id, Map<String, String> openAPI) {
         super(id);
-        this.openApi = openApi;
+        this.openAPI = openAPI;
     }
 
     /**
@@ -106,7 +106,7 @@ public final class RunStepOpenApiToolCall extends RunStepToolCall {
      * @return the openAPI value.
      */
     @Generated
-    public Map<String, String> getOpenApi() {
-        return this.openApi;
+    public Map<String, String> getOpenAPI() {
+        return this.openAPI;
     }
 }

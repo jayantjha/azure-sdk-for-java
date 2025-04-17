@@ -2,11 +2,12 @@
 // Licensed under the MIT License.
 package com.azure.ai.projects.usage.agent;
 
+
 import com.azure.ai.projects.AIProjectClientBuilder;
 import com.azure.ai.projects.AgentsClient;
 import com.azure.ai.projects.models.Agent;
 import com.azure.ai.projects.models.AgentThread;
-import com.azure.ai.projects.models.BingGroundingToolDefinition;
+import com.azure.ai.projects.models.CodeInterpreterToolDefinition;
 import com.azure.ai.projects.models.CreateAgentOptions;
 import com.azure.ai.projects.models.CreateRunOptions;
 import com.azure.ai.projects.models.MessageContent;
@@ -16,19 +17,17 @@ import com.azure.ai.projects.models.MessageTextContent;
 import com.azure.ai.projects.models.OpenAIPageableListOfThreadMessage;
 import com.azure.ai.projects.models.RunStatus;
 import com.azure.ai.projects.models.ThreadMessage;
+import com.azure.ai.projects.models.ThreadMessageOptions;
 import com.azure.ai.projects.models.ThreadRun;
-import com.azure.ai.projects.models.ToolConnection;
-import com.azure.ai.projects.models.ToolConnectionList;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.junit.jupiter.api.Test;
-
 import java.util.Arrays;
 
-public class SampleAgentBingGrounding {
+public final class AgentAdditionalMessageSample {
 
     @Test
-    void bingGroundingExample() {
+    void additionalMessageExample() {
         AgentsClient agentsClient
             = new AIProjectClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
             .subscriptionId(Configuration.getGlobalConfiguration().get("SUBSCRIPTIONID", "subscriptionid"))
@@ -37,27 +36,26 @@ public class SampleAgentBingGrounding {
             .credential(new DefaultAzureCredentialBuilder().build())
             .buildAgentsClient();
 
-        String bingConnectionId = Configuration.getGlobalConfiguration().get("BING_CONNECTION_ID", "");
-        ToolConnectionList toolConnectionList = new ToolConnectionList()
-            .setConnectionList(Arrays.asList(new ToolConnection(bingConnectionId)));
-        BingGroundingToolDefinition bingGroundingTool = new BingGroundingToolDefinition(toolConnectionList);
-
-        String agentName = "bing_grounding_example";
-        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-35-turbo")
+        String agentName = "additional_message_example";
+        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
-            .setInstructions("You are a helpful agent")
-            .setTools(Arrays.asList(bingGroundingTool));
+            .setInstructions("You are a personal electronics tutor. Write and run code to answer questions.")
+            .setTools(Arrays.asList(new CodeInterpreterToolDefinition()));
         Agent agent = agentsClient.createAgent(createAgentOptions);
 
         AgentThread thread = agentsClient.createThread();
         ThreadMessage createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
-            "How does wikipedia explain Euler's Identity?");
+            "What is the impedance formula?");
 
         //run agent
         CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
-            .setAdditionalInstructions("");
+            .setAdditionalMessages(Arrays.asList(new ThreadMessageOptions(
+                MessageRole.AGENT, "E=mc^2"
+            ), new ThreadMessageOptions(
+                MessageRole.USER, "What is the impedance formula?"
+            )));
         ThreadRun threadRun = agentsClient.createRun(createRunOptions);
 
         try {

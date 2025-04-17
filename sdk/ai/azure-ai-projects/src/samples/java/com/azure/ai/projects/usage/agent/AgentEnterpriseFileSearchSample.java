@@ -26,10 +26,9 @@ import com.azure.ai.projects.models.VectorStoreDataSourceAssetType;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.junit.jupiter.api.Test;
-
 import java.util.Arrays;
 
-public class SampleAgentEnterpriseFileSearch {
+public class AgentEnterpriseFileSearchSample {
 
     @Test
     void enterpriseFileSearchExample() {
