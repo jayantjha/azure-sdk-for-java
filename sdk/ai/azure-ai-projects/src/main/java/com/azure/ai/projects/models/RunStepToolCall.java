@@ -115,7 +115,7 @@ public class RunStepToolCall implements JsonSerializable<RunStepToolCall> {
                 } else if ("function".equals(discriminatorValue)) {
                     return RunStepFunctionToolCall.fromJson(readerToUse.reset());
                 } else if ("openapi".equals(discriminatorValue)) {
-                    return RunStepOpenAPIToolCall.fromJson(readerToUse.reset());
+                    return RunStepOpenApiToolCall.fromJson(readerToUse.reset());
                 } else {
                     return fromJsonKnownDiscriminator(readerToUse.reset());
                 }

@@ -419,7 +419,7 @@
     "com.azure.ai.projects.models.RunStepMessageCreationDetails": "Azure.AI.Projects.Agents.RunStepMessageCreationDetails",
     "com.azure.ai.projects.models.RunStepMessageCreationReference": "Azure.AI.Projects.Agents.RunStepMessageCreationReference",
     "com.azure.ai.projects.models.RunStepMicrosoftFabricToolCall": "Azure.AI.Projects.Agents.RunStepMicrosoftFabricToolCall",
-    "com.azure.ai.projects.models.RunStepOpenAPIToolCall": "Azure.AI.Projects.Agents.RunStepOpenAPIToolCall",
+    "com.azure.ai.projects.models.RunStepOpenApiToolCall": "Azure.AI.Projects.Agents.RunStepOpenAPIToolCall",
     "com.azure.ai.projects.models.RunStepSharepointToolCall": "Azure.AI.Projects.Agents.RunStepSharepointToolCall",
     "com.azure.ai.projects.models.RunStepStatus": "Azure.AI.Projects.Agents.RunStepStatus",
     "com.azure.ai.projects.models.RunStepStreamEvent": "Azure.AI.Projects.Agents.RunStepStreamEvent",

@@ -16,7 +16,7 @@ import java.util.Map;
  * executed OpenAPI operations.
  */
 @Immutable
-public final class RunStepOpenAPIToolCall extends RunStepToolCall {
+public final class RunStepOpenApiToolCall extends RunStepToolCall {
 
     /*
      * The object type.
@@ -49,16 +49,16 @@ public final class RunStepOpenAPIToolCall extends RunStepToolCall {
     }
 
     /**
-     * Reads an instance of RunStepOpenAPIToolCall from the JsonReader.
+     * Reads an instance of RunStepOpenApiToolCall from the JsonReader.
      *
      * @param jsonReader The JsonReader being read.
-     * @return An instance of RunStepOpenAPIToolCall if the JsonReader was pointing to an instance of it, or null if it
+     * @return An instance of RunStepOpenApiToolCall if the JsonReader was pointing to an instance of it, or null if it
      * was pointing to JSON null.
      * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
-     * @throws IOException If an error occurs while reading the RunStepOpenAPIToolCall.
+     * @throws IOException If an error occurs while reading the RunStepOpenApiToolCall.
      */
     @Generated
-    public static RunStepOpenAPIToolCall fromJson(JsonReader jsonReader) throws IOException {
+    public static RunStepOpenApiToolCall fromJson(JsonReader jsonReader) throws IOException {
         return jsonReader.readObject(reader -> {
             String id = null;
             Map<String, String> openAPI = null;
@@ -76,9 +76,9 @@ public final class RunStepOpenAPIToolCall extends RunStepToolCall {
                     reader.skipChildren();
                 }
             }
-            RunStepOpenAPIToolCall deserializedRunStepOpenAPIToolCall = new RunStepOpenAPIToolCall(id, openAPI);
-            deserializedRunStepOpenAPIToolCall.type = type;
-            return deserializedRunStepOpenAPIToolCall;
+            RunStepOpenApiToolCall deserializedRunStepOpenApiToolCall = new RunStepOpenApiToolCall(id, openAPI);
+            deserializedRunStepOpenApiToolCall.type = type;
+            return deserializedRunStepOpenApiToolCall;
         });
     }
 
@@ -99,13 +99,13 @@ public final class RunStepOpenAPIToolCall extends RunStepToolCall {
     }
 
     /**
-     * Creates an instance of RunStepOpenAPIToolCall class.
+     * Creates an instance of RunStepOpenApiToolCall class.
      *
      * @param id the id value to set.
      * @param openAPI the openAPI value to set.
      */
     @Generated
-    private RunStepOpenAPIToolCall(String id, Map<String, String> openAPI) {
+    private RunStepOpenApiToolCall(String id, Map<String, String> openAPI) {
         super(id);
         this.openAPI = openAPI;
     }
