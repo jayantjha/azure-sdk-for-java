@@ -42,7 +42,7 @@ public final class EvaluationsClient {
     /**
      * Resource read operation template.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -91,11 +91,11 @@ public final class EvaluationsClient {
      *
      * @param id Identifier of the evaluation.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @return evaluation Definition along with {@link Response}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return evaluation Definition along with {@link Response}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -106,7 +106,7 @@ public final class EvaluationsClient {
     /**
      * Run the evaluation.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -152,9 +152,9 @@ public final class EvaluationsClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -203,11 +203,11 @@ public final class EvaluationsClient {
      *
      * @param evaluation Evaluation to run.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @return evaluation Definition along with {@link Response}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return evaluation Definition along with {@link Response}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -227,7 +227,7 @@ public final class EvaluationsClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -275,11 +275,11 @@ public final class EvaluationsClient {
      * </pre>
      *
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @return paged collection of Evaluation items as paginated response with {@link PagedIterable}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return paged collection of Evaluation items as paginated response with {@link PagedIterable}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.COLLECTION)
@@ -290,7 +290,7 @@ public final class EvaluationsClient {
     /**
      * Resource update operation template.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -336,9 +336,9 @@ public final class EvaluationsClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -388,11 +388,11 @@ public final class EvaluationsClient {
      * @param id Identifier of the evaluation.
      * @param resource The resource instance.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @return evaluation Definition along with {@link Response}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return evaluation Definition along with {@link Response}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -403,7 +403,7 @@ public final class EvaluationsClient {
     /**
      * Resource read operation template.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -450,11 +450,11 @@ public final class EvaluationsClient {
      *
      * @param name Name of the schedule, which also serves as the unique identifier for the evaluation.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @return evaluation Schedule Definition along with {@link Response}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return evaluation Schedule Definition along with {@link Response}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -465,7 +465,7 @@ public final class EvaluationsClient {
     /**
      * Create or replace operation template.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -509,9 +509,9 @@ public final class EvaluationsClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -559,16 +559,16 @@ public final class EvaluationsClient {
      * @param name Name of the schedule, which also serves as the unique identifier for the evaluation.
      * @param resource The resource instance.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @return evaluation Schedule Definition along with {@link Response}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return evaluation Schedule Definition along with {@link Response}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<BinaryData> createOrReplaceScheduleWithResponse(String name, BinaryData resource,
-        RequestOptions requestOptions) {
+                                                                    RequestOptions requestOptions) {
         return this.serviceClient.createOrReplaceScheduleWithResponse(name, resource, requestOptions);
     }
 
@@ -584,7 +584,7 @@ public final class EvaluationsClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -630,11 +630,11 @@ public final class EvaluationsClient {
      * </pre>
      *
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @return paged collection of EvaluationSchedule items as paginated response with {@link PagedIterable}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return paged collection of EvaluationSchedule items as paginated response with {@link PagedIterable}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.COLLECTION)
@@ -647,11 +647,11 @@ public final class EvaluationsClient {
      *
      * @param name Name of the evaluation schedule.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @return the {@link Response}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return the {@link Response}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -663,19 +663,18 @@ public final class EvaluationsClient {
      * Resource read operation template.
      *
      * @param id Identifier of the evaluation.
+     * @return evaluation Definition.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return evaluation Definition.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Evaluation get(String id) {
         // Generated convenience method for getWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         return getWithResponse(id, requestOptions).getValue().toObject(Evaluation.class);
     }
 
@@ -683,19 +682,18 @@ public final class EvaluationsClient {
      * Run the evaluation.
      *
      * @param evaluation Evaluation to run.
+     * @return evaluation Definition.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return evaluation Definition.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Evaluation create(Evaluation evaluation) {
         // Generated convenience method for createWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         return createWithResponse(BinaryData.fromObject(evaluation), requestOptions).getValue()
             .toObject(Evaluation.class);
     }
@@ -705,19 +703,18 @@ public final class EvaluationsClient {
      *
      * @param top The number of result items to return.
      * @param skip The number of result items to skip.
+     * @return paged collection of Evaluation items as paginated response with {@link PagedIterable}.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged collection of Evaluation items as paginated response with {@link PagedIterable}.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<Evaluation> list(Integer top, Integer skip) {
         // Generated convenience method for list
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         if (top != null) {
             requestOptions.addQueryParam("top", String.valueOf(top), false);
         }
@@ -730,18 +727,17 @@ public final class EvaluationsClient {
     /**
      * Resource list operation template.
      *
+     * @return paged collection of Evaluation items as paginated response with {@link PagedIterable}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged collection of Evaluation items as paginated response with {@link PagedIterable}.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<Evaluation> list() {
         // Generated convenience method for list
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         return serviceClient.list(requestOptions).mapPage(bodyItemValue -> bodyItemValue.toObject(Evaluation.class));
     }
 
@@ -750,19 +746,18 @@ public final class EvaluationsClient {
      *
      * @param id Identifier of the evaluation.
      * @param resource The resource instance.
+     * @return evaluation Definition.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return evaluation Definition.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Evaluation update(String id, Evaluation resource) {
         // Generated convenience method for updateWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         JsonMergePatchHelper.getEvaluationAccessor().prepareModelForJsonMergePatch(resource, true);
         BinaryData resourceInBinaryData = BinaryData.fromObject(resource);
         // BinaryData.fromObject() will not fire serialization, use getLength() to fire serialization.
@@ -775,19 +770,18 @@ public final class EvaluationsClient {
      * Resource read operation template.
      *
      * @param name Name of the schedule, which also serves as the unique identifier for the evaluation.
+     * @return evaluation Schedule Definition.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return evaluation Schedule Definition.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public EvaluationSchedule getSchedule(String name) {
         // Generated convenience method for getScheduleWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         return getScheduleWithResponse(name, requestOptions).getValue().toObject(EvaluationSchedule.class);
     }
 
@@ -796,19 +790,18 @@ public final class EvaluationsClient {
      *
      * @param name Name of the schedule, which also serves as the unique identifier for the evaluation.
      * @param resource The resource instance.
+     * @return evaluation Schedule Definition.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return evaluation Schedule Definition.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public EvaluationSchedule createOrReplaceSchedule(String name, EvaluationSchedule resource) {
         // Generated convenience method for createOrReplaceScheduleWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         return createOrReplaceScheduleWithResponse(name, BinaryData.fromObject(resource), requestOptions).getValue()
             .toObject(EvaluationSchedule.class);
     }
@@ -818,19 +811,18 @@ public final class EvaluationsClient {
      *
      * @param top The number of result items to return.
      * @param skip The number of result items to skip.
+     * @return paged collection of EvaluationSchedule items as paginated response with {@link PagedIterable}.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged collection of EvaluationSchedule items as paginated response with {@link PagedIterable}.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<EvaluationSchedule> listSchedule(Integer top, Integer skip) {
         // Generated convenience method for listSchedule
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         if (top != null) {
             requestOptions.addQueryParam("top", String.valueOf(top), false);
         }
@@ -844,18 +836,17 @@ public final class EvaluationsClient {
     /**
      * Resource list operation template.
      *
+     * @return paged collection of EvaluationSchedule items as paginated response with {@link PagedIterable}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged collection of EvaluationSchedule items as paginated response with {@link PagedIterable}.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<EvaluationSchedule> listSchedule() {
         // Generated convenience method for listSchedule
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         return serviceClient.listSchedule(requestOptions)
             .mapPage(bodyItemValue -> bodyItemValue.toObject(EvaluationSchedule.class));
     }
@@ -871,11 +862,25 @@ public final class EvaluationsClient {
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public void disableSchedule(String name) {
         // Generated convenience method for disableScheduleWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         disableScheduleWithResponse(name, requestOptions).getValue();
+    }
+
+    /**
+     * Creates the request options.
+     *
+     * @return requestOptions
+     */
+    RequestOptions createRequestOptions() {
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.addRequestCallback(request -> {
+            String url = String.valueOf(request.getUrl());
+            String newUrl = url.replace("/agents/v1.0", "/raisvc/v1.0");
+            request.setUrl(newUrl);
+        });
+        return requestOptions;
     }
 }

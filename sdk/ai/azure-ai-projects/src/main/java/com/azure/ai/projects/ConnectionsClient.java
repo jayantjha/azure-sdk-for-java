@@ -43,7 +43,7 @@ public final class ConnectionsClient {
     /**
      * Gets the properties of the specified machine learning workspace.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -57,11 +57,11 @@ public final class ConnectionsClient {
      * </pre>
      *
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @return the properties of the specified machine learning workspace along with {@link Response}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return the properties of the specified machine learning workspace along with {@link Response}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -84,7 +84,7 @@ public final class ConnectionsClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -104,11 +104,11 @@ public final class ConnectionsClient {
      * </pre>
      *
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @return response from the list operation along with {@link Response}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return response from the list operation along with {@link Response}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -119,7 +119,7 @@ public final class ConnectionsClient {
     /**
      * Get the details of a single connection, without credentials.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -136,11 +136,11 @@ public final class ConnectionsClient {
      *
      * @param connectionName Connection Name.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @return the details of a single connection, without credentials along with {@link Response}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return the details of a single connection, without credentials along with {@link Response}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -151,7 +151,7 @@ public final class ConnectionsClient {
     /**
      * Get the details of a single connection, including credentials (if available).
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -159,9 +159,9 @@ public final class ConnectionsClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -179,16 +179,16 @@ public final class ConnectionsClient {
      * @param connectionName Connection Name.
      * @param getConnectionWithSecretsRequest The getConnectionWithSecretsRequest parameter.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @return the details of a single connection, including credentials (if available) along with {@link Response}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return the details of a single connection, including credentials (if available) along with {@link Response}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     Response<BinaryData> getConnectionWithSecretsWithResponse(String connectionName,
-        BinaryData getConnectionWithSecretsRequest, RequestOptions requestOptions) {
+                                                              BinaryData getConnectionWithSecretsRequest, RequestOptions requestOptions) {
         return this.serviceClient.getConnectionWithSecretsWithResponse(connectionName, getConnectionWithSecretsRequest,
             requestOptions);
     }
@@ -196,18 +196,17 @@ public final class ConnectionsClient {
     /**
      * Gets the properties of the specified machine learning workspace.
      *
+     * @return the properties of the specified machine learning workspace.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the properties of the specified machine learning workspace.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     GetWorkspaceResponse getWorkspace() {
         // Generated convenience method for getWorkspaceWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         return getWorkspaceWithResponse(requestOptions).getValue().toObject(GetWorkspaceResponse.class);
     }
 
@@ -217,19 +216,18 @@ public final class ConnectionsClient {
      * @param category Category of the workspace connection.
      * @param includeAll Indicates whether to list datastores. Service default: do not list datastores.
      * @param target Target of the workspace connection.
+     * @return response from the list operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response from the list operation.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     ListConnectionsResponse listConnections(ConnectionType category, Boolean includeAll, String target) {
         // Generated convenience method for listConnectionsWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         if (category != null) {
             requestOptions.addQueryParam("category", category.toString(), false);
         }
@@ -245,18 +243,17 @@ public final class ConnectionsClient {
     /**
      * List the details of all the connections (not including their credentials).
      *
+     * @return response from the list operation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response from the list operation.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     ListConnectionsResponse listConnections() {
         // Generated convenience method for listConnectionsWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         return listConnectionsWithResponse(requestOptions).getValue().toObject(ListConnectionsResponse.class);
     }
 
@@ -264,19 +261,18 @@ public final class ConnectionsClient {
      * Get the details of a single connection, without credentials.
      *
      * @param connectionName Connection Name.
+     * @return the details of a single connection, without credentials.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the details of a single connection, without credentials.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     GetConnectionResponse getConnection(String connectionName) {
         // Generated convenience method for getConnectionWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         return getConnectionWithResponse(connectionName, requestOptions).getValue()
             .toObject(GetConnectionResponse.class);
     }
@@ -286,24 +282,39 @@ public final class ConnectionsClient {
      *
      * @param connectionName Connection Name.
      * @param ignored The body is ignored. TODO: Can we remove this?.
+     * @return the details of a single connection, including credentials (if available).
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the details of a single connection, including credentials (if available).
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     GetConnectionResponse getConnectionWithSecrets(String connectionName, String ignored) {
         // Generated convenience method for getConnectionWithSecretsWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         GetConnectionWithSecretsRequest getConnectionWithSecretsRequestObj
             = new GetConnectionWithSecretsRequest(ignored);
         BinaryData getConnectionWithSecretsRequest = BinaryData.fromObject(getConnectionWithSecretsRequestObj);
         return getConnectionWithSecretsWithResponse(connectionName, getConnectionWithSecretsRequest, requestOptions)
             .getValue()
             .toObject(GetConnectionResponse.class);
+    }
+
+    /**
+     * Creates the request options.
+     *
+     * @return requestOptions
+     */
+    RequestOptions createRequestOptions() {
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.addRequestCallback(request -> {
+            String url = String.valueOf(request.getUrl());
+            // TODO: don't replace, rather set the base url
+            String newUrl = url.replace("/agents/v1.0", "");
+            request.setUrl(newUrl);
+        });
+        return requestOptions;
     }
 }

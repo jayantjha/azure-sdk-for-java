@@ -8,10 +8,10 @@ import com.azure.ai.projects.implementation.models.GetConnectionResponse;
 import com.azure.ai.projects.implementation.models.GetWorkspaceResponse;
 import com.azure.ai.projects.implementation.models.ListConnectionsResponse;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ConnectionsClientTest extends AIProjectClientTestBase {
 
@@ -21,23 +21,22 @@ class ConnectionsClientTest extends AIProjectClientTestBase {
     }
 
     @Test
-    @Disabled
     void getWorkspace() {
         GetWorkspaceResponse workspace = connectionsClient.getWorkspace();
         assertNotNull(workspace);
+        assertNotNull(workspace.getId());
     }
 
     @Test
-    @Disabled
     void listConnections() {
         ListConnectionsResponse connections = connectionsClient.listConnections();
-        assertNotNull(connections);
+        assertTrue(connections.getValue().size() > 0);
     }
 
     @Test
-    @Disabled
     void getConnection() {
         GetConnectionResponse connection = connectionsClient.getConnection("jayant-hub-2aqa-connection-AISearch");
         assertNotNull(connection);
+        assertNotNull(connection.getId());
     }
 }

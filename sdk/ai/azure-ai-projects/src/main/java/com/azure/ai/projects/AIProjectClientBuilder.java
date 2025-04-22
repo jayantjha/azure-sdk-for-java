@@ -51,7 +51,7 @@ import java.util.Objects;
         AgentsAsyncClient.class,
         ConnectionsAsyncClient.class,
         TelemetryAsyncClient.class,
-        EvaluationsAsyncClient.class })
+        EvaluationsAsyncClient.class})
 public final class AIProjectClientBuilder
     implements HttpTrait<AIProjectClientBuilder>, ConfigurationTrait<AIProjectClientBuilder>,
     TokenCredentialTrait<AIProjectClientBuilder>, EndpointTrait<AIProjectClientBuilder> {
@@ -63,13 +63,15 @@ public final class AIProjectClientBuilder
     private static final String SDK_VERSION = "version";
 
     @Generated
-    private static final String[] DEFAULT_SCOPES = new String[] { "https://management.azure.com/.default" };
+    private static final String[] DEFAULT_SCOPES = new String[]{"https://management.azure.com/.default"};
 
     @Generated
     private static final Map<String, String> PROPERTIES = CoreUtils.getProperties("azure-ai-projects.properties");
 
     @Generated
     private final List<HttpPipelinePolicy> pipelinePolicies;
+
+    private static final String MANAGEMENT_ENDPOINT = "https://management.azure.com";
 
     /**
      * Create an instance of the AIProjectClientBuilder.
@@ -324,7 +326,7 @@ public final class AIProjectClientBuilder
             = (serviceVersion != null) ? serviceVersion : ProjectsServiceVersion.getLatest();
         AIProjectClientImpl client
             = new AIProjectClientImpl(localPipeline, JacksonAdapter.createDefaultSerializerAdapter(), this.endpoint,
-                this.subscriptionId, this.resourceGroupName, this.projectName, localServiceVersion);
+            this.subscriptionId, this.resourceGroupName, this.projectName, localServiceVersion);
         return client;
     }
 
@@ -431,8 +433,8 @@ public final class AIProjectClientBuilder
      *
      * @return an instance of ConnectionsClient.
      */
-    @Generated
     public ConnectionsClient buildConnectionsClient() {
+        this.endpoint(MANAGEMENT_ENDPOINT);
         return new ConnectionsClient(buildInnerClient().getConnections());
     }
 
@@ -441,8 +443,8 @@ public final class AIProjectClientBuilder
      *
      * @return an instance of TelemetryClient.
      */
-    @Generated
     public TelemetryClient buildTelemetryClient() {
+        this.endpoint(MANAGEMENT_ENDPOINT);
         return new TelemetryClient(buildInnerClient().getTelemetries());
     }
 

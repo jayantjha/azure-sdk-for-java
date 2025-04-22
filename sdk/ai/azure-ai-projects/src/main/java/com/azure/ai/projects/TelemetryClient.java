@@ -39,7 +39,7 @@ public final class TelemetryClient {
     /**
      * Gets the properties of the specified Application Insights resource.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -55,11 +55,11 @@ public final class TelemetryClient {
      * @param appInsightsResourceUrl The AppInsights Azure resource Url. It should have the format:
      * '/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/microsoft.insights/components/{resourcename}'.
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @return the properties of the specified Application Insights resource along with {@link Response}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return the properties of the specified Application Insights resource along with {@link Response}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -72,20 +72,35 @@ public final class TelemetryClient {
      *
      * @param appInsightsResourceUrl The AppInsights Azure resource Url. It should have the format:
      * '/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/microsoft.insights/components/{resourcename}'.
+     * @return the properties of the specified Application Insights resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the properties of the specified Application Insights resource.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     GetAppInsightsResponse getAppInsights(String appInsightsResourceUrl) {
         // Generated convenience method for getAppInsightsWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         return getAppInsightsWithResponse(appInsightsResourceUrl, requestOptions).getValue()
             .toObject(GetAppInsightsResponse.class);
+    }
+
+    /**
+     * Creates the request options.
+     *
+     * @return requestOptions
+     */
+    RequestOptions createRequestOptions() {
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.addRequestCallback(request -> {
+            String url = String.valueOf(request.getUrl());
+            // TODO: don't replace, rather set the base url
+            String newUrl = url.replace("/agents/v1.0", "");
+            request.setUrl(newUrl);
+        });
+        return requestOptions;
     }
 }
