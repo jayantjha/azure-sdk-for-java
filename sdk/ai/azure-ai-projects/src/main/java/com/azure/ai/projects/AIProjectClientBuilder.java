@@ -444,7 +444,6 @@ public final class AIProjectClientBuilder
      * @return an instance of TelemetryClient.
      */
     public TelemetryClient buildTelemetryClient() {
-        this.endpoint(MANAGEMENT_ENDPOINT);
         return new TelemetryClient(buildInnerClient().getTelemetries());
     }
 

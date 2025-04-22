@@ -83,7 +83,7 @@ public final class TelemetryClient {
     @ServiceMethod(returns = ReturnType.SINGLE)
     GetAppInsightsResponse getAppInsights(String appInsightsResourceUrl) {
         // Generated convenience method for getAppInsightsWithResponse
-        RequestOptions requestOptions = createRequestOptions();
+        RequestOptions requestOptions = createRequestOptions(appInsightsResourceUrl);
         return getAppInsightsWithResponse(appInsightsResourceUrl, requestOptions).getValue()
             .toObject(GetAppInsightsResponse.class);
     }
@@ -93,12 +93,12 @@ public final class TelemetryClient {
      *
      * @return requestOptions
      */
-    RequestOptions createRequestOptions() {
+    RequestOptions createRequestOptions(String appInsightsResourceUrl) {
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.addRequestCallback(request -> {
-            String url = String.valueOf(request.getUrl());
-            // TODO: don't replace, rather set the base url
-            String newUrl = url.replace("/agents/v1.0", "");
+            String newUrl = "https://management.azure.com/"
+                + appInsightsResourceUrl
+                + "?api-version=2020-02-02";
             request.setUrl(newUrl);
         });
         return requestOptions;

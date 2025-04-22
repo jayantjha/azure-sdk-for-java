@@ -4,39 +4,32 @@ package com.azure.ai.projects.usage.agent;
 
 import com.azure.ai.projects.AIProjectClientBuilder;
 import com.azure.ai.projects.AgentsClient;
+import com.azure.ai.projects.implementation.models.CreateAgentRequest;
 import com.azure.ai.projects.models.Agent;
 import com.azure.ai.projects.models.AgentThread;
-import com.azure.ai.projects.models.CreateAgentOptions;
 import com.azure.ai.projects.models.CreateRunOptions;
 import com.azure.ai.projects.models.MessageContent;
 import com.azure.ai.projects.models.MessageImageFileContent;
 import com.azure.ai.projects.models.MessageRole;
 import com.azure.ai.projects.models.MessageTextContent;
+import com.azure.ai.projects.models.MicrosoftFabricToolDefinition;
 import com.azure.ai.projects.models.OpenAIPageableListOfThreadMessage;
-import com.azure.ai.projects.models.OpenApiAnonymousAuthDetails;
-import com.azure.ai.projects.models.OpenApiFunctionDefinition;
-import com.azure.ai.projects.models.OpenApiToolDefinition;
 import com.azure.ai.projects.models.RunStatus;
 import com.azure.ai.projects.models.ThreadMessage;
 import com.azure.ai.projects.models.ThreadRun;
+import com.azure.ai.projects.models.ToolConnection;
+import com.azure.ai.projects.models.ToolConnectionList;
+import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
-import com.azure.json.JsonProviders;
-import com.azure.json.JsonReader;
 import org.junit.jupiter.api.Test;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 
-public class AgentOpenApiSample {
+public final class AgentSharepointToolSample {
 
-    AgentsClient getAgentsClient() {
+    @Test
+    void sharepointToolExample() {
         AgentsClient agentsClient
             = new AIProjectClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
             .subscriptionId(Configuration.getGlobalConfiguration().get("SUBSCRIPTIONID", "subscriptionid"))
@@ -44,35 +37,26 @@ public class AgentOpenApiSample {
             .projectName(Configuration.getGlobalConfiguration().get("PROJECTNAME", "projectname"))
             .credential(new DefaultAzureCredentialBuilder().build())
             .buildAgentsClient();
-        return agentsClient;
-    }
 
-    @Test
-    void openApiExample() throws IOException, URISyntaxException {
-        AgentsClient agentsClient = getAgentsClient();
+        String sharepointConnectionId = Configuration.getGlobalConfiguration().get("SHAREPOINT_CONNECTION_ID", "");
+        ToolConnectionList toolConnectionList = new ToolConnectionList()
+            .setConnectionList(Arrays.asList(new ToolConnection(sharepointConnectionId)));
+        MicrosoftFabricToolDefinition fabricToolDefinition = new MicrosoftFabricToolDefinition(toolConnectionList);
 
-        Path filePath = getFile("weather_openapi.json");
-        JsonReader reader = JsonProviders.createReader(Files.readAllBytes(filePath));
-
-        OpenApiAnonymousAuthDetails oaiAuth = new OpenApiAnonymousAuthDetails();
-        OpenApiToolDefinition openApiTool = new OpenApiToolDefinition(new OpenApiFunctionDefinition(
-            "openapitool",
-            reader.getNullable(nonNullReader -> BinaryData.fromObject(nonNullReader.readUntyped())),
-            oaiAuth
-        ));
-
-        String agentName = "openApi_example";
-        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+        String agentName = "sharepoint_tool_example";
+        RequestOptions requestOptions = new RequestOptions().setHeader("x-ms-enable-preview", "true");
+        CreateAgentRequest createAgentRequest = new CreateAgentRequest("gpt-4o")
             .setName(agentName)
             .setInstructions("You are a helpful agent")
-            .setTools(Arrays.asList(openApiTool));
-        Agent agent = agentsClient.createAgent(createAgentOptions);
+            .setTools(Arrays.asList(fabricToolDefinition));
+        Agent agent = agentsClient.createAgentWithResponse(BinaryData.fromObject(createAgentRequest), requestOptions)
+            .getValue().toObject(Agent.class);
 
         AgentThread thread = agentsClient.createThread();
         ThreadMessage createdMessage = agentsClient.createMessage(
             thread.getId(),
             MessageRole.USER,
-            "What's the weather in seattle?");
+            "Give me any row from DailyActivity table from connected fabric usage metrics source");
 
         //run agent
         CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
@@ -113,14 +97,5 @@ public class AgentOpenApiSample {
             agentsClient.deleteThread(thread.getId());
             agentsClient.deleteAgent(agent.getId());
         }
-    }
-
-    private Path getFile(String fileName) throws FileNotFoundException, URISyntaxException {
-        URL resource = getClass().getClassLoader().getResource(fileName);
-        if (resource == null) {
-            throw new FileNotFoundException("File not found");
-        }
-        File file = new File(resource.toURI());
-        return file.toPath();
     }
 }

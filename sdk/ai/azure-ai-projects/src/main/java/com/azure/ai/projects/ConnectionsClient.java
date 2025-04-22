@@ -204,7 +204,7 @@ public final class ConnectionsClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    GetWorkspaceResponse getWorkspace() {
+    public GetWorkspaceResponse getWorkspace() {
         // Generated convenience method for getWorkspaceWithResponse
         RequestOptions requestOptions = createRequestOptions();
         return getWorkspaceWithResponse(requestOptions).getValue().toObject(GetWorkspaceResponse.class);
@@ -225,7 +225,7 @@ public final class ConnectionsClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    ListConnectionsResponse listConnections(ConnectionType category, Boolean includeAll, String target) {
+    public ListConnectionsResponse listConnections(ConnectionType category, Boolean includeAll, String target) {
         // Generated convenience method for listConnectionsWithResponse
         RequestOptions requestOptions = createRequestOptions();
         if (category != null) {
@@ -251,7 +251,7 @@ public final class ConnectionsClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    ListConnectionsResponse listConnections() {
+    public ListConnectionsResponse listConnections() {
         // Generated convenience method for listConnectionsWithResponse
         RequestOptions requestOptions = createRequestOptions();
         return listConnectionsWithResponse(requestOptions).getValue().toObject(ListConnectionsResponse.class);
@@ -270,7 +270,7 @@ public final class ConnectionsClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    GetConnectionResponse getConnection(String connectionName) {
+    public GetConnectionResponse getConnection(String connectionName) {
         // Generated convenience method for getConnectionWithResponse
         RequestOptions requestOptions = createRequestOptions();
         return getConnectionWithResponse(connectionName, requestOptions).getValue()
@@ -291,7 +291,7 @@ public final class ConnectionsClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    GetConnectionResponse getConnectionWithSecrets(String connectionName, String ignored) {
+    public GetConnectionResponse getConnectionWithSecrets(String connectionName, String ignored) {
         // Generated convenience method for getConnectionWithSecretsWithResponse
         RequestOptions requestOptions = createRequestOptions();
         GetConnectionWithSecretsRequest getConnectionWithSecretsRequestObj
