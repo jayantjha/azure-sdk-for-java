@@ -177,8 +177,18 @@ public final class AgentServerSentEvents {
             return;
         }
 
-        String eventName = lines[0].substring(6).trim(); // removing "event:" prefix
-        String eventJson = lines[1].substring(5).trim(); // removing "data:" prefix
+        String[] eventParts = lines[0].split(":", 2);
+        String[] dataParts = lines[1].split(":", 2);
+
+        if (eventParts.length != 2 || !eventParts[0].trim().equals("event")) {
+            throw logger.logExceptionAsError(new IllegalArgumentException("Invalid event format: missing event name"));
+        }
+        String eventName = eventParts[1].trim();
+
+        if (dataParts.length != 2 || !dataParts[0].trim().equals("data")) {
+            throw logger.logExceptionAsError(new IllegalArgumentException("Invalid event format: missing event data"));
+        }
+        String eventJson = dataParts[1].trim();
 
         if (DONE.equals(AgentStreamEvent.fromString(eventName))) {
             return;

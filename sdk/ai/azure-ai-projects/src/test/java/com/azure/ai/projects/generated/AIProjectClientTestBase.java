@@ -48,6 +48,7 @@ public class AIProjectClientTestBase extends TestProxyTestBase {
             agentsClientbuilder.credential(new DefaultAzureCredentialBuilder().build());
         }
 
+
         agentsClient = agentsClientbuilder.buildAgentsClient();
 
         AIProjectClientBuilder connectionsClientbuilder

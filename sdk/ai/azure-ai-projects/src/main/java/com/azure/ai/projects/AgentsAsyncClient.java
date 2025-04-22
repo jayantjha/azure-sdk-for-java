@@ -4841,7 +4841,7 @@ public final class AgentsAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -4903,12 +4903,12 @@ public final class AgentsAsyncClient {
      * </pre>
      *
      * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
-     * @return a list of threads that were previously created along with {@link Response} on successful completion of
-     * {@link Mono}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @return a list of threads that were previously created along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4929,18 +4929,18 @@ public final class AgentsAsyncClient {
      * @param before A cursor for use in pagination. before is an object ID that defines your place in the list. For
      * instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can
      * include before=obj_foo in order to fetch the previous page of the list.
-     * @return a list of threads that were previously created on successful completion of {@link Mono}.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a list of threads that were previously created on successful completion of {@link Mono}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<OpenAIPageableListOfAgentThread> listThreads(Integer limit, ListSortOrder order, String after,
-                                                             String before) {
+        String before) {
         // Generated convenience method for listThreadsWithResponse
         RequestOptions requestOptions = new RequestOptions();
         if (limit != null) {
@@ -4962,12 +4962,12 @@ public final class AgentsAsyncClient {
     /**
      * Gets a list of threads that were previously created.
      *
-     * @return a list of threads that were previously created on successful completion of {@link Mono}.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a list of threads that were previously created on successful completion of {@link Mono}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -4994,18 +4994,18 @@ public final class AgentsAsyncClient {
      * @param metadata A set of up to 16 key/value pairs that can be attached to an object, used for storing additional
      * information about that object in a structured format. Keys may be up to 64 characters in length and values may be
      * up to 512 characters in length.
-     * @return a single, existing message within an agent thread on successful completion of {@link Mono}.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a single, existing message within an agent thread on successful completion of {@link Mono}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<ThreadMessage> createMessage(String threadId, MessageRole role, BinaryData content,
-                                             List<MessageAttachment> attachments, Map<String, String> metadata) {
+        List<MessageAttachment> attachments, Map<String, String> metadata) {
         // Generated convenience method for createMessageWithResponse
         RequestOptions requestOptions = new RequestOptions();
         CreateMessageRequest createMessageRequestObj
@@ -5027,13 +5027,13 @@ public final class AgentsAsyncClient {
      * @param content The content of the initial message. This may be a basic string (if you only
      * need text) or an array of typed content blocks (for example, text, image_file,
      * image_url, and so on).
-     * @return a single, existing message within an agent thread on successful completion of {@link Mono}.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a single, existing message within an agent thread on successful completion of {@link Mono}.
      */
     @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
@@ -5070,10 +5070,9 @@ public final class AgentsAsyncClient {
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<ThreadMessage> createMessage(String threadId, MessageRole role, String content,
-                                             List<MessageAttachment> attachments, Map<String, String> metadata) {
+        List<MessageAttachment> attachments, Map<String, String> metadata) {
         // Generated convenience method for createMessageWithResponse
         BinaryData binaryContent = BinaryData.fromString(content);
         return this.createMessage(threadId, role, binaryContent, attachments, metadata);

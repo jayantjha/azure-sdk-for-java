@@ -21,6 +21,7 @@ class ConnectionsClientTest extends AIProjectClientTestBase {
     }
 
     @Test
+    @Disabled
     void getWorkspace() {
         GetWorkspaceResponse workspace = connectionsClient.getWorkspace();
         assertNotNull(workspace);

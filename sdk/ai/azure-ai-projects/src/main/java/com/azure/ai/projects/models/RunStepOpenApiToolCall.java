@@ -43,7 +43,7 @@ public final class RunStepOpenApiToolCall extends RunStepToolCall {
     public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
         jsonWriter.writeStartObject();
         jsonWriter.writeStringField("id", getId());
-        jsonWriter.writeMapField("openapi", this.openAPI, (writer, element) -> writer.writeString(element));
+        jsonWriter.writeMapField("openapi", this.openApi, (writer, element) -> writer.writeString(element));
         jsonWriter.writeStringField("type", this.type);
         return jsonWriter.writeEndObject();
     }
@@ -61,7 +61,7 @@ public final class RunStepOpenApiToolCall extends RunStepToolCall {
     public static RunStepOpenApiToolCall fromJson(JsonReader jsonReader) throws IOException {
         return jsonReader.readObject(reader -> {
             String id = null;
-            Map<String, String> openAPI = null;
+            Map<String, String> openApi = null;
             String type = "openapi";
             while (reader.nextToken() != JsonToken.END_OBJECT) {
                 String fieldName = reader.getFieldName();
@@ -69,44 +69,44 @@ public final class RunStepOpenApiToolCall extends RunStepToolCall {
                 if ("id".equals(fieldName)) {
                     id = reader.getString();
                 } else if ("openapi".equals(fieldName)) {
-                    openAPI = reader.readMap(reader1 -> reader1.getString());
+                    openApi = reader.readMap(reader1 -> reader1.getString());
                 } else if ("type".equals(fieldName)) {
                     type = reader.getString();
                 } else {
                     reader.skipChildren();
                 }
             }
-            RunStepOpenApiToolCall deserializedRunStepOpenApiToolCall = new RunStepOpenApiToolCall(id, openAPI);
+            RunStepOpenApiToolCall deserializedRunStepOpenApiToolCall = new RunStepOpenApiToolCall(id, openApi);
             deserializedRunStepOpenApiToolCall.type = type;
             return deserializedRunStepOpenApiToolCall;
         });
-    }
-
-    /*
-     * Reserved for future use.
-     */
-    @Generated
-    private final Map<String, String> openAPI;
-
-    /**
-     * Get the openAPI property: Reserved for future use.
-     *
-     * @return the openAPI value.
-     */
-    @Generated
-    public Map<String, String> getOpenAPI() {
-        return this.openAPI;
     }
 
     /**
      * Creates an instance of RunStepOpenApiToolCall class.
      *
      * @param id the id value to set.
-     * @param openAPI the openAPI value to set.
+     * @param openApi the openApi value to set.
      */
     @Generated
-    private RunStepOpenApiToolCall(String id, Map<String, String> openAPI) {
+    private RunStepOpenApiToolCall(String id, Map<String, String> openApi) {
         super(id);
-        this.openAPI = openAPI;
+        this.openApi = openApi;
+    }
+
+    /*
+     * Reserved for future use.
+     */
+    @Generated
+    private final Map<String, String> openApi;
+
+    /**
+     * Get the openApi property: Reserved for future use.
+     *
+     * @return the openApi value.
+     */
+    @Generated
+    public Map<String, String> getOpenApi() {
+        return this.openApi;
     }
 }
