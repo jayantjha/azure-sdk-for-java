@@ -393,8 +393,8 @@ public final class AIProjectClientBuilder
      *
      * @return an instance of ConnectionsAsyncClient.
      */
-    @Generated
     public ConnectionsAsyncClient buildConnectionsAsyncClient() {
+        this.endpoint(MANAGEMENT_ENDPOINT);
         return new ConnectionsAsyncClient(buildInnerClient().getConnections());
     }
 

@@ -84,12 +84,27 @@ public final class TelemetryAsyncClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the properties of the specified Application Insights resource on successful completion of {@link Mono}.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<GetAppInsightsResponse> getAppInsights(String appInsightsResourceUrl) {
         // Generated convenience method for getAppInsightsWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions(appInsightsResourceUrl);
         return getAppInsightsWithResponse(appInsightsResourceUrl, requestOptions).flatMap(FluxUtil::toMono)
             .map(protocolMethodData -> protocolMethodData.toObject(GetAppInsightsResponse.class));
+    }
+
+    /**
+     * Creates the request options.
+     *
+     * @return requestOptions
+     */
+    RequestOptions createRequestOptions(String appInsightsResourceUrl) {
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.addRequestCallback(request -> {
+            String newUrl = "https://management.azure.com/"
+                + appInsightsResourceUrl
+                + "?api-version=2020-02-02";
+            request.setUrl(newUrl);
+        });
+        return requestOptions;
     }
 }

@@ -12,20 +12,6 @@ public class EvaluationsClientTest extends AIProjectClientTestBase {
         this.beforeTest();
     }
 
-//    @Test
-//    void createEvaluation() {
-//        Evaluation evaluation = new Evaluation()
-//            .setDisplayName("Remote Evaluation")
-//            .setDescription("Evaluation of dataset")
-//            .setData(new InputData())
-//            .setEvaluators(
-//                mapOf(
-//                    "f1_score", new EvaluatorConfiguration().setId()
-//
-//                )
-//            )
-//    }
-
     // Use "Map.of" if available
     @SuppressWarnings("unchecked")
     private static <T> Map<String, T> mapOf(Object... inputs) {

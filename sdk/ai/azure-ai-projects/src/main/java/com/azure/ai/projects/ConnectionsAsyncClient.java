@@ -208,11 +208,10 @@ public final class ConnectionsAsyncClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the properties of the specified machine learning workspace on successful completion of {@link Mono}.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<GetWorkspaceResponse> getWorkspace() {
         // Generated convenience method for getWorkspaceWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         return getWorkspaceWithResponse(requestOptions).flatMap(FluxUtil::toMono)
             .map(protocolMethodData -> protocolMethodData.toObject(GetWorkspaceResponse.class));
     }
@@ -231,11 +230,10 @@ public final class ConnectionsAsyncClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return response from the list operation on successful completion of {@link Mono}.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<ListConnectionsResponse> listConnections(ConnectionType category, Boolean includeAll, String target) {
         // Generated convenience method for listConnectionsWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         if (category != null) {
             requestOptions.addQueryParam("category", category.toString(), false);
         }
@@ -259,11 +257,10 @@ public final class ConnectionsAsyncClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return response from the list operation on successful completion of {@link Mono}.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<ListConnectionsResponse> listConnections() {
         // Generated convenience method for listConnectionsWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         return listConnectionsWithResponse(requestOptions).flatMap(FluxUtil::toMono)
             .map(protocolMethodData -> protocolMethodData.toObject(ListConnectionsResponse.class));
     }
@@ -280,11 +277,10 @@ public final class ConnectionsAsyncClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the details of a single connection, without credentials on successful completion of {@link Mono}.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<GetConnectionResponse> getConnection(String connectionName) {
         // Generated convenience method for getConnectionWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         return getConnectionWithResponse(connectionName, requestOptions).flatMap(FluxUtil::toMono)
             .map(protocolMethodData -> protocolMethodData.toObject(GetConnectionResponse.class));
     }
@@ -303,16 +299,30 @@ public final class ConnectionsAsyncClient {
      * @return the details of a single connection, including credentials (if available) on successful completion of
      * {@link Mono}.
      */
-    @Generated
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<GetConnectionResponse> getConnectionWithSecrets(String connectionName, String ignored) {
         // Generated convenience method for getConnectionWithSecretsWithResponse
-        RequestOptions requestOptions = new RequestOptions();
+        RequestOptions requestOptions = createRequestOptions();
         GetConnectionWithSecretsRequest getConnectionWithSecretsRequestObj
             = new GetConnectionWithSecretsRequest(ignored);
         BinaryData getConnectionWithSecretsRequest = BinaryData.fromObject(getConnectionWithSecretsRequestObj);
         return getConnectionWithSecretsWithResponse(connectionName, getConnectionWithSecretsRequest, requestOptions)
             .flatMap(FluxUtil::toMono)
             .map(protocolMethodData -> protocolMethodData.toObject(GetConnectionResponse.class));
+    }
+
+    /**
+     * Creates the request options.
+     *
+     * @return requestOptions
+     */
+    RequestOptions createRequestOptions() {
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.addRequestCallback(request -> {
+            String url = String.valueOf(request.getUrl());
+            String newUrl = url.replace("/agents/v1.0", "");
+            request.setUrl(newUrl);
+        });
+        return requestOptions;
     }
 }

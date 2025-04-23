@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-
 package com.azure.ai.projects;
 
 import com.azure.ai.projects.generated.AIProjectClientTestBase;
 import com.azure.ai.projects.implementation.models.GetAppInsightsResponse;
+import com.azure.ai.projects.implementation.models.GetWorkspaceResponse;
 import com.azure.core.util.Configuration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,5 +24,15 @@ public class TelemetryClientTest extends AIProjectClientTestBase {
         GetAppInsightsResponse appInsightsResponse = this.telemetryClient.getAppInsights(appInsightsUrl);
         assertNotNull(appInsightsResponse);
         assertNotNull(appInsightsResponse.getId());
+    }
+
+    @Test
+    void getAppInsightsConnectionString() {
+        GetWorkspaceResponse workspace = connectionsClient.getWorkspace();
+        String appInsightsUrl = workspace.getProperties().getApplicationInsights();
+        GetAppInsightsResponse appInsightsResponse = this.telemetryClient.getAppInsights(appInsightsUrl);
+        assertNotNull(appInsightsResponse);
+        assertNotNull(appInsightsResponse.getId());
+        assertNotNull(appInsightsResponse.getProperties().getConnectionString());
     }
 }

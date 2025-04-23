@@ -311,7 +311,6 @@ public final class ConnectionsClient {
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.addRequestCallback(request -> {
             String url = String.valueOf(request.getUrl());
-            // TODO: don't replace, rather set the base url
             String newUrl = url.replace("/agents/v1.0", "");
             request.setUrl(newUrl);
         });
