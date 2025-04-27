@@ -22,6 +22,9 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.BinaryData;
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobClientBuilder;
+import java.nio.file.Path;
 
 /**
  * Initializes a new instance of the synchronous AIProjectClient type.
@@ -578,5 +581,20 @@ public final class DatasetsClient {
         RequestOptions requestOptions = new RequestOptions();
         return getCredentialsWithResponse(name, version, BinaryData.fromObject(body), requestOptions).getValue()
             .toObject(AssetCredentialResponse.class);
+    }
+
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public DatasetVersion createDatasetWithFile(String name, String version, Path filePath) {
+        PendingUploadRequest body = new PendingUploadRequest();
+        PendingUploadResponse pendingUploadResponse = startPendingUploadVersion(name, version, body);
+        String blobUri = pendingUploadResponse.getBlobReferenceForConsumption().getBlobUri();
+
+        BlobClient blobClient = new BlobClientBuilder().endpoint(blobUri).buildClient();
+        blobClient.upload(BinaryData.fromFile(filePath));
+
+        DatasetVersion datasetVersion = this.createOrUpdateVersion(name, version,
+            new DatasetVersion(blobClient.getBlobUrl()));
+
+        return datasetVersion;
     }
 }
