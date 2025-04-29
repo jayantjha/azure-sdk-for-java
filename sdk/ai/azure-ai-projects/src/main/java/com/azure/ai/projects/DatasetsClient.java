@@ -588,13 +588,10 @@ public final class DatasetsClient {
         PendingUploadRequest body = new PendingUploadRequest();
         PendingUploadResponse pendingUploadResponse = startPendingUploadVersion(name, version, body);
         String blobUri = pendingUploadResponse.getBlobReferenceForConsumption().getBlobUri();
-
         BlobClient blobClient = new BlobClientBuilder().endpoint(blobUri).buildClient();
         blobClient.upload(BinaryData.fromFile(filePath));
-
-        DatasetVersion datasetVersion = this.createOrUpdateVersion(name, version,
-            new DatasetVersion(blobClient.getBlobUrl()));
-
+        DatasetVersion datasetVersion
+            = this.createOrUpdateVersion(name, version, new DatasetVersion(blobClient.getBlobUrl()));
         return datasetVersion;
     }
 }
