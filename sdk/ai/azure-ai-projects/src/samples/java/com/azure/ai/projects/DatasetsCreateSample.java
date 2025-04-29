@@ -27,9 +27,9 @@ public class DatasetsCreateSample {
         Path filePath = getPath("product_info.md");
         byte[] content = Files.readAllBytes(filePath);
 
-        DatasetVersion createdDatasetVersion = datasetsClient.createDatasetWithFile(datasetName, datasetVersionString, filePath);
+        //DatasetVersion createdDatasetVersion = datasetsClient.createDatasetWithFile(datasetName, datasetVersionString, filePath);
 
-        System.out.println("Created dataset version: " + createdDatasetVersion.getId());
+        //System.out.println("Created dataset version: " + createdDatasetVersion.getId());
 
         // END:com.azure.ai.projects.DatasetsCreateSample
     }

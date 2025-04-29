@@ -97,6 +97,20 @@ public final class AIProjectClientImpl {
     }
 
     /**
+     * The EvaluationsImpl object to access its operations.
+     */
+    private final EvaluationsImpl evaluations;
+
+    /**
+     * Gets the EvaluationsImpl object to access its operations.
+     * 
+     * @return the EvaluationsImpl object.
+     */
+    public EvaluationsImpl getEvaluations() {
+        return this.evaluations;
+    }
+
+    /**
      * The DatasetsImpl object to access its operations.
      */
     private final DatasetsImpl datasets;
@@ -136,6 +150,20 @@ public final class AIProjectClientImpl {
      */
     public DeploymentsImpl getDeployments() {
         return this.deployments;
+    }
+
+    /**
+     * The RedTeamsImpl object to access its operations.
+     */
+    private final RedTeamsImpl redTeams;
+
+    /**
+     * Gets the RedTeamsImpl object to access its operations.
+     * 
+     * @return the RedTeamsImpl object.
+     */
+    public RedTeamsImpl getRedTeams() {
+        return this.redTeams;
     }
 
     /**
@@ -190,8 +218,10 @@ public final class AIProjectClientImpl {
         this.endpoint = endpoint;
         this.serviceVersion = serviceVersion;
         this.connections = new ConnectionsImpl(this);
+        this.evaluations = new EvaluationsImpl(this);
         this.datasets = new DatasetsImpl(this);
         this.indexes = new IndexesImpl(this);
         this.deployments = new DeploymentsImpl(this);
+        this.redTeams = new RedTeamsImpl(this);
     }
 }

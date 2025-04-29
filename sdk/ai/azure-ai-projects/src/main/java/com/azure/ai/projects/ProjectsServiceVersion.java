@@ -18,12 +18,7 @@ public enum ProjectsServiceVersion implements ServiceVersion {
     /**
      * Enum value 2025-05-15-preview.
      */
-    V2025_05_15_PREVIEW("2025-05-15-preview"),
-
-    /**
-     * Enum value v1.
-     */
-    V1("v1");
+    V2025_05_15_PREVIEW("2025-05-15-preview");
 
     private final String version;
 
@@ -45,6 +40,6 @@ public enum ProjectsServiceVersion implements ServiceVersion {
      * @return The latest {@link ProjectsServiceVersion}.
      */
     public static ProjectsServiceVersion getLatest() {
-        return V1;
+        return V2025_05_15_PREVIEW;
     }
 }

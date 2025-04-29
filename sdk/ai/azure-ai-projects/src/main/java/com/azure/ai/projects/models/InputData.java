@@ -13,30 +13,30 @@ import com.azure.json.JsonWriter;
 import java.io.IOException;
 
 /**
- * A base class for connection credentials.
+ * Abstract data class.
  */
 @Immutable
-public class BaseCredentials implements JsonSerializable<BaseCredentials> {
+public class InputData implements JsonSerializable<InputData> {
     /*
-     * The type of credential used by the connection
+     * Type of the data
      */
     @Generated
-    private CredentialType type = CredentialType.fromString("BaseCredentials");
+    private String type = "InputData";
 
     /**
-     * Creates an instance of BaseCredentials class.
+     * Creates an instance of InputData class.
      */
     @Generated
-    protected BaseCredentials() {
+    public InputData() {
     }
 
     /**
-     * Get the type property: The type of credential used by the connection.
+     * Get the type property: Type of the data.
      * 
      * @return the type value.
      */
     @Generated
-    public CredentialType getType() {
+    public String getType() {
         return this.type;
     }
 
@@ -47,20 +47,20 @@ public class BaseCredentials implements JsonSerializable<BaseCredentials> {
     @Override
     public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
         jsonWriter.writeStartObject();
-        jsonWriter.writeStringField("type", this.type == null ? null : this.type.toString());
+        jsonWriter.writeStringField("type", this.type);
         return jsonWriter.writeEndObject();
     }
 
     /**
-     * Reads an instance of BaseCredentials from the JsonReader.
+     * Reads an instance of InputData from the JsonReader.
      * 
      * @param jsonReader The JsonReader being read.
-     * @return An instance of BaseCredentials if the JsonReader was pointing to an instance of it, or null if it was
-     * pointing to JSON null.
-     * @throws IOException If an error occurs while reading the BaseCredentials.
+     * @return An instance of InputData if the JsonReader was pointing to an instance of it, or null if it was pointing
+     * to JSON null.
+     * @throws IOException If an error occurs while reading the InputData.
      */
     @Generated
-    public static BaseCredentials fromJson(JsonReader jsonReader) throws IOException {
+    public static InputData fromJson(JsonReader jsonReader) throws IOException {
         return jsonReader.readObject(reader -> {
             String discriminatorValue = null;
             try (JsonReader readerToUse = reader.bufferObject()) {
@@ -76,16 +76,8 @@ public class BaseCredentials implements JsonSerializable<BaseCredentials> {
                     }
                 }
                 // Use the discriminator value to determine which subtype should be deserialized.
-                if ("ApiKey".equals(discriminatorValue)) {
-                    return ApiKeyCredentials.fromJson(readerToUse.reset());
-                } else if ("AAD".equals(discriminatorValue)) {
-                    return EntraIDCredentials.fromJson(readerToUse.reset());
-                } else if ("CustomKeys".equals(discriminatorValue)) {
-                    return CustomCredential.fromJson(readerToUse.reset());
-                } else if ("SAS".equals(discriminatorValue)) {
-                    return SasCredentials.fromJson(readerToUse.reset());
-                } else if ("None".equals(discriminatorValue)) {
-                    return NoAuthenticationCredentials.fromJson(readerToUse.reset());
+                if ("dataset".equals(discriminatorValue)) {
+                    return InputDataset.fromJson(readerToUse.reset());
                 } else {
                     return fromJsonKnownDiscriminator(readerToUse.reset());
                 }
@@ -94,21 +86,21 @@ public class BaseCredentials implements JsonSerializable<BaseCredentials> {
     }
 
     @Generated
-    static BaseCredentials fromJsonKnownDiscriminator(JsonReader jsonReader) throws IOException {
+    static InputData fromJsonKnownDiscriminator(JsonReader jsonReader) throws IOException {
         return jsonReader.readObject(reader -> {
-            BaseCredentials deserializedBaseCredentials = new BaseCredentials();
+            InputData deserializedInputData = new InputData();
             while (reader.nextToken() != JsonToken.END_OBJECT) {
                 String fieldName = reader.getFieldName();
                 reader.nextToken();
 
                 if ("type".equals(fieldName)) {
-                    deserializedBaseCredentials.type = CredentialType.fromString(reader.getString());
+                    deserializedInputData.type = reader.getString();
                 } else {
                     reader.skipChildren();
                 }
             }
 
-            return deserializedBaseCredentials;
+            return deserializedInputData;
         });
     }
 }

@@ -4,7 +4,6 @@
 
 module com.azure.ai.projects {
     requires transitive com.azure.core;
-    requires com.azure.storage.blob;
 
     exports com.azure.ai.projects;
     exports com.azure.ai.projects.models;

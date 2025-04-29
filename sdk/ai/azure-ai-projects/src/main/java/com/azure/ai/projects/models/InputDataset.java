@@ -10,51 +10,53 @@ import com.azure.json.JsonReader;
 import com.azure.json.JsonToken;
 import com.azure.json.JsonWriter;
 import java.io.IOException;
-import java.util.Map;
 
 /**
- * Custom credential defintion.
+ * Dataset as source for evaluation.
  */
 @Immutable
-public final class CustomCredential extends BaseCredentials {
+public final class InputDataset extends InputData {
     /*
-     * The type of credential used by the connection
+     * Type of the data
      */
     @Generated
-    private CredentialType type = CredentialType.CUSTOM;
+    private String type = "dataset";
 
     /*
-     * The credential type
+     * Evaluation input data
      */
     @Generated
-    private Map<String, String> keys;
+    private final String id;
 
     /**
-     * Creates an instance of CustomCredential class.
+     * Creates an instance of InputDataset class.
+     * 
+     * @param id the id value to set.
      */
     @Generated
-    private CustomCredential() {
+    public InputDataset(String id) {
+        this.id = id;
     }
 
     /**
-     * Get the type property: The type of credential used by the connection.
+     * Get the type property: Type of the data.
      * 
      * @return the type value.
      */
     @Generated
     @Override
-    public CredentialType getType() {
+    public String getType() {
         return this.type;
     }
 
     /**
-     * Get the keys property: The credential type.
+     * Get the id property: Evaluation input data.
      * 
-     * @return the keys value.
+     * @return the id value.
      */
     @Generated
-    public Map<String, String> getKeys() {
-        return this.keys;
+    public String getId() {
+        return this.id;
     }
 
     /**
@@ -64,38 +66,41 @@ public final class CustomCredential extends BaseCredentials {
     @Override
     public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
         jsonWriter.writeStartObject();
-        jsonWriter.writeStringField("type", this.type == null ? null : this.type.toString());
+        jsonWriter.writeStringField("id", this.id);
+        jsonWriter.writeStringField("type", this.type);
         return jsonWriter.writeEndObject();
     }
 
     /**
-     * Reads an instance of CustomCredential from the JsonReader.
+     * Reads an instance of InputDataset from the JsonReader.
      * 
      * @param jsonReader The JsonReader being read.
-     * @return An instance of CustomCredential if the JsonReader was pointing to an instance of it, or null if it was
+     * @return An instance of InputDataset if the JsonReader was pointing to an instance of it, or null if it was
      * pointing to JSON null.
      * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
-     * @throws IOException If an error occurs while reading the CustomCredential.
+     * @throws IOException If an error occurs while reading the InputDataset.
      */
     @Generated
-    public static CustomCredential fromJson(JsonReader jsonReader) throws IOException {
+    public static InputDataset fromJson(JsonReader jsonReader) throws IOException {
         return jsonReader.readObject(reader -> {
-            CustomCredential deserializedCustomCredential = new CustomCredential();
+            String id = null;
+            String type = "dataset";
             while (reader.nextToken() != JsonToken.END_OBJECT) {
                 String fieldName = reader.getFieldName();
                 reader.nextToken();
 
-                if ("keys".equals(fieldName)) {
-                    Map<String, String> keys = reader.readMap(reader1 -> reader1.getString());
-                    deserializedCustomCredential.keys = keys;
+                if ("id".equals(fieldName)) {
+                    id = reader.getString();
                 } else if ("type".equals(fieldName)) {
-                    deserializedCustomCredential.type = CredentialType.fromString(reader.getString());
+                    type = reader.getString();
                 } else {
                     reader.skipChildren();
                 }
             }
+            InputDataset deserializedInputDataset = new InputDataset(id);
+            deserializedInputDataset.type = type;
 
-            return deserializedCustomCredential;
+            return deserializedInputDataset;
         });
     }
 }
