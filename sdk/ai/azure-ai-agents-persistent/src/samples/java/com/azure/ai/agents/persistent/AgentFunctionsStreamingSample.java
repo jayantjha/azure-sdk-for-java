@@ -43,10 +43,12 @@ import java.util.function.Supplier;
 public final class AgentFunctionsStreamingSample {
 
     public static void main(String[] args) {
-        PersistentAgentsClient agentsClient
-            = new PersistentAgentsClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
-            .credential(new DefaultAzureCredentialBuilder().build())
-            .buildClient();
+        PersistentAgentsAdministrationClientBuilder clientBuilder = new PersistentAgentsAdministrationClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
+            .credential(new DefaultAzureCredentialBuilder().build());
+        PersistentAgentsAdministrationClient agentsClient = clientBuilder.buildClient();
+        ThreadsClient threadsClient = clientBuilder.buildThreadsClient();
+        MessagesClient messagesClient = clientBuilder.buildMessagesClient();
+        RunsClient runsClient = clientBuilder.buildRunsClient();
 
         // function tool definitions
         FunctionToolDefinition getUserFavoriteCityTool = new FunctionToolDefinition(
@@ -153,8 +155,8 @@ public final class AgentFunctionsStreamingSample {
             .setTools(Arrays.asList(getUserFavoriteCityTool, getCityNicknameTool, getCurrentWeatherAtLocationTool));
         PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
 
-        PersistentAgentThread thread = agentsClient.createThread();
-        ThreadMessage createdMessage = agentsClient.createMessage(
+        PersistentAgentThread thread = threadsClient.createThread();
+        ThreadMessage createdMessage = messagesClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "What's the weather like in my favorite city?");
@@ -164,7 +166,7 @@ public final class AgentFunctionsStreamingSample {
             .setAdditionalInstructions("");
 
         try {
-            Flux<StreamUpdate> streamingUpdates = agentsClient.createRunStreaming(createRunOptions);
+            Flux<StreamUpdate> streamingUpdates = runsClient.createRunStreaming(createRunOptions);
 
 
             streamingUpdates.doOnNext(
@@ -183,7 +185,7 @@ public final class AgentFunctionsStreamingSample {
                                 toolOutputs.add(getResolvedToolOutput.apply(toolCall));
                             }
 
-                            agentsClient.submitToolOutputsToRunStreaming(
+                            runsClient.submitToolOutputsToRunStreaming(
                                 streamRun.get().getThreadId(),
                                 streamRun.get().getId(),
                                 toolOutputs
@@ -210,7 +212,7 @@ public final class AgentFunctionsStreamingSample {
             throw ex;
         } finally {
             //cleanup
-            agentsClient.deleteThread(thread.getId());
+            threadsClient.deleteThread(thread.getId());
             agentsClient.deleteAgent(agent.getId());
         }
     }

@@ -26,10 +26,13 @@ import java.util.Arrays;
 public class AgentCodeInterpreterEnterpriseFileSearchSample {
 
     public static void main(String[] args) {
-        PersistentAgentsClient agentsClient
-            = new PersistentAgentsClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
-            .credential(new DefaultAzureCredentialBuilder().build())
-            .buildClient();
+
+        PersistentAgentsAdministrationClientBuilder clientBuilder = new PersistentAgentsAdministrationClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
+            .credential(new DefaultAzureCredentialBuilder().build());
+        PersistentAgentsAdministrationClient agentsClient = clientBuilder.buildClient();
+        ThreadsClient threadsClient = clientBuilder.buildThreadsClient();
+        MessagesClient messagesClient = clientBuilder.buildMessagesClient();
+        RunsClient runsClient = clientBuilder.buildRunsClient();
 
         String agentName = "code_interpreter_enterprise_file_search_example";
         CodeInterpreterToolDefinition ciTool = new CodeInterpreterToolDefinition();
@@ -47,9 +50,9 @@ public class AgentCodeInterpreterEnterpriseFileSearchSample {
             Arrays.asList(BinaryData.fromObject(ciTool))
         ).setDataSource(vectorStoreDataSource);
 
-        PersistentAgentThread thread = agentsClient.createThread();
+        PersistentAgentThread thread = threadsClient.createThread();
 
-        ThreadMessage createdMessage = agentsClient.createMessage(
+        ThreadMessage createdMessage = messagesClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "What does the attachment say?",
@@ -60,12 +63,12 @@ public class AgentCodeInterpreterEnterpriseFileSearchSample {
         //run agent
         CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
-        ThreadRun threadRun = agentsClient.createRun(createRunOptions);
+        ThreadRun threadRun = runsClient.createRun(createRunOptions);
 
         try {
             do {
                 Thread.sleep(500);
-                threadRun = agentsClient.getRun(thread.getId(), threadRun.getId());
+                threadRun = runsClient.getRun(thread.getId(), threadRun.getId());
             }
             while (
                 threadRun.getStatus() == RunStatus.QUEUED
@@ -76,7 +79,7 @@ public class AgentCodeInterpreterEnterpriseFileSearchSample {
                 System.out.println(threadRun.getLastError().getMessage());
             }
 
-            OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
+            OpenAIPageableListOfThreadMessage runMessages = messagesClient.listMessages(thread.getId());
             for (ThreadMessage message : runMessages.getData()) {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
                 for (MessageContent contentItem : message.getContent()) {
@@ -93,7 +96,7 @@ public class AgentCodeInterpreterEnterpriseFileSearchSample {
             throw new RuntimeException(e);
         } finally {
             //cleanup
-            agentsClient.deleteThread(thread.getId());
+            threadsClient.deleteThread(thread.getId());
             agentsClient.deleteAgent(agent.getId());
         }
     }

@@ -28,16 +28,20 @@ import java.util.Arrays;
 public class AgentEnterpriseFileSearchSample {
 
     public static void main(String[] args) {
-        PersistentAgentsClient agentsClient
-            = new PersistentAgentsClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
-            .credential(new DefaultAzureCredentialBuilder().build())
-            .buildClient();
+
+        PersistentAgentsAdministrationClientBuilder clientBuilder = new PersistentAgentsAdministrationClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
+            .credential(new DefaultAzureCredentialBuilder().build());
+        PersistentAgentsAdministrationClient agentsClient = clientBuilder.buildClient();
+        ThreadsClient threadsClient = clientBuilder.buildThreadsClient();
+        MessagesClient messagesClient = clientBuilder.buildMessagesClient();
+        RunsClient runsClient = clientBuilder.buildRunsClient();
+        VectorStoresClient vectorStoresClient = clientBuilder.buildVectorStoresClient();
 
         String dataUri = Configuration.getGlobalConfiguration().get("DATA_URI", "");
         VectorStoreDataSource vectorStoreDataSource = new VectorStoreDataSource(
             dataUri, VectorStoreDataSourceAssetType.URI_ASSET);
 
-        VectorStore vs = agentsClient.createVectorStore(
+        VectorStore vs = vectorStoresClient.createVectorStore(
             null, "sample_vector_store",
             new VectorStoreConfiguration(Arrays.asList(vectorStoreDataSource)),
             null, null, null
@@ -54,8 +58,8 @@ public class AgentEnterpriseFileSearchSample {
             .setToolResources(new ToolResources().setFileSearch(fileSearchToolResource));
         PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
 
-        PersistentAgentThread thread = agentsClient.createThread();
-        ThreadMessage createdMessage = agentsClient.createMessage(
+        PersistentAgentThread thread = threadsClient.createThread();
+        ThreadMessage createdMessage = messagesClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "What is data about?");
@@ -63,12 +67,12 @@ public class AgentEnterpriseFileSearchSample {
         //run agent
         CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
-        ThreadRun threadRun = agentsClient.createRun(createRunOptions);
+        ThreadRun threadRun = runsClient.createRun(createRunOptions);
 
         try {
             do {
                 Thread.sleep(500);
-                threadRun = agentsClient.getRun(thread.getId(), threadRun.getId());
+                threadRun = runsClient.getRun(thread.getId(), threadRun.getId());
             }
             while (
                 threadRun.getStatus() == RunStatus.QUEUED
@@ -79,7 +83,7 @@ public class AgentEnterpriseFileSearchSample {
                 System.out.println(threadRun.getLastError().getMessage());
             }
 
-            OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
+            OpenAIPageableListOfThreadMessage runMessages = messagesClient.listMessages(thread.getId());
             for (ThreadMessage message : runMessages.getData()) {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
                 for (MessageContent contentItem : message.getContent()) {
@@ -96,7 +100,7 @@ public class AgentEnterpriseFileSearchSample {
             throw new RuntimeException(e);
         } finally {
             //cleanup
-            agentsClient.deleteThread(thread.getId());
+            threadsClient.deleteThread(thread.getId());
             agentsClient.deleteAgent(agent.getId());
         }
     }

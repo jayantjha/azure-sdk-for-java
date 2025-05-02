@@ -7,13 +7,13 @@ import com.azure.ai.agents.persistent.implementation.models.UploadFileRequest;
 import com.azure.ai.agents.persistent.models.CodeInterpreterToolDefinition;
 import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.CreateRunOptions;
+import com.azure.ai.agents.persistent.models.FileInfo;
 import com.azure.ai.agents.persistent.models.FilePurpose;
 import com.azure.ai.agents.persistent.models.MessageAttachment;
 import com.azure.ai.agents.persistent.models.MessageContent;
 import com.azure.ai.agents.persistent.models.MessageImageFileContent;
 import com.azure.ai.agents.persistent.models.MessageRole;
 import com.azure.ai.agents.persistent.models.MessageTextContent;
-import com.azure.ai.agents.persistent.models.OpenAIFile;
 import com.azure.ai.agents.persistent.models.OpenAIPageableListOfThreadMessage;
 import com.azure.ai.agents.persistent.models.PersistentAgent;
 import com.azure.ai.agents.persistent.models.PersistentAgentThread;
@@ -33,10 +33,14 @@ import java.util.Arrays;
 public class AgentCodeInterpreterFileAttachmentSample {
 
     public static void main(String[] args) throws FileNotFoundException, URISyntaxException {
-        PersistentAgentsClient agentsClient
-            = new PersistentAgentsClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
-            .credential(new DefaultAzureCredentialBuilder().build())
-            .buildClient();
+
+        PersistentAgentsAdministrationClientBuilder clientBuilder = new PersistentAgentsAdministrationClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
+            .credential(new DefaultAzureCredentialBuilder().build());
+        PersistentAgentsAdministrationClient agentsClient = clientBuilder.buildClient();
+        ThreadsClient threadsClient = clientBuilder.buildThreadsClient();
+        MessagesClient messagesClient = clientBuilder.buildMessagesClient();
+        RunsClient runsClient = clientBuilder.buildRunsClient();
+        FilesClient filesClient = clientBuilder.buildFilesClient();
 
         Path htmlFile = getFile("sample.html");
 
@@ -45,14 +49,14 @@ public class AgentCodeInterpreterFileAttachmentSample {
         CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini").setName(agentName).setInstructions("You are a helpful agent").setTools(Arrays.asList(ciTool));
         PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
 
-        OpenAIFile uploadedFile = agentsClient.uploadFile(new UploadFileRequest(
+        FileInfo uploadedFile = filesClient.uploadFile(new UploadFileRequest(
             new FileDetails(BinaryData.fromFile(htmlFile))
             .setFilename("sample.html"), FilePurpose.AGENTS));
 
         MessageAttachment messageAttachment = new MessageAttachment(Arrays.asList(BinaryData.fromObject(ciTool))).setFileId(uploadedFile.getId());
 
-        PersistentAgentThread thread = agentsClient.createThread();
-        ThreadMessage createdMessage = agentsClient.createMessage(
+        PersistentAgentThread thread = threadsClient.createThread();
+        ThreadMessage createdMessage = messagesClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "What does the attachment say?",
@@ -61,19 +65,19 @@ public class AgentCodeInterpreterFileAttachmentSample {
 
         //run agent
         CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId()).setAdditionalInstructions("");
-        ThreadRun threadRun = agentsClient.createRun(createRunOptions);
+        ThreadRun threadRun = runsClient.createRun(createRunOptions);
 
         try {
             do {
                 Thread.sleep(500);
-                threadRun = agentsClient.getRun(thread.getId(), threadRun.getId());
+                threadRun = runsClient.getRun(thread.getId(), threadRun.getId());
             } while (threadRun.getStatus() == RunStatus.QUEUED || threadRun.getStatus() == RunStatus.IN_PROGRESS || threadRun.getStatus() == RunStatus.REQUIRES_ACTION);
 
             if (threadRun.getStatus() == RunStatus.FAILED) {
                 System.out.println(threadRun.getLastError().getMessage());
             }
 
-            OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
+            OpenAIPageableListOfThreadMessage runMessages = messagesClient.listMessages(thread.getId());
             for (ThreadMessage message : runMessages.getData()) {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
                 for (MessageContent contentItem : message.getContent()) {
@@ -90,7 +94,7 @@ public class AgentCodeInterpreterFileAttachmentSample {
             throw new RuntimeException(e);
         } finally {
             //cleanup
-            agentsClient.deleteThread(thread.getId());
+            threadsClient.deleteThread(thread.getId());
             agentsClient.deleteAgent(agent.getId());
         }
     }

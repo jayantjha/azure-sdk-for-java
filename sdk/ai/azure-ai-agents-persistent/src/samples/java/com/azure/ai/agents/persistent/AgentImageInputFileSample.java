@@ -6,6 +6,7 @@ import com.azure.ai.agents.persistent.implementation.models.FileDetails;
 import com.azure.ai.agents.persistent.implementation.models.UploadFileRequest;
 import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.CreateRunOptions;
+import com.azure.ai.agents.persistent.models.FileInfo;
 import com.azure.ai.agents.persistent.models.FilePurpose;
 import com.azure.ai.agents.persistent.models.MessageContent;
 import com.azure.ai.agents.persistent.models.MessageImageFileContent;
@@ -15,7 +16,6 @@ import com.azure.ai.agents.persistent.models.MessageInputImageFileBlock;
 import com.azure.ai.agents.persistent.models.MessageInputTextBlock;
 import com.azure.ai.agents.persistent.models.MessageRole;
 import com.azure.ai.agents.persistent.models.MessageTextContent;
-import com.azure.ai.agents.persistent.models.OpenAIFile;
 import com.azure.ai.agents.persistent.models.OpenAIPageableListOfThreadMessage;
 import com.azure.ai.agents.persistent.models.PersistentAgent;
 import com.azure.ai.agents.persistent.models.PersistentAgentThread;
@@ -37,14 +37,17 @@ import java.util.List;
 public final class AgentImageInputFileSample {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
-        PersistentAgentsClient agentsClient
-            = new PersistentAgentsClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
-            .credential(new DefaultAzureCredentialBuilder().build())
-            .buildClient();
+        PersistentAgentsAdministrationClientBuilder clientBuilder = new PersistentAgentsAdministrationClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
+            .credential(new DefaultAzureCredentialBuilder().build());
+        PersistentAgentsAdministrationClient agentsClient = clientBuilder.buildClient();
+        ThreadsClient threadsClient = clientBuilder.buildThreadsClient();
+        MessagesClient messagesClient = clientBuilder.buildMessagesClient();
+        RunsClient runsClient = clientBuilder.buildRunsClient();
+        FilesClient filesClient = clientBuilder.buildFilesClient();
 
         Path file = getFile("sample_image.jpg");
 
-        OpenAIFile uploadedAgentFile = agentsClient.uploadFile(
+        FileInfo uploadedAgentFile = filesClient.uploadFile(
             new UploadFileRequest(
                 new FileDetails(
                     BinaryData.fromFile(file))
@@ -62,8 +65,8 @@ public final class AgentImageInputFileSample {
             .setInstructions("You are a helpful agent");
         PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
 
-        PersistentAgentThread thread = agentsClient.createThread();
-        ThreadMessage createdMessage = agentsClient.createMessage(
+        PersistentAgentThread thread = threadsClient.createThread();
+        ThreadMessage createdMessage = messagesClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             BinaryData.fromObject(messageBlock));
@@ -71,12 +74,12 @@ public final class AgentImageInputFileSample {
         //run agent
         CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
-        ThreadRun threadRun = agentsClient.createRun(createRunOptions);
+        ThreadRun threadRun = runsClient.createRun(createRunOptions);
 
         try {
             do {
                 Thread.sleep(500);
-                threadRun = agentsClient.getRun(thread.getId(), threadRun.getId());
+                threadRun = runsClient.getRun(thread.getId(), threadRun.getId());
             }
             while (
                 threadRun.getStatus() == RunStatus.QUEUED
@@ -87,7 +90,7 @@ public final class AgentImageInputFileSample {
                 System.out.println(threadRun.getLastError().getMessage());
             }
 
-            OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
+            OpenAIPageableListOfThreadMessage runMessages = messagesClient.listMessages(thread.getId());
             for (ThreadMessage message : runMessages.getData()) {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
                 for (MessageContent contentItem : message.getContent()) {
@@ -104,7 +107,7 @@ public final class AgentImageInputFileSample {
             throw new RuntimeException(e);
         } finally {
             //cleanup
-            agentsClient.deleteThread(thread.getId());
+            threadsClient.deleteThread(thread.getId());
             agentsClient.deleteAgent(agent.getId());
         }
     }

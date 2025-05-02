@@ -22,10 +22,12 @@ import java.util.Arrays;
 public final class AgentStreamingSample {
 
     public static void main(String[] args) {
-        PersistentAgentsClient agentsClient
-            = new PersistentAgentsClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
-            .credential(new DefaultAzureCredentialBuilder().build())
-            .buildClient();
+        PersistentAgentsAdministrationClientBuilder clientBuilder = new PersistentAgentsAdministrationClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
+            .credential(new DefaultAzureCredentialBuilder().build());
+        PersistentAgentsAdministrationClient agentsClient = clientBuilder.buildClient();
+        ThreadsClient threadsClient = clientBuilder.buildThreadsClient();
+        MessagesClient messagesClient = clientBuilder.buildMessagesClient();
+        RunsClient runsClient = clientBuilder.buildRunsClient();
 
         String agentName = "agent_streaming_example";
         CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
@@ -34,8 +36,8 @@ public final class AgentStreamingSample {
             .setTools(Arrays.asList(new CodeInterpreterToolDefinition()));
         PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
 
-        PersistentAgentThread thread = agentsClient.createThread();
-        ThreadMessage createdMessage = agentsClient.createMessage(
+        PersistentAgentThread thread = threadsClient.createThread();
+        ThreadMessage createdMessage = messagesClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "Hi, Assistant! Draw a graph for a line with a slope of 4 and y-intercept of 9.");
@@ -44,7 +46,7 @@ public final class AgentStreamingSample {
             .setAdditionalInstructions("");
 
         try {
-            Flux<StreamUpdate> streamingUpdates = agentsClient.createRunStreaming(createRunOptions);
+            Flux<StreamUpdate> streamingUpdates = runsClient.createRunStreaming(createRunOptions);
 
             streamingUpdates.doOnNext(
                 streamUpdate -> {
@@ -70,7 +72,7 @@ public final class AgentStreamingSample {
             throw ex;
         } finally {
             //cleanup
-            agentsClient.deleteThread(thread.getId());
+            threadsClient.deleteThread(thread.getId());
             agentsClient.deleteAgent(agent.getId());
         }
     }

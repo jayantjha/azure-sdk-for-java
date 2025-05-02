@@ -14,6 +14,8 @@ import com.azure.ai.agents.persistent.models.OpenAIPageableListOfThreadRun;
 import com.azure.ai.agents.persistent.models.RunAdditionalFieldList;
 import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.ai.agents.persistent.models.ToolOutput;
+import com.azure.ai.agents.persistent.models.streaming.PersistentAgentServerSentEvents;
+import com.azure.ai.agents.persistent.models.streaming.StreamUpdate;
 import com.azure.core.annotation.Generated;
 import com.azure.core.annotation.ReturnType;
 import com.azure.core.annotation.ServiceClient;
@@ -25,6 +27,8 @@ import com.azure.core.exception.ResourceNotFoundException;
 import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.BinaryData;
+import reactor.core.publisher.Flux;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -1007,5 +1011,85 @@ public final class RunsClient {
         // Generated convenience method for cancelRunWithResponse
         RequestOptions requestOptions = new RequestOptions();
         return cancelRunWithResponse(threadId, runId, requestOptions).getValue().toObject(ThreadRun.class);
+    }
+
+    /**
+     * Creates a new streaming run for an agent thread.
+     *
+     * @param options Options for createRun API.
+     * @return data representing a single evaluation run of an agent thread.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Flux<StreamUpdate> createRunStreaming(CreateRunOptions options) {
+        // Generated convenience method for createRunWithResponse
+        RequestOptions requestOptions = new RequestOptions();
+        String threadId = options.getThreadId();
+        List<RunAdditionalFieldList> include = options.getInclude();
+        CreateRunRequest createRunRequestObj
+            = new CreateRunRequest(options.getAssistantId()).setModel(options.getModel())
+            .setInstructions(options.getInstructions())
+            .setAdditionalInstructions(options.getAdditionalInstructions())
+            .setAdditionalMessages(options.getAdditionalMessages())
+            .setTools(options.getTools())
+            .setStream(true)
+            .setTemperature(options.getTemperature())
+            .setTopP(options.getTopP())
+            .setMaxPromptTokens(options.getMaxPromptTokens())
+            .setMaxCompletionTokens(options.getMaxCompletionTokens())
+            .setTruncationStrategy(options.getTruncationStrategy())
+            .setToolChoice(options.getToolChoice())
+            .setResponseFormat(options.getResponseFormat())
+            .setParallelToolCalls(options.isParallelToolCalls())
+            .setMetadata(options.getMetadata());
+        BinaryData createRunRequest = BinaryData.fromObject(createRunRequestObj);
+        if (include != null) {
+            requestOptions.addQueryParam("include[]",
+                include.stream()
+                    .map(paramItemValue -> Objects.toString(paramItemValue, ""))
+                    .collect(Collectors.joining(",")),
+                false);
+        }
+        Flux<ByteBuffer> response
+            = createRunWithResponse(threadId, createRunRequest, requestOptions).getValue().toFluxByteBuffer();
+        PersistentAgentServerSentEvents eventStream = new PersistentAgentServerSentEvents(response);
+        return eventStream.getEvents();
+    }
+
+    /**
+     * Submits outputs from tools as requested by tool calls in a run with streaming updates.
+     * Runs that need submitted tool outputs will have a status of 'requires_action'
+     * with a required_action.type of 'submit_tool_outputs'.
+     *
+     * @param threadId Identifier of the thread.
+     * @param runId Identifier of the run.
+     * @param toolOutputs A list of tools for which the outputs are being submitted.
+     * @return data representing a single evaluation run of an agent thread.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Flux<StreamUpdate> submitToolOutputsToRunStreaming(String threadId, String runId,
+                                                              List<ToolOutput> toolOutputs) {
+        // Generated convenience method for submitToolOutputsToRunWithResponse
+        RequestOptions requestOptions = new RequestOptions();
+        SubmitToolOutputsToRunRequest submitToolOutputsToRunRequestObj
+            = new SubmitToolOutputsToRunRequest(toolOutputs).setStream(true);
+        BinaryData submitToolOutputsToRunRequest = BinaryData.fromObject(submitToolOutputsToRunRequestObj);
+        Flux<ByteBuffer> response
+            = submitToolOutputsToRunWithResponse(threadId, runId, submitToolOutputsToRunRequest, requestOptions)
+            .getValue()
+            .toFluxByteBuffer();
+        PersistentAgentServerSentEvents eventStream = new PersistentAgentServerSentEvents(response);
+        return eventStream.getEvents();
     }
 }

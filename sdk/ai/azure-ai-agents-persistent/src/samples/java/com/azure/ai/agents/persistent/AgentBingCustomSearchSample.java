@@ -4,6 +4,8 @@
 package com.azure.ai.agents.persistent;
 
 import com.azure.ai.agents.persistent.implementation.models.CreateAgentRequest;
+import com.azure.ai.agents.persistent.models.BingCustomSearchConfiguration;
+import com.azure.ai.agents.persistent.models.BingCustomSearchConfigurationList;
 import com.azure.ai.agents.persistent.models.BingCustomSearchToolDefinition;
 import com.azure.ai.agents.persistent.models.CreateRunOptions;
 import com.azure.ai.agents.persistent.models.MessageContent;
@@ -14,8 +16,6 @@ import com.azure.ai.agents.persistent.models.OpenAIPageableListOfThreadMessage;
 import com.azure.ai.agents.persistent.models.PersistentAgent;
 import com.azure.ai.agents.persistent.models.PersistentAgentThread;
 import com.azure.ai.agents.persistent.models.RunStatus;
-import com.azure.ai.agents.persistent.models.SearchConfiguration;
-import com.azure.ai.agents.persistent.models.SearchConfigurationList;
 import com.azure.ai.agents.persistent.models.ThreadMessage;
 import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.ai.agents.persistent.models.ToolConnection;
@@ -30,10 +30,13 @@ import java.util.Arrays;
 public class AgentBingCustomSearchSample {
 
     public static void main(String[] args) {
-        PersistentAgentsClient agentsClient
-            = new PersistentAgentsClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
-            .credential(new DefaultAzureCredentialBuilder().build())
-            .buildClient();
+
+        PersistentAgentsAdministrationClientBuilder clientBuilder = new PersistentAgentsAdministrationClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
+            .credential(new DefaultAzureCredentialBuilder().build());
+        PersistentAgentsAdministrationClient agentsClient = clientBuilder.buildClient();
+        ThreadsClient threadsClient = clientBuilder.buildThreadsClient();
+        MessagesClient messagesClient = clientBuilder.buildMessagesClient();
+        RunsClient runsClient = clientBuilder.buildRunsClient();
 
         String bingConnectionId = Configuration.getGlobalConfiguration().get("BING_SEARCH_CONNECTION_ID", "");
         String bingConfigurationId = Configuration.getGlobalConfiguration().get("BING_SEARCH_CONFIGURATION_ID", "");
@@ -41,8 +44,8 @@ public class AgentBingCustomSearchSample {
         ToolConnectionList toolConnectionList = new ToolConnectionList()
             .setConnectionList(Arrays.asList(new ToolConnection(bingConnectionId)));
 
-        SearchConfiguration searchConfiguration = new SearchConfiguration(bingConnectionId, bingConfigurationId);
-        SearchConfigurationList searchConfigurationList = new SearchConfigurationList(Arrays.asList(searchConfiguration));
+        BingCustomSearchConfiguration searchConfiguration = new BingCustomSearchConfiguration(bingConnectionId, bingConfigurationId);
+        BingCustomSearchConfigurationList searchConfigurationList = new BingCustomSearchConfigurationList(Arrays.asList(searchConfiguration));
 
         BingCustomSearchToolDefinition bingCustomSearchToolDefinition = new BingCustomSearchToolDefinition(searchConfigurationList);
 
@@ -56,8 +59,8 @@ public class AgentBingCustomSearchSample {
         PersistentAgent agent = agentsClient.createAgentWithResponse(BinaryData.fromObject(createAgentRequest), requestOptions)
             .getValue().toObject(PersistentAgent.class);
 
-        PersistentAgentThread thread = agentsClient.createThread();
-        ThreadMessage createdMessage = agentsClient.createMessage(
+        PersistentAgentThread thread = threadsClient.createThread();
+        ThreadMessage createdMessage = messagesClient.createMessage(
             thread.getId(),
             MessageRole.USER,
             "How does wikipedia explain Euler's Identity?");
@@ -65,12 +68,12 @@ public class AgentBingCustomSearchSample {
         //run agent
         CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
             .setAdditionalInstructions("");
-        ThreadRun threadRun = agentsClient.createRun(createRunOptions);
+        ThreadRun threadRun = runsClient.createRun(createRunOptions);
 
         try {
             do {
                 Thread.sleep(500);
-                threadRun = agentsClient.getRun(thread.getId(), threadRun.getId());
+                threadRun = runsClient.getRun(thread.getId(), threadRun.getId());
             }
             while (
                 threadRun.getStatus() == RunStatus.QUEUED
@@ -81,7 +84,7 @@ public class AgentBingCustomSearchSample {
                 System.out.println(threadRun.getLastError().getMessage());
             }
 
-            OpenAIPageableListOfThreadMessage runMessages = agentsClient.listMessages(thread.getId());
+            OpenAIPageableListOfThreadMessage runMessages = messagesClient.listMessages(thread.getId());
             for (ThreadMessage message : runMessages.getData()) {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
                 for (MessageContent contentItem : message.getContent()) {
@@ -98,7 +101,7 @@ public class AgentBingCustomSearchSample {
             throw new RuntimeException(e);
         } finally {
             //cleanup
-            agentsClient.deleteThread(thread.getId());
+            threadsClient.deleteThread(thread.getId());
             agentsClient.deleteAgent(agent.getId());
         }
     }
