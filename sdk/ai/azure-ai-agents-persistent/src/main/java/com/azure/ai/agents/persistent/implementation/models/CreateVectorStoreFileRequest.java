@@ -32,7 +32,7 @@ public final class CreateVectorStoreFileRequest implements JsonSerializable<Crea
     private VectorStoreDataSource dataSource;
 
     /*
-     * The chunking strategy used to chunk the file(s). If not set, will use the auto strategy.
+     * The chunking strategy used to chunk the file. If not set, uses the auto strategy.
      */
     @Generated
     private VectorStoreChunkingStrategyRequest chunkingStrategy;
@@ -89,7 +89,7 @@ public final class CreateVectorStoreFileRequest implements JsonSerializable<Crea
     }
 
     /**
-     * Get the chunkingStrategy property: The chunking strategy used to chunk the file(s). If not set, will use the auto
+     * Get the chunkingStrategy property: The chunking strategy used to chunk the file. If not set, uses the auto
      * strategy.
      *
      * @return the chunkingStrategy value.
@@ -100,7 +100,7 @@ public final class CreateVectorStoreFileRequest implements JsonSerializable<Crea
     }
 
     /**
-     * Set the chunkingStrategy property: The chunking strategy used to chunk the file(s). If not set, will use the auto
+     * Set the chunkingStrategy property: The chunking strategy used to chunk the file. If not set, uses the auto
      * strategy.
      *
      * @param chunkingStrategy the chunkingStrategy value to set.

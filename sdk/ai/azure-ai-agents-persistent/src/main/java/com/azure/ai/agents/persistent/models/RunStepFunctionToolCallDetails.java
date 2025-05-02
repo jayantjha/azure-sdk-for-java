@@ -29,26 +29,6 @@ public final class RunStepFunctionToolCallDetails implements JsonSerializable<Ru
     @Generated
     private final String arguments;
 
-    /*
-     * The output of the function, only populated for function calls that have already have had their outputs submitted.
-     */
-    @Generated
-    private final String output;
-
-    /**
-     * Creates an instance of RunStepFunctionToolCallDetails class.
-     *
-     * @param name the name value to set.
-     * @param arguments the arguments value to set.
-     * @param output the output value to set.
-     */
-    @Generated
-    private RunStepFunctionToolCallDetails(String name, String arguments, String output) {
-        this.name = name;
-        this.arguments = arguments;
-        this.output = output;
-    }
-
     /**
      * Get the name property: The name of the function.
      *
@@ -70,17 +50,6 @@ public final class RunStepFunctionToolCallDetails implements JsonSerializable<Ru
     }
 
     /**
-     * Get the output property: The output of the function, only populated for function calls that have already have had
-     * their outputs submitted.
-     *
-     * @return the output value.
-     */
-    @Generated
-    public String getOutput() {
-        return this.output;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Generated
@@ -89,7 +58,6 @@ public final class RunStepFunctionToolCallDetails implements JsonSerializable<Ru
         jsonWriter.writeStartObject();
         jsonWriter.writeStringField("name", this.name);
         jsonWriter.writeStringField("arguments", this.arguments);
-        jsonWriter.writeStringField("output", this.output);
         return jsonWriter.writeEndObject();
     }
 
@@ -107,7 +75,6 @@ public final class RunStepFunctionToolCallDetails implements JsonSerializable<Ru
         return jsonReader.readObject(reader -> {
             String name = null;
             String arguments = null;
-            String output = null;
             while (reader.nextToken() != JsonToken.END_OBJECT) {
                 String fieldName = reader.getFieldName();
                 reader.nextToken();
@@ -115,13 +82,23 @@ public final class RunStepFunctionToolCallDetails implements JsonSerializable<Ru
                     name = reader.getString();
                 } else if ("arguments".equals(fieldName)) {
                     arguments = reader.getString();
-                } else if ("output".equals(fieldName)) {
-                    output = reader.getString();
                 } else {
                     reader.skipChildren();
                 }
             }
-            return new RunStepFunctionToolCallDetails(name, arguments, output);
+            return new RunStepFunctionToolCallDetails(name, arguments);
         });
+    }
+
+    /**
+     * Creates an instance of RunStepFunctionToolCallDetails class.
+     *
+     * @param name the name value to set.
+     * @param arguments the arguments value to set.
+     */
+    @Generated
+    private RunStepFunctionToolCallDetails(String name, String arguments) {
+        this.name = name;
+        this.arguments = arguments;
     }
 }

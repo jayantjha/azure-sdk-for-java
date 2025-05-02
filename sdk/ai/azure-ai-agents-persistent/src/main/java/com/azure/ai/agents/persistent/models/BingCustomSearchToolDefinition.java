@@ -26,17 +26,7 @@ public final class BingCustomSearchToolDefinition extends ToolDefinition {
      * The list of search configurations used by the bing custom search tool.
      */
     @Generated
-    private final SearchConfigurationList bingCustomSearch;
-
-    /**
-     * Creates an instance of BingCustomSearchToolDefinition class.
-     *
-     * @param bingCustomSearch the bingCustomSearch value to set.
-     */
-    @Generated
-    public BingCustomSearchToolDefinition(SearchConfigurationList bingCustomSearch) {
-        this.bingCustomSearch = bingCustomSearch;
-    }
+    private final BingCustomSearchConfigurationList bingCustomSearch;
 
     /**
      * Get the type property: The object type.
@@ -55,7 +45,7 @@ public final class BingCustomSearchToolDefinition extends ToolDefinition {
      * @return the bingCustomSearch value.
      */
     @Generated
-    public SearchConfigurationList getBingCustomSearch() {
+    public BingCustomSearchConfigurationList getBingCustomSearch() {
         return this.bingCustomSearch;
     }
 
@@ -83,13 +73,13 @@ public final class BingCustomSearchToolDefinition extends ToolDefinition {
     @Generated
     public static BingCustomSearchToolDefinition fromJson(JsonReader jsonReader) throws IOException {
         return jsonReader.readObject(reader -> {
-            SearchConfigurationList bingCustomSearch = null;
+            BingCustomSearchConfigurationList bingCustomSearch = null;
             String type = "bing_custom_search";
             while (reader.nextToken() != JsonToken.END_OBJECT) {
                 String fieldName = reader.getFieldName();
                 reader.nextToken();
                 if ("bing_custom_search".equals(fieldName)) {
-                    bingCustomSearch = SearchConfigurationList.fromJson(reader);
+                    bingCustomSearch = BingCustomSearchConfigurationList.fromJson(reader);
                 } else if ("type".equals(fieldName)) {
                     type = reader.getString();
                 } else {
@@ -101,5 +91,15 @@ public final class BingCustomSearchToolDefinition extends ToolDefinition {
             deserializedBingCustomSearchToolDefinition.type = type;
             return deserializedBingCustomSearchToolDefinition;
         });
+    }
+
+    /**
+     * Creates an instance of BingCustomSearchToolDefinition class.
+     *
+     * @param bingCustomSearch the bingCustomSearch value to set.
+     */
+    @Generated
+    public BingCustomSearchToolDefinition(BingCustomSearchConfigurationList bingCustomSearch) {
+        this.bingCustomSearch = bingCustomSearch;
     }
 }

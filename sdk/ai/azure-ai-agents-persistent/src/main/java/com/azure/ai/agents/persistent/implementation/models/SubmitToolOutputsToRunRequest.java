@@ -26,8 +26,7 @@ public final class SubmitToolOutputsToRunRequest implements JsonSerializable<Sub
     private final List<ToolOutput> toolOutputs;
 
     /*
-     * If true, returns a stream of events that happen during the Run as server-sent events, terminating when the run
-     * enters a terminal state.
+     * If true, returns a stream of events that happen during the Run as SSE, terminating at `[DONE]`.
      */
     @Generated
     private Boolean stream;
@@ -53,8 +52,8 @@ public final class SubmitToolOutputsToRunRequest implements JsonSerializable<Sub
     }
 
     /**
-     * Get the stream property: If true, returns a stream of events that happen during the Run as server-sent events,
-     * terminating when the run enters a terminal state.
+     * Get the stream property: If true, returns a stream of events that happen during the Run as SSE, terminating at
+     * `[DONE]`.
      *
      * @return the stream value.
      */
@@ -64,8 +63,8 @@ public final class SubmitToolOutputsToRunRequest implements JsonSerializable<Sub
     }
 
     /**
-     * Set the stream property: If true, returns a stream of events that happen during the Run as server-sent events,
-     * terminating when the run enters a terminal state.
+     * Set the stream property: If true, returns a stream of events that happen during the Run as SSE, terminating at
+     * `[DONE]`.
      *
      * @param stream the stream value to set.
      * @return the SubmitToolOutputsToRunRequest object itself.

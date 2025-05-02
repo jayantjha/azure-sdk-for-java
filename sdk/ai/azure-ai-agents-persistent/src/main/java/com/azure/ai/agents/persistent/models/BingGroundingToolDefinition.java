@@ -23,20 +23,10 @@ public final class BingGroundingToolDefinition extends ToolDefinition {
     private String type = "bing_grounding";
 
     /*
-     * The list of connections used by the bing grounding tool.
+     * The list of search configurations used by the bing grounding tool.
      */
     @Generated
-    private final ToolConnectionList bingGrounding;
-
-    /**
-     * Creates an instance of BingGroundingToolDefinition class.
-     *
-     * @param bingGrounding the bingGrounding value to set.
-     */
-    @Generated
-    public BingGroundingToolDefinition(ToolConnectionList bingGrounding) {
-        this.bingGrounding = bingGrounding;
-    }
+    private final BingGroundingSearchConfigurationList bingGrounding;
 
     /**
      * Get the type property: The object type.
@@ -50,12 +40,12 @@ public final class BingGroundingToolDefinition extends ToolDefinition {
     }
 
     /**
-     * Get the bingGrounding property: The list of connections used by the bing grounding tool.
+     * Get the bingGrounding property: The list of search configurations used by the bing grounding tool.
      *
      * @return the bingGrounding value.
      */
     @Generated
-    public ToolConnectionList getBingGrounding() {
+    public BingGroundingSearchConfigurationList getBingGrounding() {
         return this.bingGrounding;
     }
 
@@ -83,13 +73,13 @@ public final class BingGroundingToolDefinition extends ToolDefinition {
     @Generated
     public static BingGroundingToolDefinition fromJson(JsonReader jsonReader) throws IOException {
         return jsonReader.readObject(reader -> {
-            ToolConnectionList bingGrounding = null;
+            BingGroundingSearchConfigurationList bingGrounding = null;
             String type = "bing_grounding";
             while (reader.nextToken() != JsonToken.END_OBJECT) {
                 String fieldName = reader.getFieldName();
                 reader.nextToken();
                 if ("bing_grounding".equals(fieldName)) {
-                    bingGrounding = ToolConnectionList.fromJson(reader);
+                    bingGrounding = BingGroundingSearchConfigurationList.fromJson(reader);
                 } else if ("type".equals(fieldName)) {
                     type = reader.getString();
                 } else {
@@ -101,5 +91,15 @@ public final class BingGroundingToolDefinition extends ToolDefinition {
             deserializedBingGroundingToolDefinition.type = type;
             return deserializedBingGroundingToolDefinition;
         });
+    }
+
+    /**
+     * Creates an instance of BingGroundingToolDefinition class.
+     *
+     * @param bingGrounding the bingGrounding value to set.
+     */
+    @Generated
+    public BingGroundingToolDefinition(BingGroundingSearchConfigurationList bingGrounding) {
+        this.bingGrounding = bingGrounding;
     }
 }

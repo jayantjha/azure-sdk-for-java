@@ -23,8 +23,8 @@ public final class CreateRunOptions {
 
     /*
      * A list of additional fields to include in the response.
-     * Currently the only supported value is `step_details.tool_calls[*].file_search.results[*].content` to fetch the
-     * file search result content.
+     * Currently the only supported value is `step_details.tool_calls[*].file_search.results[*].content`
+     * to fetch the file search result content.
      */
     @Generated
     private List<RunAdditionalFieldList> include;
@@ -167,8 +167,8 @@ public final class CreateRunOptions {
 
     /**
      * Get the include property: A list of additional fields to include in the response.
-     * Currently the only supported value is `step_details.tool_calls[*].file_search.results[*].content` to fetch the
-     * file search result content.
+     * Currently the only supported value is `step_details.tool_calls[*].file_search.results[*].content`
+     * to fetch the file search result content.
      *
      * @return the include value.
      */
@@ -179,8 +179,8 @@ public final class CreateRunOptions {
 
     /**
      * Set the include property: A list of additional fields to include in the response.
-     * Currently the only supported value is `step_details.tool_calls[*].file_search.results[*].content` to fetch the
-     * file search result content.
+     * Currently the only supported value is `step_details.tool_calls[*].file_search.results[*].content`
+     * to fetch the file search result content.
      *
      * @param include the include value to set.
      * @return the CreateRunOptions object itself.

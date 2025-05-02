@@ -28,7 +28,7 @@ public final class FileListResponse implements JsonSerializable<FileListResponse
      * The files returned for the request.
      */
     @Generated
-    private final List<OpenAIFile> data;
+    private final List<FileInfo> data;
 
     /**
      * Creates an instance of FileListResponse class.
@@ -36,7 +36,7 @@ public final class FileListResponse implements JsonSerializable<FileListResponse
      * @param data the data value to set.
      */
     @Generated
-    private FileListResponse(List<OpenAIFile> data) {
+    private FileListResponse(List<FileInfo> data) {
         this.data = data;
     }
 
@@ -56,7 +56,7 @@ public final class FileListResponse implements JsonSerializable<FileListResponse
      * @return the data value.
      */
     @Generated
-    public List<OpenAIFile> getData() {
+    public List<FileInfo> getData() {
         return this.data;
     }
 
@@ -84,12 +84,12 @@ public final class FileListResponse implements JsonSerializable<FileListResponse
     @Generated
     public static FileListResponse fromJson(JsonReader jsonReader) throws IOException {
         return jsonReader.readObject(reader -> {
-            List<OpenAIFile> data = null;
+            List<FileInfo> data = null;
             while (reader.nextToken() != JsonToken.END_OBJECT) {
                 String fieldName = reader.getFieldName();
                 reader.nextToken();
                 if ("data".equals(fieldName)) {
-                    data = reader.readArray(reader1 -> OpenAIFile.fromJson(reader1));
+                    data = reader.readArray(reader1 -> FileInfo.fromJson(reader1));
                 } else {
                     reader.skipChildren();
                 }

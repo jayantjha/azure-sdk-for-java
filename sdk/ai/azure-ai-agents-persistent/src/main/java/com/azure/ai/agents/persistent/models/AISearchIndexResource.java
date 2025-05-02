@@ -42,7 +42,7 @@ public final class AISearchIndexResource implements JsonSerializable<AISearchInd
     private Integer topK;
 
     /*
-     * Odata filter string for search resource.
+     * filter string for search resource.
      */
     @Generated
     private String filter;
@@ -124,7 +124,7 @@ public final class AISearchIndexResource implements JsonSerializable<AISearchInd
     }
 
     /**
-     * Get the filter property: Odata filter string for search resource.
+     * Get the filter property: filter string for search resource.
      *
      * @return the filter value.
      */
@@ -134,7 +134,7 @@ public final class AISearchIndexResource implements JsonSerializable<AISearchInd
     }
 
     /**
-     * Set the filter property: Odata filter string for search resource.
+     * Set the filter property: filter string for search resource.
      *
      * @param filter the filter value to set.
      * @return the AISearchIndexResource object itself.
@@ -157,6 +157,7 @@ public final class AISearchIndexResource implements JsonSerializable<AISearchInd
         jsonWriter.writeStringField("query_type", this.queryType == null ? null : this.queryType.toString());
         jsonWriter.writeNumberField("top_k", this.topK);
         jsonWriter.writeStringField("filter", this.filter);
+        jsonWriter.writeStringField("index_asset_id", this.indexAssetId);
         return jsonWriter.writeEndObject();
     }
 
@@ -177,6 +178,7 @@ public final class AISearchIndexResource implements JsonSerializable<AISearchInd
             AzureAISearchQueryType queryType = null;
             Integer topK = null;
             String filter = null;
+            String indexAssetId = null;
             while (reader.nextToken() != JsonToken.END_OBJECT) {
                 String fieldName = reader.getFieldName();
                 reader.nextToken();
@@ -190,6 +192,8 @@ public final class AISearchIndexResource implements JsonSerializable<AISearchInd
                     topK = reader.getNullable(JsonReader::getInt);
                 } else if ("filter".equals(fieldName)) {
                     filter = reader.getString();
+                } else if ("index_asset_id".equals(fieldName)) {
+                    indexAssetId = reader.getString();
                 } else {
                     reader.skipChildren();
                 }
@@ -199,7 +203,36 @@ public final class AISearchIndexResource implements JsonSerializable<AISearchInd
             deserializedAISearchIndexResource.queryType = queryType;
             deserializedAISearchIndexResource.topK = topK;
             deserializedAISearchIndexResource.filter = filter;
+            deserializedAISearchIndexResource.indexAssetId = indexAssetId;
             return deserializedAISearchIndexResource;
         });
+    }
+
+    /*
+     * Index asset id for search resource.
+     */
+    @Generated
+    private String indexAssetId;
+
+    /**
+     * Get the indexAssetId property: Index asset id for search resource.
+     *
+     * @return the indexAssetId value.
+     */
+    @Generated
+    public String getIndexAssetId() {
+        return this.indexAssetId;
+    }
+
+    /**
+     * Set the indexAssetId property: Index asset id for search resource.
+     *
+     * @param indexAssetId the indexAssetId value to set.
+     * @return the AISearchIndexResource object itself.
+     */
+    @Generated
+    public AISearchIndexResource setIndexAssetId(String indexAssetId) {
+        this.indexAssetId = indexAssetId;
+        return this;
     }
 }
