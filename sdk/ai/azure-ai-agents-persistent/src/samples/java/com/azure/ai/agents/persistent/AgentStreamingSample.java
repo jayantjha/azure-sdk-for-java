@@ -5,8 +5,6 @@ package com.azure.ai.agents.persistent;
 import com.azure.ai.agents.persistent.models.CodeInterpreterToolDefinition;
 import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.CreateRunOptions;
-import com.azure.ai.agents.persistent.models.MessageDeltaImageFileContent;
-import com.azure.ai.agents.persistent.models.MessageDeltaTextContent;
 import com.azure.ai.agents.persistent.models.MessageRole;
 import com.azure.ai.agents.persistent.models.PersistentAgent;
 import com.azure.ai.agents.persistent.models.PersistentAgentStreamEvent;
@@ -18,6 +16,8 @@ import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import reactor.core.publisher.Flux;
 import java.util.Arrays;
+
+import static com.azure.ai.agents.persistent.SampleUtils.printStreamUpdate;
 
 public final class AgentStreamingSample {
 
@@ -54,15 +54,7 @@ public final class AgentStreamingSample {
                         System.out.println("----- Run started! -----");
                     } else if (streamUpdate instanceof StreamMessageUpdate) {
                         StreamMessageUpdate messageUpdate = (StreamMessageUpdate) streamUpdate;
-                        messageUpdate.getMessage().getDelta().getContent().stream().forEach(delta -> {
-                            if (delta instanceof MessageDeltaImageFileContent) {
-                                MessageDeltaImageFileContent imgContent = (MessageDeltaImageFileContent) delta;
-                                System.out.println("Image fileId: " + imgContent.getImageFile().getFileId());
-                            } else if (delta instanceof MessageDeltaTextContent) {
-                                MessageDeltaTextContent textContent = (MessageDeltaTextContent) delta;
-                                System.out.print(textContent.getText().getValue());
-                            }
-                        });
+                        printStreamUpdate(messageUpdate);
                     }
                 }
             ).blockLast();

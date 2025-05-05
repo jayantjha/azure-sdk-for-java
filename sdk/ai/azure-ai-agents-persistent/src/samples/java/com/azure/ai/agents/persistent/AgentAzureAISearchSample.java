@@ -7,11 +7,7 @@ import com.azure.ai.agents.persistent.models.AzureAISearchResource;
 import com.azure.ai.agents.persistent.models.AzureAISearchToolDefinition;
 import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.CreateRunOptions;
-import com.azure.ai.agents.persistent.models.MessageContent;
-import com.azure.ai.agents.persistent.models.MessageImageFileContent;
 import com.azure.ai.agents.persistent.models.MessageRole;
-import com.azure.ai.agents.persistent.models.MessageTextContent;
-import com.azure.ai.agents.persistent.models.OpenAIPageableListOfThreadMessage;
 import com.azure.ai.agents.persistent.models.PersistentAgent;
 import com.azure.ai.agents.persistent.models.PersistentAgentThread;
 import com.azure.ai.agents.persistent.models.RunStatus;
@@ -21,6 +17,9 @@ import com.azure.ai.agents.persistent.models.ToolResources;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import java.util.Arrays;
+
+import static com.azure.ai.agents.persistent.SampleUtils.printRunMessages;
+import static com.azure.ai.agents.persistent.SampleUtils.waitForRunCompletion;
 
 public class AgentAzureAISearchSample {
 
@@ -53,38 +52,15 @@ public class AgentAzureAISearchSample {
             MessageRole.USER,
             "Best horror movie?");
 
-        //run agent
-        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
-            .setAdditionalInstructions("");
-        ThreadRun threadRun = runsClient.createRun(createRunOptions);
-
         try {
-            do {
-                Thread.sleep(500);
-                threadRun = runsClient.getRun(thread.getId(), threadRun.getId());
-            }
-            while (
-                threadRun.getStatus() == RunStatus.QUEUED
-                    || threadRun.getStatus() == RunStatus.IN_PROGRESS
-                    || threadRun.getStatus() == RunStatus.REQUIRES_ACTION);
+            //run agent
+            CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+                .setAdditionalInstructions("");
+            ThreadRun threadRun = runsClient.createRun(createRunOptions);
 
-            if (threadRun.getStatus() == RunStatus.FAILED) {
-                System.out.println(threadRun.getLastError().getMessage());
-            }
+            waitForRunCompletion(thread.getId(), threadRun, runsClient);
+            printRunMessages(messagesClient, thread.getId());
 
-            OpenAIPageableListOfThreadMessage runMessages = messagesClient.listMessages(thread.getId());
-            for (ThreadMessage message : runMessages.getData()) {
-                System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
-                for (MessageContent contentItem : message.getContent()) {
-                    if (contentItem instanceof MessageTextContent) {
-                        System.out.print((((MessageTextContent) contentItem).getText().getValue()));
-                    } else if (contentItem instanceof MessageImageFileContent) {
-                        String imageFileId = (((MessageImageFileContent) contentItem).getImageFile().getFileId());
-                        System.out.print("Image from ID: " + imageFileId);
-                    }
-                    System.out.println();
-                }
-            }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {

@@ -6,11 +6,7 @@ import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.CreateRunOptions;
 import com.azure.ai.agents.persistent.models.FunctionDefinition;
 import com.azure.ai.agents.persistent.models.FunctionToolDefinition;
-import com.azure.ai.agents.persistent.models.MessageContent;
-import com.azure.ai.agents.persistent.models.MessageImageFileContent;
 import com.azure.ai.agents.persistent.models.MessageRole;
-import com.azure.ai.agents.persistent.models.MessageTextContent;
-import com.azure.ai.agents.persistent.models.OpenAIPageableListOfThreadMessage;
 import com.azure.ai.agents.persistent.models.PersistentAgent;
 import com.azure.ai.agents.persistent.models.PersistentAgentThread;
 import com.azure.ai.agents.persistent.models.RequiredFunctionToolCall;
@@ -32,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import static com.azure.ai.agents.persistent.SampleUtils.printRunMessages;
 
 public class AgentFunctionsSample {
 
@@ -110,12 +108,12 @@ public class AgentFunctionsSample {
             MessageRole.USER,
             "What's the nickname of my favorite city?");
 
-        //run agent
-        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
-            .setAdditionalInstructions("");
-        ThreadRun threadRun = runsClient.createRun(createRunOptions);
-
         try {
+            //run agent
+            CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+                .setAdditionalInstructions("");
+            ThreadRun threadRun = runsClient.createRun(createRunOptions);
+
             do {
                 Thread.sleep(500);
                 threadRun = runsClient.getRun(thread.getId(), threadRun.getId());
@@ -138,19 +136,7 @@ public class AgentFunctionsSample {
                 System.out.println(threadRun.getLastError().getMessage());
             }
 
-            OpenAIPageableListOfThreadMessage runMessages = messagesClient.listMessages(thread.getId());
-            for (ThreadMessage message : runMessages.getData()) {
-                System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
-                for (MessageContent contentItem : message.getContent()) {
-                    if (contentItem instanceof MessageTextContent) {
-                        System.out.print((((MessageTextContent) contentItem).getText().getValue()));
-                    } else if (contentItem instanceof MessageImageFileContent) {
-                        String imageFileId = (((MessageImageFileContent) contentItem).getImageFile().getFileId());
-                        System.out.print("Image from ID: " + imageFileId);
-                    }
-                    System.out.println();
-                }
-            }
+            printRunMessages(messagesClient, thread.getId());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {

@@ -37,7 +37,7 @@ public abstract class ChatCompletionsClientTestBase extends TestProxyTestBase {
     protected ImageEmbeddingsClient imageEmbeddingsClient;
     private boolean sanitizersRemoved = false;
 
-    ChatCompletionsClientBuilder getChatCompletionsClientBuilder(HttpClient httpClient) {
+    ChatCompletionsClientBuilder getChatCompletionsClientBuilder(HttpClient httpClient)     {
         ChatCompletionsClientBuilder builder = new ChatCompletionsClientBuilder().httpClient(httpClient);
         TestMode testMode = getTestMode();
         if (testMode != TestMode.LIVE) {

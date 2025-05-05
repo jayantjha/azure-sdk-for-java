@@ -6,8 +6,6 @@ import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.CreateRunOptions;
 import com.azure.ai.agents.persistent.models.FunctionDefinition;
 import com.azure.ai.agents.persistent.models.FunctionToolDefinition;
-import com.azure.ai.agents.persistent.models.MessageDeltaImageFileContent;
-import com.azure.ai.agents.persistent.models.MessageDeltaTextContent;
 import com.azure.ai.agents.persistent.models.MessageRole;
 import com.azure.ai.agents.persistent.models.PersistentAgent;
 import com.azure.ai.agents.persistent.models.PersistentAgentStreamEvent;
@@ -39,6 +37,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import static com.azure.ai.agents.persistent.SampleUtils.printStreamUpdate;
 
 public final class AgentFunctionsStreamingSample {
 
@@ -215,18 +215,6 @@ public final class AgentFunctionsStreamingSample {
             threadsClient.deleteThread(thread.getId());
             agentsClient.deleteAgent(agent.getId());
         }
-    }
-
-    private static void printStreamUpdate(StreamMessageUpdate messageUpdate) {
-        messageUpdate.getMessage().getDelta().getContent().stream().forEach(delta -> {
-            if (delta instanceof MessageDeltaImageFileContent) {
-                MessageDeltaImageFileContent imgContent = (MessageDeltaImageFileContent) delta;
-                System.out.println("Image fileId: " + imgContent.getImageFile().getFileId());
-            } else if (delta instanceof MessageDeltaTextContent) {
-                MessageDeltaTextContent textContent = (MessageDeltaTextContent) delta;
-                System.out.print(textContent.getText().getValue());
-            }
-        });
     }
 
     // Use "Map.of" if available
