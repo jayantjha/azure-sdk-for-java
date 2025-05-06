@@ -9,6 +9,7 @@ import com.azure.ai.agents.persistent.models.ThreadDeletionStatus;
 import com.azure.ai.agents.persistent.models.ToolResources;
 import com.azure.ai.agents.persistent.models.UpdateAgentOptions;
 import com.azure.core.http.HttpClient;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import java.util.HashMap;
@@ -20,48 +21,89 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThreadsClientTest extends ClientTestBase {
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
-    public void testThreadsClientOperations(HttpClient httpClient) {
-        PersistentAgentsAdministrationClientBuilder clientBuilder = getClientBuilder(httpClient);
-        PersistentAgentsAdministrationClient agentsClient = clientBuilder.buildClient();
-        ThreadsClient threadsClient = clientBuilder.buildThreadsClient();
+    private PersistentAgentsAdministrationClientBuilder clientBuilder;
+    private PersistentAgentsAdministrationClient agentsClient;
+    private ThreadsClient threadsClient;
+    private PersistentAgent agent;
+    private PersistentAgentThread thread;
 
-        assertNotNull(agentsClient, "PersistentAgentsAdministrationClient should not be null");
-        assertNotNull(threadsClient, "ThreadsClient should not be null");
-
-        String agentName = "TestThreadOperationsAgent";
-        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+    private PersistentAgent createAgent(String agentName) {
+        CreateAgentOptions options = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You are a helpful agent");
+        PersistentAgent createdAgent = agentsClient.createAgent(options);
+        assertNotNull(createdAgent, "Persistent agent should not be null");
+        return createdAgent;
+    }
 
-        PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
-        assertAgent(agent);
+    private void setup(HttpClient httpClient) {
+        clientBuilder = getClientBuilder(httpClient);
+        agentsClient = clientBuilder.buildClient();
+        threadsClient = clientBuilder.buildThreadsClient();
+        agent = createAgent("TestAgent");
+        thread = threadsClient.createThread();
+    }
 
-        PersistentAgentThread thread = threadsClient.createThread();
+    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
+    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
+    public void testCreateThread(HttpClient httpClient) {
+        setup(httpClient);
+        // Validate that thread exists
         assertNotNull(thread, "Thread should not be null");
         assertNotNull(thread.getId(), "Thread ID should not be null");
+    }
 
+    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
+    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
+    public void testListThreads(HttpClient httpClient) {
+        setup(httpClient);
         List<PersistentAgentThread> threadList = threadsClient.listThreads().getData();
         assertNotNull(threadList, "Thread list should not be null");
         assertTrue(threadList.size() > 0, "Thread list should not be empty");
+    }
 
+    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
+    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
+    public void testGetThread(HttpClient httpClient) {
+        setup(httpClient);
         PersistentAgentThread retrievedThread = threadsClient.getThread(thread.getId());
         assertNotNull(retrievedThread, "Retrieved thread should not be null");
-        assertTrue(retrievedThread.getId().equals(thread.getId()), "Retrieved thread ID should match created thread ID");
+        assertTrue(thread.getId().equals(retrievedThread.getId()), "Thread ID should match");
+    }
 
+    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
+    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
+    public void testUpdateThread(HttpClient httpClient) {
+        setup(httpClient);
         HashMap<String, String> metadata = new HashMap<>();
         metadata.put("testKey", "testValue");
         PersistentAgentThread updatedThread = threadsClient.updateThread(thread.getId(), new ToolResources(), metadata);
         assertNotNull(updatedThread, "Updated thread should not be null");
-        assertTrue(updatedThread.getMetadata().get("testKey").equals("testValue"), "Updated thread metadata should match");
+        assertTrue("testValue".equals(updatedThread.getMetadata().get("testKey")), "Updated metadata should match");
+    }
 
+    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
+    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
+    public void testDeleteThread(HttpClient httpClient) {
+        setup(httpClient);
         ThreadDeletionStatus deletionStatus = threadsClient.deleteThread(thread.getId());
         assertNotNull(deletionStatus, "Deletion status should not be null");
         assertTrue(deletionStatus.isDeleted(), "Thread should be deleted");
-
-        // Clean up agent
-        agentsClient.deleteAgent(agent.getId());
     }
 
+    @AfterEach
+    public void cleanup() {
+        if (thread != null) {
+            try {
+                // Attempt to delete the thread
+                ThreadDeletionStatus deletionStatus = threadsClient.deleteThread(thread.getId());
+            } catch (Exception e) {
+                System.out.println("Failed to cleanup thread: " + thread.getId());
+                System.out.println(e.getMessage());
+            }
+        }
+        if (agent != null) {
+            agentsClient.deleteAgent(agent.getId());
+        }
+    }
 }

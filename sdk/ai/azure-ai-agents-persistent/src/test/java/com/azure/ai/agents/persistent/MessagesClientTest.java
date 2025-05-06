@@ -8,10 +8,13 @@ import com.azure.ai.agents.persistent.models.ThreadDeletionStatus;
 import com.azure.ai.agents.persistent.models.ThreadMessage;
 import com.azure.ai.agents.persistent.models.ToolResources;
 import com.azure.core.http.HttpClient;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.azure.ai.agents.persistent.TestUtils.DISPLAY_NAME_WITH_ARGUMENTS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,28 +23,36 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MessagesClientTest extends ClientTestBase {
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
-    public void testMessagesClientOperations(HttpClient httpClient) {
-        PersistentAgentsAdministrationClientBuilder clientBuilder = getClientBuilder(httpClient);
-        PersistentAgentsAdministrationClient agentsClient = clientBuilder.buildClient();
-        ThreadsClient threadsClient = clientBuilder.buildThreadsClient();
-        MessagesClient messagesClient = clientBuilder.buildMessagesClient();
+    private PersistentAgentsAdministrationClientBuilder clientBuilder;
+    private PersistentAgentsAdministrationClient agentsClient;
+    private ThreadsClient threadsClient;
+    private MessagesClient messagesClient;
+    private PersistentAgent agent;
+    private PersistentAgentThread thread;
 
-        assertNotNull(agentsClient, "PersistentAgentsAdministrationClient should not be null");
-        assertNotNull(threadsClient, "ThreadsClient should not be null");
-
-        String agentName = "TestThreadOperationsAgent";
-        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+    private PersistentAgent createAgent(String agentName) {
+        CreateAgentOptions options = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You are a helpful agent");
+        PersistentAgent createdAgent = agentsClient.createAgent(options);
+        assertNotNull(createdAgent, "Persistent agent should not be null");
+        return createdAgent;
+    }
 
-        PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
-        assertAgent(agent);
+    private void setup(HttpClient httpClient) {
+        clientBuilder = getClientBuilder(httpClient);
+        agentsClient = clientBuilder.buildClient();
+        threadsClient = clientBuilder.buildThreadsClient();
+        messagesClient = clientBuilder.buildMessagesClient();
+        agent = createAgent("TestAgent");
+        thread = threadsClient.createThread();
+    }
 
-        PersistentAgentThread thread = threadsClient.createThread();
-
-        // Test create message
+    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
+    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
+    public void testCreateAndRetrieveMessage(HttpClient httpClient) {
+        setup(httpClient);
+        // Create message
         ThreadMessage createdMessage = messagesClient.createMessage(
             thread.getId(),
             MessageRole.USER,
@@ -49,17 +60,19 @@ public class MessagesClientTest extends ClientTestBase {
         assertNotNull(createdMessage, "Created message should not be null");
         assertNotNull(createdMessage.getId(), "Message ID should not be null");
         assertEquals(MessageRole.USER, createdMessage.getRole(), "Message role should be USER");
-
-        // Test retrieve message
+        // Retrieve message
         ThreadMessage retrievedMessage = messagesClient.getMessage(thread.getId(), createdMessage.getId());
         assertNotNull(retrievedMessage, "Retrieved message should not be null");
-        assertEquals(createdMessage.getId(), retrievedMessage.getId(), "Retrieved message ID should match created message ID");
+        assertEquals(createdMessage.getId(), retrievedMessage.getId(), "Message IDs should match");
+    }
 
-        // Test create message with metadata
-        HashMap<String, String> metadata = new HashMap<>();
+    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
+    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
+    public void testCreateMessageWithMetadata(HttpClient httpClient) {
+        setup(httpClient);
+        Map<String, String> metadata = new HashMap<>();
         metadata.put("source", "test");
         metadata.put("priority", "high");
-
         ThreadMessage messageWithMetadata = messagesClient.createMessage(
             thread.getId(),
             MessageRole.USER,
@@ -68,26 +81,50 @@ public class MessagesClientTest extends ClientTestBase {
             metadata);
         assertNotNull(messageWithMetadata, "Message with metadata should not be null");
         assertNotNull(messageWithMetadata.getMetadata(), "Message metadata should not be null");
-        assertEquals("test", messageWithMetadata.getMetadata().get("source"), "Message metadata should contain source");
-        assertEquals("high", messageWithMetadata.getMetadata().get("priority"), "Message metadata should contain priority");
+        assertEquals("test", messageWithMetadata.getMetadata().get("source"), "Metadata source should match");
+        assertEquals("high", messageWithMetadata.getMetadata().get("priority"), "Metadata priority should match");
+    }
 
-        // Test update message
-        HashMap<String, String> updatedMetadata = new HashMap<>();
+    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
+    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
+    public void testUpdateMessage(HttpClient httpClient) {
+        setup(httpClient);
+        // Create initial message
+        ThreadMessage createdMessage = messagesClient.createMessage(
+            thread.getId(),
+            MessageRole.USER,
+            "Initial message");
+        // Update message metadata
+        Map<String, String> updatedMetadata = new HashMap<>();
         updatedMetadata.put("updated", "true");
         updatedMetadata.put("timestamp", String.valueOf(System.currentTimeMillis()));
-
         ThreadMessage updatedMessage = messagesClient.updateMessage(thread.getId(), createdMessage.getId(), updatedMetadata);
         assertNotNull(updatedMessage, "Updated message should not be null");
-        assertNotNull(updatedMessage.getMetadata(), "Updated message metadata should not be null");
-        assertEquals("true", updatedMessage.getMetadata().get("updated"), "Updated message metadata should contain updated flag");
+        assertNotNull(updatedMessage.getMetadata(), "Updated metadata should not be null");
+        assertEquals("true", updatedMessage.getMetadata().get("updated"), "Metadata updated flag should be true");
+    }
 
-        // Test list messages
+    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
+    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
+    public void testListMessagesDefault(HttpClient httpClient) {
+        setup(httpClient);
+        // Create at least two messages
+        messagesClient.createMessage(thread.getId(), MessageRole.USER, "Message 1");
+        messagesClient.createMessage(thread.getId(), MessageRole.USER, "Message 2");
         var messagesList = messagesClient.listMessages(thread.getId());
         assertNotNull(messagesList, "Messages list should not be null");
-        assertNotNull(messagesList.getData(), "Messages data should not be null");
-        assertTrue(messagesList.getData().size() >= 2, "Should have at least 2 messages");
+        assertNotNull(messagesList.getData(), "Message data should not be null");
+        assertTrue(messagesList.getData().size() >= 2, "There should be at least 2 messages");
+    }
 
-        // Test list messages with parameters
+    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
+    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
+    public void testListMessagesWithParameters(HttpClient httpClient) {
+        setup(httpClient);
+        // Create multiple messages
+        for (int i = 0; i < 5; i++) {
+            messagesClient.createMessage(thread.getId(), MessageRole.USER, "Message " + i);
+        }
         var filteredMessages = messagesClient.listMessages(
             thread.getId(),
             null,    // runId
@@ -97,15 +134,18 @@ public class MessagesClientTest extends ClientTestBase {
             null);   // before
         assertNotNull(filteredMessages, "Filtered messages should not be null");
         assertNotNull(filteredMessages.getData(), "Filtered messages data should not be null");
-        assertTrue(filteredMessages.getData().size() <= 10, "Should have at most 10 messages");
-
-        // Clean up
-        ThreadDeletionStatus deletionStatus = threadsClient.deleteThread(thread.getId());
-        assertNotNull(deletionStatus, "Deletion status should not be null");
-        assertTrue(deletionStatus.isDeleted(), "Thread should be deleted");
-
-        // Clean up agent
-        agentsClient.deleteAgent(agent.getId());
+        assertTrue(filteredMessages.getData().size() <= 10, "Messages list should have at most 10 messages");
     }
 
+    @AfterEach
+    public void cleanup() {
+        if (thread != null) {
+            ThreadDeletionStatus deletionStatus = threadsClient.deleteThread(thread.getId());
+            assertNotNull(deletionStatus, "Deletion status should not be null");
+            assertTrue(deletionStatus.isDeleted(), "Thread should be deleted");
+        }
+        if (agent != null) {
+            agentsClient.deleteAgent(agent.getId());
+        }
+    }
 }

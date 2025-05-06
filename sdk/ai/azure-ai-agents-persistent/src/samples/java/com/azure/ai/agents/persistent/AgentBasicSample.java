@@ -20,7 +20,7 @@ import static com.azure.ai.agents.persistent.SampleUtils.waitForRunCompletion;
 
 public final class AgentBasicSample {
 
-    public static void basicExampleSync() {
+    public static void main(String[] args) {
 
         PersistentAgentsAdministrationClientBuilder clientBuilder = new PersistentAgentsAdministrationClientBuilder()
             .endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))

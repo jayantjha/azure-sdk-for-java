@@ -3,8 +3,11 @@ package com.azure.ai.agents.persistent;
 import com.azure.ai.agents.persistent.models.AgentDeletionStatus;
 import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.PersistentAgent;
+import com.azure.ai.agents.persistent.models.PersistentAgentThread;
+import com.azure.ai.agents.persistent.models.ThreadDeletionStatus;
 import com.azure.ai.agents.persistent.models.UpdateAgentOptions;
 import com.azure.core.http.HttpClient;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -16,47 +19,82 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AdministrationClientTest extends ClientTestBase {
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
-    public void testAdministrationClientOperations(HttpClient httpClient) {
-        PersistentAgentsAdministrationClient agentsClient = getClientBuilder(httpClient).buildClient();
+    private PersistentAgentsAdministrationClientBuilder clientBuilder;
+    private PersistentAgentsAdministrationClient agentsClient;
+    private PersistentAgent agent;
 
-        assertNotNull(agentsClient, "PersistentAgentsAdministrationClient should not be null");
-
-        String agentName = "TestAgentOperationsAgent";
-        CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
+    private PersistentAgent createAgent(String agentName) {
+        CreateAgentOptions options = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You are a helpful agent");
+        PersistentAgent createdAgent = agentsClient.createAgent(options);
+        assertNotNull(createdAgent, "Persistent agent should not be null");
+        return createdAgent;
+    }
 
-        PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
-        // Validate the agent creation
+    private void setup(HttpClient httpClient) {
+        clientBuilder = getClientBuilder(httpClient);
+        agentsClient = clientBuilder.buildClient();
+        agent = createAgent("TestAgent");
+    }
+
+    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
+    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
+    public void testCreateAgent(HttpClient httpClient) {
+        setup(httpClient);
         assertAgent(agent);
+    }
 
-        List<PersistentAgent> agentList = agentsClient.listAgents().getData();
+    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
+    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
+    public void testListAgents(HttpClient httpClient) {
+        setup(httpClient);
 
         // Validate the agent listing
+        var agentList = agentsClient.listAgents().getData();
         assertNotNull(agentList, "Agent list should not be null");
         assertTrue(agentList.size() > 0, "Agent list should not be empty");
+    }
+
+    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
+    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
+    public void testGetAgent(HttpClient httpClient) {
+        setup(httpClient);
 
         PersistentAgent retrievedAgent = agentsClient.getAgent(agent.getId());
-
-        // Validate the agent retrieval
         assertAgent(retrievedAgent);
-        assertTrue(retrievedAgent.getId() == agent.getId(), "Retrieved agent ID should match created agent ID");
+        assertTrue(retrievedAgent.getId().equals(agent.getId()), "Retrieved agent ID should match created agent ID");
+    }
 
-        UpdateAgentOptions updateAgentOptions = new UpdateAgentOptions(agent.getId())
+    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
+    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
+    public void testUpdateAgent(HttpClient httpClient) {
+        setup(httpClient);
+
+        UpdateAgentOptions updateOptions = new UpdateAgentOptions(agent.getId())
             .setInstructions("Updated instructions for the agent");
-        PersistentAgent updatedAgent = agentsClient.updateAgent(updateAgentOptions);
-
-        // Validate the agent update
+        PersistentAgent updatedAgent = agentsClient.updateAgent(updateOptions);
         assertAgent(updatedAgent);
         assertTrue(updatedAgent.getInstructions().equals("Updated instructions for the agent"), "Updated agent instructions should match");
-        assertTrue(updatedAgent.getId() == agent.getId(), "Updated agent ID should match created agent ID");
+        assertTrue(updatedAgent.getId().equals(agent.getId()), "Updated agent ID should match created agent ID");
+    }
+
+    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
+    @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
+    public void testDeleteAgent(HttpClient httpClient) {
+        setup(httpClient);
 
         AgentDeletionStatus deletionStatus = agentsClient.deleteAgent(agent.getId());
-
-        // Validate the agent deletion
         assertNotNull(deletionStatus, "Deletion status should not be null");
         assertTrue(deletionStatus.isDeleted(), "Agent should be deleted");
+        agent = null;
+    }
+
+
+    @AfterEach
+    public void cleanup() {
+        if (agent != null) {
+            agentsClient.deleteAgent(agent.getId());
+        }
     }
 }
