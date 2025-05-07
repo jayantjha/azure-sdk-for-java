@@ -27,6 +27,10 @@ import com.azure.core.http.HttpPipeline;
 import com.azure.core.http.HttpPipelineBuilder;
 import com.azure.core.http.policy.RetryPolicy;
 import com.azure.core.http.policy.UserAgentPolicy;
+import com.azure.core.http.rest.PagedFlux;
+import com.azure.core.http.rest.PagedIterable;
+import com.azure.core.http.rest.PagedResponse;
+import com.azure.core.http.rest.PagedResponseBase;
 import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.http.rest.Response;
 import com.azure.core.http.rest.RestProxy;
@@ -35,6 +39,9 @@ import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
 import com.azure.core.util.serializer.JacksonAdapter;
 import com.azure.core.util.serializer.SerializerAdapter;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import reactor.core.publisher.Mono;
 
 /**
@@ -728,72 +735,64 @@ public final class PersistentAgentsAdministrationClientImpl {
      * <pre>
      * {@code
      * {
+     *     id: String (Required)
      *     object: String (Required)
-     *     data (Required): [
+     *     created_at: long (Required)
+     *     name: String (Required)
+     *     description: String (Required)
+     *     model: String (Required)
+     *     instructions: String (Required)
+     *     tools (Required): [
      *          (Required){
-     *             id: String (Required)
-     *             object: String (Required)
-     *             created_at: long (Required)
-     *             name: String (Required)
-     *             description: String (Required)
-     *             model: String (Required)
-     *             instructions: String (Required)
-     *             tools (Required): [
-     *                  (Required){
-     *                     type: String (Required)
-     *                 }
-     *             ]
-     *             tool_resources (Required): {
-     *                 code_interpreter (Optional): {
-     *                     file_ids (Optional): [
-     *                         String (Optional)
-     *                     ]
-     *                     data_sources (Optional): [
-     *                          (Optional){
-     *                             uri: String (Required)
-     *                             type: String(uri_asset/id_asset) (Required)
-     *                         }
-     *                     ]
-     *                 }
-     *                 file_search (Optional): {
-     *                     vector_store_ids (Optional): [
-     *                         String (Optional)
-     *                     ]
-     *                     vector_stores (Optional): [
-     *                          (Optional){
-     *                             name: String (Required)
-     *                             configuration (Required): {
-     *                                 data_sources (Required): [
-     *                                     (recursive schema, see above)
-     *                                 ]
-     *                             }
-     *                         }
-     *                     ]
-     *                 }
-     *                 azure_ai_search (Optional): {
-     *                     indexes (Optional): [
-     *                          (Optional){
-     *                             index_connection_id: String (Required)
-     *                             index_name: String (Required)
-     *                             query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
-     *                             top_k: Integer (Optional)
-     *                             filter: String (Optional)
-     *                             index_asset_id: String (Optional)
-     *                         }
-     *                     ]
-     *                 }
-     *             }
-     *             temperature: Double (Required)
-     *             top_p: Double (Required)
-     *             response_format: BinaryData (Optional)
-     *             metadata (Required): {
-     *                 String: String (Required)
-     *             }
+     *             type: String (Required)
      *         }
      *     ]
-     *     first_id: String (Required)
-     *     last_id: String (Required)
-     *     has_more: boolean (Required)
+     *     tool_resources (Required): {
+     *         code_interpreter (Optional): {
+     *             file_ids (Optional): [
+     *                 String (Optional)
+     *             ]
+     *             data_sources (Optional): [
+     *                  (Optional){
+     *                     uri: String (Required)
+     *                     type: String(uri_asset/id_asset) (Required)
+     *                 }
+     *             ]
+     *         }
+     *         file_search (Optional): {
+     *             vector_store_ids (Optional): [
+     *                 String (Optional)
+     *             ]
+     *             vector_stores (Optional): [
+     *                  (Optional){
+     *                     name: String (Required)
+     *                     configuration (Required): {
+     *                         data_sources (Required): [
+     *                             (recursive schema, see above)
+     *                         ]
+     *                     }
+     *                 }
+     *             ]
+     *         }
+     *         azure_ai_search (Optional): {
+     *             indexes (Optional): [
+     *                  (Optional){
+     *                     index_connection_id: String (Required)
+     *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
+     *                     index_asset_id: String (Optional)
+     *                 }
+     *             ]
+     *         }
+     *     }
+     *     temperature: Double (Required)
+     *     top_p: Double (Required)
+     *     response_format: BinaryData (Optional)
+     *     metadata (Required): {
+     *         String: String (Required)
+     *     }
      * }
      * }
      * </pre>
@@ -803,14 +802,17 @@ public final class PersistentAgentsAdministrationClientImpl {
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return a list of agents that were previously created along with {@link Response} on successful completion of
-     * {@link Mono}.
+     * @return a list of agents that were previously created along with {@link PagedResponse} on successful completion
+     * of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<BinaryData>> listAgentsWithResponseAsync(RequestOptions requestOptions) {
+    private Mono<PagedResponse<BinaryData>> listAgentsSinglePageAsync(RequestOptions requestOptions) {
         final String accept = "application/json";
-        return FluxUtil.withContext(context -> service.listAgents(this.getEndpoint(),
-            this.getServiceVersion().getVersion(), accept, requestOptions, context));
+        return FluxUtil
+            .withContext(context -> service.listAgents(this.getEndpoint(), this.getServiceVersion().getVersion(),
+                accept, requestOptions, context))
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                getValues(res.getValue(), "data"), null, null));
     }
 
     /**
@@ -837,72 +839,64 @@ public final class PersistentAgentsAdministrationClientImpl {
      * <pre>
      * {@code
      * {
+     *     id: String (Required)
      *     object: String (Required)
-     *     data (Required): [
+     *     created_at: long (Required)
+     *     name: String (Required)
+     *     description: String (Required)
+     *     model: String (Required)
+     *     instructions: String (Required)
+     *     tools (Required): [
      *          (Required){
-     *             id: String (Required)
-     *             object: String (Required)
-     *             created_at: long (Required)
-     *             name: String (Required)
-     *             description: String (Required)
-     *             model: String (Required)
-     *             instructions: String (Required)
-     *             tools (Required): [
-     *                  (Required){
-     *                     type: String (Required)
-     *                 }
-     *             ]
-     *             tool_resources (Required): {
-     *                 code_interpreter (Optional): {
-     *                     file_ids (Optional): [
-     *                         String (Optional)
-     *                     ]
-     *                     data_sources (Optional): [
-     *                          (Optional){
-     *                             uri: String (Required)
-     *                             type: String(uri_asset/id_asset) (Required)
-     *                         }
-     *                     ]
-     *                 }
-     *                 file_search (Optional): {
-     *                     vector_store_ids (Optional): [
-     *                         String (Optional)
-     *                     ]
-     *                     vector_stores (Optional): [
-     *                          (Optional){
-     *                             name: String (Required)
-     *                             configuration (Required): {
-     *                                 data_sources (Required): [
-     *                                     (recursive schema, see above)
-     *                                 ]
-     *                             }
-     *                         }
-     *                     ]
-     *                 }
-     *                 azure_ai_search (Optional): {
-     *                     indexes (Optional): [
-     *                          (Optional){
-     *                             index_connection_id: String (Required)
-     *                             index_name: String (Required)
-     *                             query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
-     *                             top_k: Integer (Optional)
-     *                             filter: String (Optional)
-     *                             index_asset_id: String (Optional)
-     *                         }
-     *                     ]
-     *                 }
-     *             }
-     *             temperature: Double (Required)
-     *             top_p: Double (Required)
-     *             response_format: BinaryData (Optional)
-     *             metadata (Required): {
-     *                 String: String (Required)
-     *             }
+     *             type: String (Required)
      *         }
      *     ]
-     *     first_id: String (Required)
-     *     last_id: String (Required)
-     *     has_more: boolean (Required)
+     *     tool_resources (Required): {
+     *         code_interpreter (Optional): {
+     *             file_ids (Optional): [
+     *                 String (Optional)
+     *             ]
+     *             data_sources (Optional): [
+     *                  (Optional){
+     *                     uri: String (Required)
+     *                     type: String(uri_asset/id_asset) (Required)
+     *                 }
+     *             ]
+     *         }
+     *         file_search (Optional): {
+     *             vector_store_ids (Optional): [
+     *                 String (Optional)
+     *             ]
+     *             vector_stores (Optional): [
+     *                  (Optional){
+     *                     name: String (Required)
+     *                     configuration (Required): {
+     *                         data_sources (Required): [
+     *                             (recursive schema, see above)
+     *                         ]
+     *                     }
+     *                 }
+     *             ]
+     *         }
+     *         azure_ai_search (Optional): {
+     *             indexes (Optional): [
+     *                  (Optional){
+     *                     index_connection_id: String (Required)
+     *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
+     *                     index_asset_id: String (Optional)
+     *                 }
+     *             ]
+     *         }
+     *     }
+     *     temperature: Double (Required)
+     *     top_p: Double (Required)
+     *     response_format: BinaryData (Optional)
+     *     metadata (Required): {
+     *         String: String (Required)
+     *     }
      * }
      * }
      * </pre>
@@ -912,13 +906,211 @@ public final class PersistentAgentsAdministrationClientImpl {
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return a list of agents that were previously created along with {@link Response}.
+     * @return a list of agents that were previously created as paginated response with {@link PagedFlux}.
+     */
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    public PagedFlux<BinaryData> listAgentsAsync(RequestOptions requestOptions) {
+        return new PagedFlux<>(() -> listAgentsSinglePageAsync(requestOptions));
+    }
+
+    /**
+     * Gets a list of agents that were previously created.
+     * <p><strong>Query Parameters</strong></p>
+     * <table border="1">
+     * <caption>Query Parameters</caption>
+     * <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+     * <tr><td>limit</td><td>Integer</td><td>No</td><td>A limit on the number of objects to be returned. Limit can range
+     * between 1 and 100, and the default is 20.</td></tr>
+     * <tr><td>order</td><td>String</td><td>No</td><td>Sort order by the created_at timestamp of the objects. asc for
+     * ascending order and desc for descending order. Allowed values: "asc", "desc".</td></tr>
+     * <tr><td>after</td><td>String</td><td>No</td><td>A cursor for use in pagination. after is an object ID that
+     * defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with
+     * obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.</td></tr>
+     * <tr><td>before</td><td>String</td><td>No</td><td>A cursor for use in pagination. before is an object ID that
+     * defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with
+     * obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the
+     * list.</td></tr>
+     * </table>
+     * You can add these to a request with {@link RequestOptions#addQueryParam}
+     * <p><strong>Response Body Schema</strong></p>
+     * 
+     * <pre>
+     * {@code
+     * {
+     *     id: String (Required)
+     *     object: String (Required)
+     *     created_at: long (Required)
+     *     name: String (Required)
+     *     description: String (Required)
+     *     model: String (Required)
+     *     instructions: String (Required)
+     *     tools (Required): [
+     *          (Required){
+     *             type: String (Required)
+     *         }
+     *     ]
+     *     tool_resources (Required): {
+     *         code_interpreter (Optional): {
+     *             file_ids (Optional): [
+     *                 String (Optional)
+     *             ]
+     *             data_sources (Optional): [
+     *                  (Optional){
+     *                     uri: String (Required)
+     *                     type: String(uri_asset/id_asset) (Required)
+     *                 }
+     *             ]
+     *         }
+     *         file_search (Optional): {
+     *             vector_store_ids (Optional): [
+     *                 String (Optional)
+     *             ]
+     *             vector_stores (Optional): [
+     *                  (Optional){
+     *                     name: String (Required)
+     *                     configuration (Required): {
+     *                         data_sources (Required): [
+     *                             (recursive schema, see above)
+     *                         ]
+     *                     }
+     *                 }
+     *             ]
+     *         }
+     *         azure_ai_search (Optional): {
+     *             indexes (Optional): [
+     *                  (Optional){
+     *                     index_connection_id: String (Required)
+     *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
+     *                     index_asset_id: String (Optional)
+     *                 }
+     *             ]
+     *         }
+     *     }
+     *     temperature: Double (Required)
+     *     top_p: Double (Required)
+     *     response_format: BinaryData (Optional)
+     *     metadata (Required): {
+     *         String: String (Required)
+     *     }
+     * }
+     * }
+     * </pre>
+     * 
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @return a list of agents that were previously created along with {@link PagedResponse}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<BinaryData> listAgentsWithResponse(RequestOptions requestOptions) {
+    private PagedResponse<BinaryData> listAgentsSinglePage(RequestOptions requestOptions) {
         final String accept = "application/json";
-        return service.listAgentsSync(this.getEndpoint(), this.getServiceVersion().getVersion(), accept, requestOptions,
-            Context.NONE);
+        Response<BinaryData> res = service.listAgentsSync(this.getEndpoint(), this.getServiceVersion().getVersion(),
+            accept, requestOptions, Context.NONE);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+            getValues(res.getValue(), "data"), null, null);
+    }
+
+    /**
+     * Gets a list of agents that were previously created.
+     * <p><strong>Query Parameters</strong></p>
+     * <table border="1">
+     * <caption>Query Parameters</caption>
+     * <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+     * <tr><td>limit</td><td>Integer</td><td>No</td><td>A limit on the number of objects to be returned. Limit can range
+     * between 1 and 100, and the default is 20.</td></tr>
+     * <tr><td>order</td><td>String</td><td>No</td><td>Sort order by the created_at timestamp of the objects. asc for
+     * ascending order and desc for descending order. Allowed values: "asc", "desc".</td></tr>
+     * <tr><td>after</td><td>String</td><td>No</td><td>A cursor for use in pagination. after is an object ID that
+     * defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with
+     * obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.</td></tr>
+     * <tr><td>before</td><td>String</td><td>No</td><td>A cursor for use in pagination. before is an object ID that
+     * defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with
+     * obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the
+     * list.</td></tr>
+     * </table>
+     * You can add these to a request with {@link RequestOptions#addQueryParam}
+     * <p><strong>Response Body Schema</strong></p>
+     * 
+     * <pre>
+     * {@code
+     * {
+     *     id: String (Required)
+     *     object: String (Required)
+     *     created_at: long (Required)
+     *     name: String (Required)
+     *     description: String (Required)
+     *     model: String (Required)
+     *     instructions: String (Required)
+     *     tools (Required): [
+     *          (Required){
+     *             type: String (Required)
+     *         }
+     *     ]
+     *     tool_resources (Required): {
+     *         code_interpreter (Optional): {
+     *             file_ids (Optional): [
+     *                 String (Optional)
+     *             ]
+     *             data_sources (Optional): [
+     *                  (Optional){
+     *                     uri: String (Required)
+     *                     type: String(uri_asset/id_asset) (Required)
+     *                 }
+     *             ]
+     *         }
+     *         file_search (Optional): {
+     *             vector_store_ids (Optional): [
+     *                 String (Optional)
+     *             ]
+     *             vector_stores (Optional): [
+     *                  (Optional){
+     *                     name: String (Required)
+     *                     configuration (Required): {
+     *                         data_sources (Required): [
+     *                             (recursive schema, see above)
+     *                         ]
+     *                     }
+     *                 }
+     *             ]
+     *         }
+     *         azure_ai_search (Optional): {
+     *             indexes (Optional): [
+     *                  (Optional){
+     *                     index_connection_id: String (Required)
+     *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
+     *                     index_asset_id: String (Optional)
+     *                 }
+     *             ]
+     *         }
+     *     }
+     *     temperature: Double (Required)
+     *     top_p: Double (Required)
+     *     response_format: BinaryData (Optional)
+     *     metadata (Required): {
+     *         String: String (Required)
+     *     }
+     * }
+     * }
+     * </pre>
+     * 
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @return a list of agents that were previously created as paginated response with {@link PagedIterable}.
+     */
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    public PagedIterable<BinaryData> listAgents(RequestOptions requestOptions) {
+        return new PagedIterable<>(() -> listAgentsSinglePage(requestOptions));
     }
 
     /**
@@ -1867,5 +2059,24 @@ public final class PersistentAgentsAdministrationClientImpl {
         final String accept = "application/json";
         return service.createThreadAndRunSync(this.getEndpoint(), this.getServiceVersion().getVersion(), contentType,
             accept, createThreadAndRunRequest, requestOptions, Context.NONE);
+    }
+
+    private List<BinaryData> getValues(BinaryData binaryData, String path) {
+        try {
+            Map<?, ?> obj = binaryData.toObject(Map.class);
+            List<?> values = (List<?>) obj.get(path);
+            return values.stream().map(BinaryData::fromObject).collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    private String getNextLink(BinaryData binaryData, String path) {
+        try {
+            Map<?, ?> obj = binaryData.toObject(Map.class);
+            return (String) obj.get(path);
+        } catch (RuntimeException e) {
+            return null;
+        }
     }
 }

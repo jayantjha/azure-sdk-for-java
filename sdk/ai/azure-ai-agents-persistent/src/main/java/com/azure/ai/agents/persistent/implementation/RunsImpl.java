@@ -22,12 +22,19 @@ import com.azure.core.exception.ClientAuthenticationException;
 import com.azure.core.exception.HttpResponseException;
 import com.azure.core.exception.ResourceModifiedException;
 import com.azure.core.exception.ResourceNotFoundException;
+import com.azure.core.http.rest.PagedFlux;
+import com.azure.core.http.rest.PagedIterable;
+import com.azure.core.http.rest.PagedResponse;
+import com.azure.core.http.rest.PagedResponseBase;
 import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.http.rest.Response;
 import com.azure.core.http.rest.RestProxy;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import reactor.core.publisher.Mono;
 
 /**
@@ -99,7 +106,7 @@ public final class RunsImpl {
         @UnexpectedResponseExceptionType(value = ResourceModifiedException.class, code = { 409 })
         @UnexpectedResponseExceptionType(HttpResponseException.class)
         Mono<Response<BinaryData>> listRuns(@HostParam("endpoint") String endpoint,
-            @QueryParam("api-version") String apiVersion, @PathParam("threadId") String threadId,
+            @PathParam("threadId") String threadId, @QueryParam("api-version") String apiVersion,
             @HeaderParam("Accept") String accept, RequestOptions requestOptions, Context context);
 
         @Get("/threads/{threadId}/runs")
@@ -109,7 +116,7 @@ public final class RunsImpl {
         @UnexpectedResponseExceptionType(value = ResourceModifiedException.class, code = { 409 })
         @UnexpectedResponseExceptionType(HttpResponseException.class)
         Response<BinaryData> listRunsSync(@HostParam("endpoint") String endpoint,
-            @QueryParam("api-version") String apiVersion, @PathParam("threadId") String threadId,
+            @PathParam("threadId") String threadId, @QueryParam("api-version") String apiVersion,
             @HeaderParam("Accept") String accept, RequestOptions requestOptions, Context context);
 
         @Get("/threads/{threadId}/runs/{runId}")
@@ -561,85 +568,77 @@ public final class RunsImpl {
      * <pre>
      * {@code
      * {
+     *     id: String (Required)
      *     object: String (Required)
-     *     data (Required): [
+     *     thread_id: String (Required)
+     *     assistant_id: String (Required)
+     *     status: String(queued/in_progress/requires_action/cancelling/cancelled/failed/completed/expired) (Required)
+     *     required_action (Optional): {
+     *         type: String (Required)
+     *     }
+     *     last_error (Required): {
+     *         code: String (Required)
+     *         message: String (Required)
+     *     }
+     *     model: String (Required)
+     *     instructions: String (Required)
+     *     tools (Required): [
      *          (Required){
-     *             id: String (Required)
-     *             object: String (Required)
-     *             thread_id: String (Required)
-     *             assistant_id: String (Required)
-     *             status: String(queued/in_progress/requires_action/cancelling/cancelled/failed/completed/expired) (Required)
-     *             required_action (Optional): {
-     *                 type: String (Required)
-     *             }
-     *             last_error (Required): {
-     *                 code: String (Required)
-     *                 message: String (Required)
-     *             }
-     *             model: String (Required)
-     *             instructions: String (Required)
-     *             tools (Required): [
-     *                  (Required){
-     *                     type: String (Required)
-     *                 }
-     *             ]
-     *             created_at: long (Required)
-     *             expires_at: Long (Required)
-     *             started_at: Long (Required)
-     *             completed_at: Long (Required)
-     *             cancelled_at: Long (Required)
-     *             failed_at: Long (Required)
-     *             incomplete_details (Required): {
-     *                 reason: String(max_completion_tokens/max_prompt_tokens) (Required)
-     *             }
-     *             usage (Required): {
-     *                 completion_tokens: long (Required)
-     *                 prompt_tokens: long (Required)
-     *                 total_tokens: long (Required)
-     *             }
-     *             temperature: Double (Optional)
-     *             top_p: Double (Optional)
-     *             max_prompt_tokens: Integer (Required)
-     *             max_completion_tokens: Integer (Required)
-     *             truncation_strategy (Required): {
-     *                 type: String(auto/last_messages) (Required)
-     *                 last_messages: Integer (Optional)
-     *             }
-     *             tool_choice: BinaryData (Required)
-     *             response_format: BinaryData (Required)
-     *             metadata (Required): {
-     *                 String: String (Required)
-     *             }
-     *             tool_resources (Optional): {
-     *                 code_interpreter (Optional): {
-     *                     file_ids (Optional): [
-     *                         String (Optional)
-     *                     ]
-     *                 }
-     *                 file_search (Optional): {
-     *                     vector_store_ids (Optional): [
-     *                         String (Optional)
-     *                     ]
-     *                 }
-     *                 azure_ai_search (Optional): {
-     *                     indexes (Optional): [
-     *                          (Optional){
-     *                             index_connection_id: String (Required)
-     *                             index_name: String (Required)
-     *                             query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
-     *                             top_k: Integer (Optional)
-     *                             filter: String (Optional)
-     *                             index_asset_id: String (Optional)
-     *                         }
-     *                     ]
-     *                 }
-     *             }
-     *             parallel_tool_calls: boolean (Required)
+     *             type: String (Required)
      *         }
      *     ]
-     *     first_id: String (Required)
-     *     last_id: String (Required)
-     *     has_more: boolean (Required)
+     *     created_at: long (Required)
+     *     expires_at: Long (Required)
+     *     started_at: Long (Required)
+     *     completed_at: Long (Required)
+     *     cancelled_at: Long (Required)
+     *     failed_at: Long (Required)
+     *     incomplete_details (Required): {
+     *         reason: String(max_completion_tokens/max_prompt_tokens) (Required)
+     *     }
+     *     usage (Required): {
+     *         completion_tokens: long (Required)
+     *         prompt_tokens: long (Required)
+     *         total_tokens: long (Required)
+     *     }
+     *     temperature: Double (Optional)
+     *     top_p: Double (Optional)
+     *     max_prompt_tokens: Integer (Required)
+     *     max_completion_tokens: Integer (Required)
+     *     truncation_strategy (Required): {
+     *         type: String(auto/last_messages) (Required)
+     *         last_messages: Integer (Optional)
+     *     }
+     *     tool_choice: BinaryData (Required)
+     *     response_format: BinaryData (Required)
+     *     metadata (Required): {
+     *         String: String (Required)
+     *     }
+     *     tool_resources (Optional): {
+     *         code_interpreter (Optional): {
+     *             file_ids (Optional): [
+     *                 String (Optional)
+     *             ]
+     *         }
+     *         file_search (Optional): {
+     *             vector_store_ids (Optional): [
+     *                 String (Optional)
+     *             ]
+     *         }
+     *         azure_ai_search (Optional): {
+     *             indexes (Optional): [
+     *                  (Optional){
+     *                     index_connection_id: String (Required)
+     *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
+     *                     index_asset_id: String (Optional)
+     *                 }
+     *             ]
+     *         }
+     *     }
+     *     parallel_tool_calls: boolean (Required)
      * }
      * }
      * </pre>
@@ -650,14 +649,17 @@ public final class RunsImpl {
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return a list of runs for a specified thread along with {@link Response} on successful completion of
+     * @return a list of runs for a specified thread along with {@link PagedResponse} on successful completion of
      * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<BinaryData>> listRunsWithResponseAsync(String threadId, RequestOptions requestOptions) {
+    private Mono<PagedResponse<BinaryData>> listRunsSinglePageAsync(String threadId, RequestOptions requestOptions) {
         final String accept = "application/json";
-        return FluxUtil.withContext(context -> service.listRuns(this.client.getEndpoint(),
-            this.client.getServiceVersion().getVersion(), threadId, accept, requestOptions, context));
+        return FluxUtil
+            .withContext(context -> service.listRuns(this.client.getEndpoint(), threadId,
+                this.client.getServiceVersion().getVersion(), accept, requestOptions, context))
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                getValues(res.getValue(), "data"), null, null));
     }
 
     /**
@@ -684,85 +686,77 @@ public final class RunsImpl {
      * <pre>
      * {@code
      * {
+     *     id: String (Required)
      *     object: String (Required)
-     *     data (Required): [
+     *     thread_id: String (Required)
+     *     assistant_id: String (Required)
+     *     status: String(queued/in_progress/requires_action/cancelling/cancelled/failed/completed/expired) (Required)
+     *     required_action (Optional): {
+     *         type: String (Required)
+     *     }
+     *     last_error (Required): {
+     *         code: String (Required)
+     *         message: String (Required)
+     *     }
+     *     model: String (Required)
+     *     instructions: String (Required)
+     *     tools (Required): [
      *          (Required){
-     *             id: String (Required)
-     *             object: String (Required)
-     *             thread_id: String (Required)
-     *             assistant_id: String (Required)
-     *             status: String(queued/in_progress/requires_action/cancelling/cancelled/failed/completed/expired) (Required)
-     *             required_action (Optional): {
-     *                 type: String (Required)
-     *             }
-     *             last_error (Required): {
-     *                 code: String (Required)
-     *                 message: String (Required)
-     *             }
-     *             model: String (Required)
-     *             instructions: String (Required)
-     *             tools (Required): [
-     *                  (Required){
-     *                     type: String (Required)
-     *                 }
-     *             ]
-     *             created_at: long (Required)
-     *             expires_at: Long (Required)
-     *             started_at: Long (Required)
-     *             completed_at: Long (Required)
-     *             cancelled_at: Long (Required)
-     *             failed_at: Long (Required)
-     *             incomplete_details (Required): {
-     *                 reason: String(max_completion_tokens/max_prompt_tokens) (Required)
-     *             }
-     *             usage (Required): {
-     *                 completion_tokens: long (Required)
-     *                 prompt_tokens: long (Required)
-     *                 total_tokens: long (Required)
-     *             }
-     *             temperature: Double (Optional)
-     *             top_p: Double (Optional)
-     *             max_prompt_tokens: Integer (Required)
-     *             max_completion_tokens: Integer (Required)
-     *             truncation_strategy (Required): {
-     *                 type: String(auto/last_messages) (Required)
-     *                 last_messages: Integer (Optional)
-     *             }
-     *             tool_choice: BinaryData (Required)
-     *             response_format: BinaryData (Required)
-     *             metadata (Required): {
-     *                 String: String (Required)
-     *             }
-     *             tool_resources (Optional): {
-     *                 code_interpreter (Optional): {
-     *                     file_ids (Optional): [
-     *                         String (Optional)
-     *                     ]
-     *                 }
-     *                 file_search (Optional): {
-     *                     vector_store_ids (Optional): [
-     *                         String (Optional)
-     *                     ]
-     *                 }
-     *                 azure_ai_search (Optional): {
-     *                     indexes (Optional): [
-     *                          (Optional){
-     *                             index_connection_id: String (Required)
-     *                             index_name: String (Required)
-     *                             query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
-     *                             top_k: Integer (Optional)
-     *                             filter: String (Optional)
-     *                             index_asset_id: String (Optional)
-     *                         }
-     *                     ]
-     *                 }
-     *             }
-     *             parallel_tool_calls: boolean (Required)
+     *             type: String (Required)
      *         }
      *     ]
-     *     first_id: String (Required)
-     *     last_id: String (Required)
-     *     has_more: boolean (Required)
+     *     created_at: long (Required)
+     *     expires_at: Long (Required)
+     *     started_at: Long (Required)
+     *     completed_at: Long (Required)
+     *     cancelled_at: Long (Required)
+     *     failed_at: Long (Required)
+     *     incomplete_details (Required): {
+     *         reason: String(max_completion_tokens/max_prompt_tokens) (Required)
+     *     }
+     *     usage (Required): {
+     *         completion_tokens: long (Required)
+     *         prompt_tokens: long (Required)
+     *         total_tokens: long (Required)
+     *     }
+     *     temperature: Double (Optional)
+     *     top_p: Double (Optional)
+     *     max_prompt_tokens: Integer (Required)
+     *     max_completion_tokens: Integer (Required)
+     *     truncation_strategy (Required): {
+     *         type: String(auto/last_messages) (Required)
+     *         last_messages: Integer (Optional)
+     *     }
+     *     tool_choice: BinaryData (Required)
+     *     response_format: BinaryData (Required)
+     *     metadata (Required): {
+     *         String: String (Required)
+     *     }
+     *     tool_resources (Optional): {
+     *         code_interpreter (Optional): {
+     *             file_ids (Optional): [
+     *                 String (Optional)
+     *             ]
+     *         }
+     *         file_search (Optional): {
+     *             vector_store_ids (Optional): [
+     *                 String (Optional)
+     *             ]
+     *         }
+     *         azure_ai_search (Optional): {
+     *             indexes (Optional): [
+     *                  (Optional){
+     *                     index_connection_id: String (Required)
+     *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
+     *                     index_asset_id: String (Optional)
+     *                 }
+     *             ]
+     *         }
+     *     }
+     *     parallel_tool_calls: boolean (Required)
      * }
      * }
      * </pre>
@@ -773,13 +767,239 @@ public final class RunsImpl {
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return a list of runs for a specified thread along with {@link Response}.
+     * @return a list of runs for a specified thread as paginated response with {@link PagedFlux}.
+     */
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    public PagedFlux<BinaryData> listRunsAsync(String threadId, RequestOptions requestOptions) {
+        return new PagedFlux<>(() -> listRunsSinglePageAsync(threadId, requestOptions));
+    }
+
+    /**
+     * Gets a list of runs for a specified thread.
+     * <p><strong>Query Parameters</strong></p>
+     * <table border="1">
+     * <caption>Query Parameters</caption>
+     * <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+     * <tr><td>limit</td><td>Integer</td><td>No</td><td>A limit on the number of objects to be returned. Limit can range
+     * between 1 and 100, and the default is 20.</td></tr>
+     * <tr><td>order</td><td>String</td><td>No</td><td>Sort order by the created_at timestamp of the objects. asc for
+     * ascending order and desc for descending order. Allowed values: "asc", "desc".</td></tr>
+     * <tr><td>after</td><td>String</td><td>No</td><td>A cursor for use in pagination. after is an object ID that
+     * defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with
+     * obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.</td></tr>
+     * <tr><td>before</td><td>String</td><td>No</td><td>A cursor for use in pagination. before is an object ID that
+     * defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with
+     * obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the
+     * list.</td></tr>
+     * </table>
+     * You can add these to a request with {@link RequestOptions#addQueryParam}
+     * <p><strong>Response Body Schema</strong></p>
+     * 
+     * <pre>
+     * {@code
+     * {
+     *     id: String (Required)
+     *     object: String (Required)
+     *     thread_id: String (Required)
+     *     assistant_id: String (Required)
+     *     status: String(queued/in_progress/requires_action/cancelling/cancelled/failed/completed/expired) (Required)
+     *     required_action (Optional): {
+     *         type: String (Required)
+     *     }
+     *     last_error (Required): {
+     *         code: String (Required)
+     *         message: String (Required)
+     *     }
+     *     model: String (Required)
+     *     instructions: String (Required)
+     *     tools (Required): [
+     *          (Required){
+     *             type: String (Required)
+     *         }
+     *     ]
+     *     created_at: long (Required)
+     *     expires_at: Long (Required)
+     *     started_at: Long (Required)
+     *     completed_at: Long (Required)
+     *     cancelled_at: Long (Required)
+     *     failed_at: Long (Required)
+     *     incomplete_details (Required): {
+     *         reason: String(max_completion_tokens/max_prompt_tokens) (Required)
+     *     }
+     *     usage (Required): {
+     *         completion_tokens: long (Required)
+     *         prompt_tokens: long (Required)
+     *         total_tokens: long (Required)
+     *     }
+     *     temperature: Double (Optional)
+     *     top_p: Double (Optional)
+     *     max_prompt_tokens: Integer (Required)
+     *     max_completion_tokens: Integer (Required)
+     *     truncation_strategy (Required): {
+     *         type: String(auto/last_messages) (Required)
+     *         last_messages: Integer (Optional)
+     *     }
+     *     tool_choice: BinaryData (Required)
+     *     response_format: BinaryData (Required)
+     *     metadata (Required): {
+     *         String: String (Required)
+     *     }
+     *     tool_resources (Optional): {
+     *         code_interpreter (Optional): {
+     *             file_ids (Optional): [
+     *                 String (Optional)
+     *             ]
+     *         }
+     *         file_search (Optional): {
+     *             vector_store_ids (Optional): [
+     *                 String (Optional)
+     *             ]
+     *         }
+     *         azure_ai_search (Optional): {
+     *             indexes (Optional): [
+     *                  (Optional){
+     *                     index_connection_id: String (Required)
+     *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
+     *                     index_asset_id: String (Optional)
+     *                 }
+     *             ]
+     *         }
+     *     }
+     *     parallel_tool_calls: boolean (Required)
+     * }
+     * }
+     * </pre>
+     * 
+     * @param threadId Identifier of the thread.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @return a list of runs for a specified thread along with {@link PagedResponse}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<BinaryData> listRunsWithResponse(String threadId, RequestOptions requestOptions) {
+    private PagedResponse<BinaryData> listRunsSinglePage(String threadId, RequestOptions requestOptions) {
         final String accept = "application/json";
-        return service.listRunsSync(this.client.getEndpoint(), this.client.getServiceVersion().getVersion(), threadId,
-            accept, requestOptions, Context.NONE);
+        Response<BinaryData> res = service.listRunsSync(this.client.getEndpoint(), threadId,
+            this.client.getServiceVersion().getVersion(), accept, requestOptions, Context.NONE);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+            getValues(res.getValue(), "data"), null, null);
+    }
+
+    /**
+     * Gets a list of runs for a specified thread.
+     * <p><strong>Query Parameters</strong></p>
+     * <table border="1">
+     * <caption>Query Parameters</caption>
+     * <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+     * <tr><td>limit</td><td>Integer</td><td>No</td><td>A limit on the number of objects to be returned. Limit can range
+     * between 1 and 100, and the default is 20.</td></tr>
+     * <tr><td>order</td><td>String</td><td>No</td><td>Sort order by the created_at timestamp of the objects. asc for
+     * ascending order and desc for descending order. Allowed values: "asc", "desc".</td></tr>
+     * <tr><td>after</td><td>String</td><td>No</td><td>A cursor for use in pagination. after is an object ID that
+     * defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with
+     * obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.</td></tr>
+     * <tr><td>before</td><td>String</td><td>No</td><td>A cursor for use in pagination. before is an object ID that
+     * defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with
+     * obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the
+     * list.</td></tr>
+     * </table>
+     * You can add these to a request with {@link RequestOptions#addQueryParam}
+     * <p><strong>Response Body Schema</strong></p>
+     * 
+     * <pre>
+     * {@code
+     * {
+     *     id: String (Required)
+     *     object: String (Required)
+     *     thread_id: String (Required)
+     *     assistant_id: String (Required)
+     *     status: String(queued/in_progress/requires_action/cancelling/cancelled/failed/completed/expired) (Required)
+     *     required_action (Optional): {
+     *         type: String (Required)
+     *     }
+     *     last_error (Required): {
+     *         code: String (Required)
+     *         message: String (Required)
+     *     }
+     *     model: String (Required)
+     *     instructions: String (Required)
+     *     tools (Required): [
+     *          (Required){
+     *             type: String (Required)
+     *         }
+     *     ]
+     *     created_at: long (Required)
+     *     expires_at: Long (Required)
+     *     started_at: Long (Required)
+     *     completed_at: Long (Required)
+     *     cancelled_at: Long (Required)
+     *     failed_at: Long (Required)
+     *     incomplete_details (Required): {
+     *         reason: String(max_completion_tokens/max_prompt_tokens) (Required)
+     *     }
+     *     usage (Required): {
+     *         completion_tokens: long (Required)
+     *         prompt_tokens: long (Required)
+     *         total_tokens: long (Required)
+     *     }
+     *     temperature: Double (Optional)
+     *     top_p: Double (Optional)
+     *     max_prompt_tokens: Integer (Required)
+     *     max_completion_tokens: Integer (Required)
+     *     truncation_strategy (Required): {
+     *         type: String(auto/last_messages) (Required)
+     *         last_messages: Integer (Optional)
+     *     }
+     *     tool_choice: BinaryData (Required)
+     *     response_format: BinaryData (Required)
+     *     metadata (Required): {
+     *         String: String (Required)
+     *     }
+     *     tool_resources (Optional): {
+     *         code_interpreter (Optional): {
+     *             file_ids (Optional): [
+     *                 String (Optional)
+     *             ]
+     *         }
+     *         file_search (Optional): {
+     *             vector_store_ids (Optional): [
+     *                 String (Optional)
+     *             ]
+     *         }
+     *         azure_ai_search (Optional): {
+     *             indexes (Optional): [
+     *                  (Optional){
+     *                     index_connection_id: String (Required)
+     *                     index_name: String (Required)
+     *                     query_type: String(simple/semantic/vector/vector_simple_hybrid/vector_semantic_hybrid) (Optional)
+     *                     top_k: Integer (Optional)
+     *                     filter: String (Optional)
+     *                     index_asset_id: String (Optional)
+     *                 }
+     *             ]
+     *         }
+     *     }
+     *     parallel_tool_calls: boolean (Required)
+     * }
+     * }
+     * </pre>
+     * 
+     * @param threadId Identifier of the thread.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @return a list of runs for a specified thread as paginated response with {@link PagedIterable}.
+     */
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    public PagedIterable<BinaryData> listRuns(String threadId, RequestOptions requestOptions) {
+        return new PagedIterable<>(() -> listRunsSinglePage(threadId, requestOptions));
     }
 
     /**
@@ -1641,5 +1861,24 @@ public final class RunsImpl {
         final String accept = "application/json";
         return service.cancelRunSync(this.client.getEndpoint(), this.client.getServiceVersion().getVersion(), threadId,
             runId, accept, requestOptions, Context.NONE);
+    }
+
+    private List<BinaryData> getValues(BinaryData binaryData, String path) {
+        try {
+            Map<?, ?> obj = binaryData.toObject(Map.class);
+            List<?> values = (List<?>) obj.get(path);
+            return values.stream().map(BinaryData::fromObject).collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    private String getNextLink(BinaryData binaryData, String path) {
+        try {
+            Map<?, ?> obj = binaryData.toObject(Map.class);
+            return (String) obj.get(path);
+        } catch (RuntimeException e) {
+            return null;
+        }
     }
 }

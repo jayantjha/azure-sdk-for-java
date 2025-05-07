@@ -22,12 +22,19 @@ import com.azure.core.exception.ClientAuthenticationException;
 import com.azure.core.exception.HttpResponseException;
 import com.azure.core.exception.ResourceModifiedException;
 import com.azure.core.exception.ResourceNotFoundException;
+import com.azure.core.http.rest.PagedFlux;
+import com.azure.core.http.rest.PagedIterable;
+import com.azure.core.http.rest.PagedResponse;
+import com.azure.core.http.rest.PagedResponseBase;
 import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.http.rest.Response;
 import com.azure.core.http.rest.RestProxy;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import reactor.core.publisher.Mono;
 
 /**
@@ -101,7 +108,7 @@ public final class MessagesImpl {
         @UnexpectedResponseExceptionType(value = ResourceModifiedException.class, code = { 409 })
         @UnexpectedResponseExceptionType(HttpResponseException.class)
         Mono<Response<BinaryData>> listMessages(@HostParam("endpoint") String endpoint,
-            @QueryParam("api-version") String apiVersion, @PathParam("threadId") String threadId,
+            @PathParam("threadId") String threadId, @QueryParam("api-version") String apiVersion,
             @HeaderParam("Accept") String accept, RequestOptions requestOptions, Context context);
 
         @Get("/threads/{threadId}/messages")
@@ -111,7 +118,7 @@ public final class MessagesImpl {
         @UnexpectedResponseExceptionType(value = ResourceModifiedException.class, code = { 409 })
         @UnexpectedResponseExceptionType(HttpResponseException.class)
         Response<BinaryData> listMessagesSync(@HostParam("endpoint") String endpoint,
-            @QueryParam("api-version") String apiVersion, @PathParam("threadId") String threadId,
+            @PathParam("threadId") String threadId, @QueryParam("api-version") String apiVersion,
             @HeaderParam("Accept") String accept, RequestOptions requestOptions, Context context);
 
         @Get("/threads/{threadId}/messages/{messageId}")
@@ -364,47 +371,39 @@ public final class MessagesImpl {
      * <pre>
      * {@code
      * {
+     *     id: String (Required)
      *     object: String (Required)
-     *     data (Required): [
+     *     created_at: long (Required)
+     *     thread_id: String (Required)
+     *     status: String(in_progress/incomplete/completed) (Required)
+     *     incomplete_details (Required): {
+     *         reason: String(content_filter/max_tokens/run_cancelled/run_failed/run_expired) (Required)
+     *     }
+     *     completed_at: Long (Required)
+     *     incomplete_at: Long (Required)
+     *     role: String(user/assistant) (Required)
+     *     content (Required): [
      *          (Required){
-     *             id: String (Required)
-     *             object: String (Required)
-     *             created_at: long (Required)
-     *             thread_id: String (Required)
-     *             status: String(in_progress/incomplete/completed) (Required)
-     *             incomplete_details (Required): {
-     *                 reason: String(content_filter/max_tokens/run_cancelled/run_failed/run_expired) (Required)
-     *             }
-     *             completed_at: Long (Required)
-     *             incomplete_at: Long (Required)
-     *             role: String(user/assistant) (Required)
-     *             content (Required): [
-     *                  (Required){
-     *                     type: String (Required)
-     *                 }
-     *             ]
-     *             assistant_id: String (Required)
-     *             run_id: String (Required)
-     *             attachments (Required): [
-     *                  (Required){
-     *                     file_id: String (Optional)
-     *                     data_source (Optional): {
-     *                         uri: String (Required)
-     *                         type: String(uri_asset/id_asset) (Required)
-     *                     }
-     *                     tools (Required): [
-     *                         BinaryData (Required)
-     *                     ]
-     *                 }
-     *             ]
-     *             metadata (Required): {
-     *                 String: String (Required)
-     *             }
+     *             type: String (Required)
      *         }
      *     ]
-     *     first_id: String (Required)
-     *     last_id: String (Required)
-     *     has_more: boolean (Required)
+     *     assistant_id: String (Required)
+     *     run_id: String (Required)
+     *     attachments (Required): [
+     *          (Required){
+     *             file_id: String (Optional)
+     *             data_source (Optional): {
+     *                 uri: String (Required)
+     *                 type: String(uri_asset/id_asset) (Required)
+     *             }
+     *             tools (Required): [
+     *                 BinaryData (Required)
+     *             ]
+     *         }
+     *     ]
+     *     metadata (Required): {
+     *         String: String (Required)
+     *     }
      * }
      * }
      * </pre>
@@ -415,14 +414,18 @@ public final class MessagesImpl {
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return a list of messages that exist on a thread along with {@link Response} on successful completion of
+     * @return a list of messages that exist on a thread along with {@link PagedResponse} on successful completion of
      * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<BinaryData>> listMessagesWithResponseAsync(String threadId, RequestOptions requestOptions) {
+    private Mono<PagedResponse<BinaryData>> listMessagesSinglePageAsync(String threadId,
+        RequestOptions requestOptions) {
         final String accept = "application/json";
-        return FluxUtil.withContext(context -> service.listMessages(this.client.getEndpoint(),
-            this.client.getServiceVersion().getVersion(), threadId, accept, requestOptions, context));
+        return FluxUtil
+            .withContext(context -> service.listMessages(this.client.getEndpoint(), threadId,
+                this.client.getServiceVersion().getVersion(), accept, requestOptions, context))
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                getValues(res.getValue(), "data"), null, null));
     }
 
     /**
@@ -450,47 +453,39 @@ public final class MessagesImpl {
      * <pre>
      * {@code
      * {
+     *     id: String (Required)
      *     object: String (Required)
-     *     data (Required): [
+     *     created_at: long (Required)
+     *     thread_id: String (Required)
+     *     status: String(in_progress/incomplete/completed) (Required)
+     *     incomplete_details (Required): {
+     *         reason: String(content_filter/max_tokens/run_cancelled/run_failed/run_expired) (Required)
+     *     }
+     *     completed_at: Long (Required)
+     *     incomplete_at: Long (Required)
+     *     role: String(user/assistant) (Required)
+     *     content (Required): [
      *          (Required){
-     *             id: String (Required)
-     *             object: String (Required)
-     *             created_at: long (Required)
-     *             thread_id: String (Required)
-     *             status: String(in_progress/incomplete/completed) (Required)
-     *             incomplete_details (Required): {
-     *                 reason: String(content_filter/max_tokens/run_cancelled/run_failed/run_expired) (Required)
-     *             }
-     *             completed_at: Long (Required)
-     *             incomplete_at: Long (Required)
-     *             role: String(user/assistant) (Required)
-     *             content (Required): [
-     *                  (Required){
-     *                     type: String (Required)
-     *                 }
-     *             ]
-     *             assistant_id: String (Required)
-     *             run_id: String (Required)
-     *             attachments (Required): [
-     *                  (Required){
-     *                     file_id: String (Optional)
-     *                     data_source (Optional): {
-     *                         uri: String (Required)
-     *                         type: String(uri_asset/id_asset) (Required)
-     *                     }
-     *                     tools (Required): [
-     *                         BinaryData (Required)
-     *                     ]
-     *                 }
-     *             ]
-     *             metadata (Required): {
-     *                 String: String (Required)
-     *             }
+     *             type: String (Required)
      *         }
      *     ]
-     *     first_id: String (Required)
-     *     last_id: String (Required)
-     *     has_more: boolean (Required)
+     *     assistant_id: String (Required)
+     *     run_id: String (Required)
+     *     attachments (Required): [
+     *          (Required){
+     *             file_id: String (Optional)
+     *             data_source (Optional): {
+     *                 uri: String (Required)
+     *                 type: String(uri_asset/id_asset) (Required)
+     *             }
+     *             tools (Required): [
+     *                 BinaryData (Required)
+     *             ]
+     *         }
+     *     ]
+     *     metadata (Required): {
+     *         String: String (Required)
+     *     }
      * }
      * }
      * </pre>
@@ -501,13 +496,165 @@ public final class MessagesImpl {
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
      * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
      * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return a list of messages that exist on a thread along with {@link Response}.
+     * @return a list of messages that exist on a thread as paginated response with {@link PagedFlux}.
+     */
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    public PagedFlux<BinaryData> listMessagesAsync(String threadId, RequestOptions requestOptions) {
+        return new PagedFlux<>(() -> listMessagesSinglePageAsync(threadId, requestOptions));
+    }
+
+    /**
+     * Gets a list of messages that exist on a thread.
+     * <p><strong>Query Parameters</strong></p>
+     * <table border="1">
+     * <caption>Query Parameters</caption>
+     * <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+     * <tr><td>run_id</td><td>String</td><td>No</td><td>Filter messages by the run ID that generated them.</td></tr>
+     * <tr><td>limit</td><td>Integer</td><td>No</td><td>A limit on the number of objects to be returned. Limit can range
+     * between 1 and 100, and the default is 20.</td></tr>
+     * <tr><td>order</td><td>String</td><td>No</td><td>Sort order by the created_at timestamp of the objects. asc for
+     * ascending order and desc for descending order. Allowed values: "asc", "desc".</td></tr>
+     * <tr><td>after</td><td>String</td><td>No</td><td>A cursor for use in pagination. after is an object ID that
+     * defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with
+     * obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.</td></tr>
+     * <tr><td>before</td><td>String</td><td>No</td><td>A cursor for use in pagination. before is an object ID that
+     * defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with
+     * obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the
+     * list.</td></tr>
+     * </table>
+     * You can add these to a request with {@link RequestOptions#addQueryParam}
+     * <p><strong>Response Body Schema</strong></p>
+     * 
+     * <pre>
+     * {@code
+     * {
+     *     id: String (Required)
+     *     object: String (Required)
+     *     created_at: long (Required)
+     *     thread_id: String (Required)
+     *     status: String(in_progress/incomplete/completed) (Required)
+     *     incomplete_details (Required): {
+     *         reason: String(content_filter/max_tokens/run_cancelled/run_failed/run_expired) (Required)
+     *     }
+     *     completed_at: Long (Required)
+     *     incomplete_at: Long (Required)
+     *     role: String(user/assistant) (Required)
+     *     content (Required): [
+     *          (Required){
+     *             type: String (Required)
+     *         }
+     *     ]
+     *     assistant_id: String (Required)
+     *     run_id: String (Required)
+     *     attachments (Required): [
+     *          (Required){
+     *             file_id: String (Optional)
+     *             data_source (Optional): {
+     *                 uri: String (Required)
+     *                 type: String(uri_asset/id_asset) (Required)
+     *             }
+     *             tools (Required): [
+     *                 BinaryData (Required)
+     *             ]
+     *         }
+     *     ]
+     *     metadata (Required): {
+     *         String: String (Required)
+     *     }
+     * }
+     * }
+     * </pre>
+     * 
+     * @param threadId Identifier of the thread.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @return a list of messages that exist on a thread along with {@link PagedResponse}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<BinaryData> listMessagesWithResponse(String threadId, RequestOptions requestOptions) {
+    private PagedResponse<BinaryData> listMessagesSinglePage(String threadId, RequestOptions requestOptions) {
         final String accept = "application/json";
-        return service.listMessagesSync(this.client.getEndpoint(), this.client.getServiceVersion().getVersion(),
-            threadId, accept, requestOptions, Context.NONE);
+        Response<BinaryData> res = service.listMessagesSync(this.client.getEndpoint(), threadId,
+            this.client.getServiceVersion().getVersion(), accept, requestOptions, Context.NONE);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+            getValues(res.getValue(), "data"), null, null);
+    }
+
+    /**
+     * Gets a list of messages that exist on a thread.
+     * <p><strong>Query Parameters</strong></p>
+     * <table border="1">
+     * <caption>Query Parameters</caption>
+     * <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+     * <tr><td>run_id</td><td>String</td><td>No</td><td>Filter messages by the run ID that generated them.</td></tr>
+     * <tr><td>limit</td><td>Integer</td><td>No</td><td>A limit on the number of objects to be returned. Limit can range
+     * between 1 and 100, and the default is 20.</td></tr>
+     * <tr><td>order</td><td>String</td><td>No</td><td>Sort order by the created_at timestamp of the objects. asc for
+     * ascending order and desc for descending order. Allowed values: "asc", "desc".</td></tr>
+     * <tr><td>after</td><td>String</td><td>No</td><td>A cursor for use in pagination. after is an object ID that
+     * defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with
+     * obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.</td></tr>
+     * <tr><td>before</td><td>String</td><td>No</td><td>A cursor for use in pagination. before is an object ID that
+     * defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with
+     * obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the
+     * list.</td></tr>
+     * </table>
+     * You can add these to a request with {@link RequestOptions#addQueryParam}
+     * <p><strong>Response Body Schema</strong></p>
+     * 
+     * <pre>
+     * {@code
+     * {
+     *     id: String (Required)
+     *     object: String (Required)
+     *     created_at: long (Required)
+     *     thread_id: String (Required)
+     *     status: String(in_progress/incomplete/completed) (Required)
+     *     incomplete_details (Required): {
+     *         reason: String(content_filter/max_tokens/run_cancelled/run_failed/run_expired) (Required)
+     *     }
+     *     completed_at: Long (Required)
+     *     incomplete_at: Long (Required)
+     *     role: String(user/assistant) (Required)
+     *     content (Required): [
+     *          (Required){
+     *             type: String (Required)
+     *         }
+     *     ]
+     *     assistant_id: String (Required)
+     *     run_id: String (Required)
+     *     attachments (Required): [
+     *          (Required){
+     *             file_id: String (Optional)
+     *             data_source (Optional): {
+     *                 uri: String (Required)
+     *                 type: String(uri_asset/id_asset) (Required)
+     *             }
+     *             tools (Required): [
+     *                 BinaryData (Required)
+     *             ]
+     *         }
+     *     ]
+     *     metadata (Required): {
+     *         String: String (Required)
+     *     }
+     * }
+     * }
+     * </pre>
+     * 
+     * @param threadId Identifier of the thread.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @return a list of messages that exist on a thread as paginated response with {@link PagedIterable}.
+     */
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    public PagedIterable<BinaryData> listMessages(String threadId, RequestOptions requestOptions) {
+        return new PagedIterable<>(() -> listMessagesSinglePage(threadId, requestOptions));
     }
 
     /**
@@ -783,5 +930,24 @@ public final class MessagesImpl {
         final String accept = "application/json";
         return service.updateMessageSync(this.client.getEndpoint(), this.client.getServiceVersion().getVersion(),
             threadId, messageId, contentType, accept, updateMessageRequest, requestOptions, Context.NONE);
+    }
+
+    private List<BinaryData> getValues(BinaryData binaryData, String path) {
+        try {
+            Map<?, ?> obj = binaryData.toObject(Map.class);
+            List<?> values = (List<?>) obj.get(path);
+            return values.stream().map(BinaryData::fromObject).collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    private String getNextLink(BinaryData binaryData, String path) {
+        try {
+            Map<?, ?> obj = binaryData.toObject(Map.class);
+            return (String) obj.get(path);
+        } catch (RuntimeException e) {
+            return null;
+        }
     }
 }
