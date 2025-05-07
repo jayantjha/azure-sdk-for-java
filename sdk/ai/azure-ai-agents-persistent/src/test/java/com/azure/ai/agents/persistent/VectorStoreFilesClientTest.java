@@ -1,4 +1,5 @@
-// File: src/test/java/com/azure/ai/agents/persistent/VectorStoreFilesClientTest.java
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 package com.azure.ai.agents.persistent;
 
 import com.azure.ai.agents.persistent.implementation.models.FileDetails;
@@ -6,17 +7,15 @@ import com.azure.ai.agents.persistent.implementation.models.UploadFileRequest;
 import com.azure.ai.agents.persistent.models.FileDeletionStatus;
 import com.azure.ai.agents.persistent.models.FileInfo;
 import com.azure.ai.agents.persistent.models.FilePurpose;
-import com.azure.ai.agents.persistent.models.OpenAIPageableListOfVectorStoreFile;
 import com.azure.ai.agents.persistent.models.VectorStore;
 import com.azure.ai.agents.persistent.models.VectorStoreFile;
-import com.azure.ai.agents.persistent.models.VectorStoreFileBatch;
 import com.azure.ai.agents.persistent.models.VectorStoreFileDeletionStatus;
 import com.azure.core.http.HttpClient;
+import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.BinaryData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,9 +112,9 @@ public class VectorStoreFilesClientTest extends ClientTestBase {
         createVectorStoreFile(vectorStore.getId(), uploadedFile1.getId());
         createVectorStoreFile(vectorStore.getId(), uploadedFile2.getId());
 
-        OpenAIPageableListOfVectorStoreFile listResponse = vectorStoreFilesClient.listVectorStoreFiles(vectorStore.getId());
+        PagedIterable<VectorStoreFile> listResponse = vectorStoreFilesClient.listVectorStoreFiles(vectorStore.getId());
         assertNotNull(listResponse, "List response should not be null");
-        List<VectorStoreFile> vectorStoreFiles = listResponse.getData();
+        List<VectorStoreFile> vectorStoreFiles = listResponse.stream().toList();
         assertNotNull(vectorStoreFiles, "Vector store files list should not be null");
         assertTrue(vectorStoreFiles.size() > 0, "There should be at least one vector store file");
     }

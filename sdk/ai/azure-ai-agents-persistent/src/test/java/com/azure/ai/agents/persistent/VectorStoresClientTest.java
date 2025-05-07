@@ -1,15 +1,11 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 package com.azure.ai.agents.persistent;
 
-import com.azure.ai.agents.persistent.implementation.models.FileDetails;
-import com.azure.ai.agents.persistent.implementation.models.UploadFileRequest;
-import com.azure.ai.agents.persistent.models.FileDeletionStatus;
-import com.azure.ai.agents.persistent.models.FileInfo;
-import com.azure.ai.agents.persistent.models.FileListResponse;
-import com.azure.ai.agents.persistent.models.FilePurpose;
 import com.azure.ai.agents.persistent.models.VectorStore;
 import com.azure.ai.agents.persistent.models.VectorStoreDeletionStatus;
 import com.azure.core.http.HttpClient;
-import com.azure.core.util.BinaryData;
+import com.azure.core.http.rest.PagedIterable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -105,9 +101,9 @@ public class VectorStoresClientTest extends ClientTestBase {
         VectorStore vectorStore = createVectorStore(vectorStoreName);
 
         // Retrieve the list of vector stores
-        List<VectorStore> vectorStoreList = vectorStoresClient.listVectorStores().getData();
+        PagedIterable<VectorStore> vectorStoreList = vectorStoresClient.listVectorStores();
         assertNotNull(vectorStoreList, "Vector store list should not be null");
-        assertTrue(vectorStoreList.size() > 0, "Vector store list should not be empty");
+        assertTrue(vectorStoreList.stream().count() > 0, "Vector store list should not be empty");
     }
 
     @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)

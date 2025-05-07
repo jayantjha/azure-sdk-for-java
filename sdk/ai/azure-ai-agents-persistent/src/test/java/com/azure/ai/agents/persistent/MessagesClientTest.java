@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 package com.azure.ai.agents.persistent;
 
 import com.azure.ai.agents.persistent.models.CreateAgentOptions;
@@ -6,14 +8,12 @@ import com.azure.ai.agents.persistent.models.PersistentAgent;
 import com.azure.ai.agents.persistent.models.PersistentAgentThread;
 import com.azure.ai.agents.persistent.models.ThreadDeletionStatus;
 import com.azure.ai.agents.persistent.models.ThreadMessage;
-import com.azure.ai.agents.persistent.models.ToolResources;
 import com.azure.core.http.HttpClient;
+import com.azure.core.http.rest.PagedIterable;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.azure.ai.agents.persistent.TestUtils.DISPLAY_NAME_WITH_ARGUMENTS;
@@ -111,10 +111,10 @@ public class MessagesClientTest extends ClientTestBase {
         // Create at least two messages
         messagesClient.createMessage(thread.getId(), MessageRole.USER, "Message 1");
         messagesClient.createMessage(thread.getId(), MessageRole.USER, "Message 2");
-        var messagesList = messagesClient.listMessages(thread.getId());
+        PagedIterable<ThreadMessage> messagesList = messagesClient.listMessages(thread.getId());
+
         assertNotNull(messagesList, "Messages list should not be null");
-        assertNotNull(messagesList.getData(), "Message data should not be null");
-        assertTrue(messagesList.getData().size() >= 2, "There should be at least 2 messages");
+        assertTrue(messagesList.stream().count() >= 2, "There should be at least 2 messages");
     }
 
     @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
@@ -125,16 +125,16 @@ public class MessagesClientTest extends ClientTestBase {
         for (int i = 0; i < 5; i++) {
             messagesClient.createMessage(thread.getId(), MessageRole.USER, "Message " + i);
         }
-        var filteredMessages = messagesClient.listMessages(
+        PagedIterable<ThreadMessage> filteredMessages = messagesClient.listMessages(
             thread.getId(),
             null,    // runId
             10,      // limit
             null,    // order
             null,    // after
             null);   // before
+
         assertNotNull(filteredMessages, "Filtered messages should not be null");
-        assertNotNull(filteredMessages.getData(), "Filtered messages data should not be null");
-        assertTrue(filteredMessages.getData().size() <= 10, "Messages list should have at most 10 messages");
+        assertTrue(filteredMessages.stream().count() <= 10, "Messages list should have at most 10 messages");
     }
 
     @AfterEach

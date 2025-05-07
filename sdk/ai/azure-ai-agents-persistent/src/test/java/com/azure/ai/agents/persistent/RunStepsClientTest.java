@@ -1,20 +1,19 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 package com.azure.ai.agents.persistent;
 
 import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.CreateRunOptions;
-import com.azure.ai.agents.persistent.models.OpenAIPageableListOfRunStep;
-import com.azure.ai.agents.persistent.models.OpenAIPageableListOfThreadRun;
 import com.azure.ai.agents.persistent.models.PersistentAgent;
 import com.azure.ai.agents.persistent.models.PersistentAgentThread;
 import com.azure.ai.agents.persistent.models.RunStep;
 import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.core.http.HttpClient;
+import com.azure.core.http.rest.PagedIterable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.azure.ai.agents.persistent.TestUtils.DISPLAY_NAME_WITH_ARGUMENTS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,9 +65,9 @@ public class RunStepsClientTest extends ClientTestBase {
         ThreadRun run = createRun();
         waitForRunCompletion(run, runsClient);
 
-        OpenAIPageableListOfRunStep runStepsResponse = runStepsClient.listRunSteps(run.getThreadId(), run.getId());
+        PagedIterable<RunStep> runStepsResponse = runStepsClient.listRunSteps(run.getThreadId(), run.getId());
         assertNotNull(runStepsResponse, "Run steps response should not be null");
-        List<RunStep> runSteps = runStepsResponse.getData();
+        List<RunStep> runSteps = runStepsResponse.stream().toList();
         assertNotNull(runSteps, "Run steps list should not be null");
         assertTrue(runSteps.size() > 0, "Run steps list should contain at least one step");
     }
@@ -81,9 +80,9 @@ public class RunStepsClientTest extends ClientTestBase {
         ThreadRun run = createRun();
         waitForRunCompletion(run, runsClient);
 
-        OpenAIPageableListOfRunStep runStepsResponse = runStepsClient.listRunSteps(run.getThreadId(), run.getId());
+        PagedIterable<RunStep> runStepsResponse = runStepsClient.listRunSteps(run.getThreadId(), run.getId());
         assertNotNull(runStepsResponse, "Run steps response should not be null");
-        List<RunStep> runSteps = runStepsResponse.getData();
+        List<RunStep> runSteps = runStepsResponse.stream().toList();
         assertNotNull(runSteps, "Run steps list should not be null");
         assertTrue(runSteps.size() > 0, "Run steps list should contain at least one step");
 

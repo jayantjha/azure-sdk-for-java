@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 package com.azure.ai.agents.persistent;
 
 import com.azure.ai.agents.persistent.models.MessageContent;
@@ -5,12 +7,11 @@ import com.azure.ai.agents.persistent.models.MessageDeltaImageFileContent;
 import com.azure.ai.agents.persistent.models.MessageDeltaTextContent;
 import com.azure.ai.agents.persistent.models.MessageImageFileContent;
 import com.azure.ai.agents.persistent.models.MessageTextContent;
-import com.azure.ai.agents.persistent.models.OpenAIPageableListOfThreadMessage;
 import com.azure.ai.agents.persistent.models.RunStatus;
 import com.azure.ai.agents.persistent.models.ThreadMessage;
 import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.ai.agents.persistent.models.streaming.StreamMessageUpdate;
-import reactor.core.publisher.Flux;
+import com.azure.core.http.rest.PagedIterable;
 import reactor.core.publisher.Mono;
 
 public class SampleUtils {
@@ -19,8 +20,8 @@ public class SampleUtils {
 
         // BEGIN: com.azure.ai.agents.persistent.SampleUtils.printRunMessages
 
-        OpenAIPageableListOfThreadMessage runMessages = messagesClient.listMessages(threadId);
-        for (ThreadMessage message : runMessages.getData()) {
+        PagedIterable<ThreadMessage> runMessages = messagesClient.listMessages(threadId);
+        for (ThreadMessage message : runMessages) {
             System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
             for (MessageContent contentItem : message.getContent()) {
                 if (contentItem instanceof MessageTextContent) {
@@ -40,7 +41,6 @@ public class SampleUtils {
         // BEGIN: com.azure.ai.agents.persistent.SampleUtils.printRunMessagesAsync
 
         return messagesAsyncClient.listMessages(threadId)
-            .flatMapMany(response -> Flux.fromIterable(response.getData()))
             .doOnNext(message -> {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
                 message.getContent().forEach(contentItem -> {

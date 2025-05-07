@@ -1,17 +1,15 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 package com.azure.ai.agents.persistent;
 
 import com.azure.ai.agents.persistent.models.AgentDeletionStatus;
 import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.PersistentAgent;
-import com.azure.ai.agents.persistent.models.PersistentAgentThread;
-import com.azure.ai.agents.persistent.models.ThreadDeletionStatus;
 import com.azure.ai.agents.persistent.models.UpdateAgentOptions;
 import com.azure.core.http.HttpClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.List;
 
 import static com.azure.ai.agents.persistent.TestUtils.DISPLAY_NAME_WITH_ARGUMENTS;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -51,7 +49,7 @@ public class AdministrationClientTest extends ClientTestBase {
         setup(httpClient);
 
         // Validate the agent listing
-        var agentList = agentsClient.listAgents().getData();
+        var agentList = agentsClient.listAgents().stream().toList();
         assertNotNull(agentList, "Agent list should not be null");
         assertTrue(agentList.size() > 0, "Agent list should not be empty");
     }

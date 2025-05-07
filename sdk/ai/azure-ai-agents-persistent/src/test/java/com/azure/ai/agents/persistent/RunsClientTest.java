@@ -1,19 +1,20 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 package com.azure.ai.agents.persistent;
 
 import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.CreateRunOptions;
-import com.azure.ai.agents.persistent.models.OpenAIPageableListOfThreadRun;
 import com.azure.ai.agents.persistent.models.PersistentAgent;
 import com.azure.ai.agents.persistent.models.PersistentAgentThread;
 import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.core.http.HttpClient;
+import com.azure.core.http.rest.PagedIterable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 import static com.azure.ai.agents.persistent.TestUtils.DISPLAY_NAME_WITH_ARGUMENTS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -116,10 +117,9 @@ public class RunsClientTest extends ClientTestBase {
             waitForRunCompletion(run, runsClient);
         }
 
-        OpenAIPageableListOfThreadRun runsListResponse = runsClient.listRuns(thread.getId());
-        List<ThreadRun> runsList = runsListResponse.getData();
+        PagedIterable<ThreadRun> runsList = runsClient.listRuns(thread.getId());
         assertNotNull(runsList, "Runs list should not be null");
-        assertTrue(runsList.size() >= 2, "There should be at least 2 runs");
+        assertTrue(runsList.stream().count() >= 2, "There should be at least 2 runs");
     }
 
     @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
@@ -133,7 +133,7 @@ public class RunsClientTest extends ClientTestBase {
             waitForRunCompletion(run, runsClient);
         }
 
-         OpenAIPageableListOfThreadRun runsListResponse = runsClient.listRuns(
+        PagedIterable<ThreadRun> runsList = runsClient.listRuns(
             thread.getId(),
             10,    // limit
             null,  // order
@@ -141,7 +141,7 @@ public class RunsClientTest extends ClientTestBase {
             null   // before
         );
 
-        List<ThreadRun> filteredRuns = runsListResponse.getData();
+        List<ThreadRun> filteredRuns = runsList.stream().toList();
         assertNotNull(filteredRuns, "Filtered runs should not be null");
         assertTrue(filteredRuns.size() <= 10, "Run list should have at most 10 runs");
     }
