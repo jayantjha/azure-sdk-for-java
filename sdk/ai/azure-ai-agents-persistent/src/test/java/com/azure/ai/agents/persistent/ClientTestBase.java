@@ -11,6 +11,7 @@ import com.azure.core.test.TestMode;
 import com.azure.core.test.TestProxyTestBase;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
+import reactor.core.publisher.Mono;
 
 import static com.azure.ai.agents.persistent.TestUtils.FAKE_API_KEY;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -65,5 +66,21 @@ public class ClientTestBase extends TestProxyTestBase {
         if (threadRun.getStatus() == RunStatus.FAILED || retryLeft == 0) {
             fail("Run failed or couldn't complete in time");
         }
+    }
+
+    public static Mono<ThreadRun> waitForRunCompletionAsync(ThreadRun threadRun, RunsAsyncClient runsAsyncClient) {
+        return Mono.defer(() -> runsAsyncClient.getRun(threadRun.getThreadId(), threadRun.getId())).flatMap(run -> {
+            if (run.getStatus() == RunStatus.QUEUED
+                || run.getStatus() == RunStatus.IN_PROGRESS
+                || run.getStatus() == RunStatus.REQUIRES_ACTION) {
+                return Mono.delay(java.time.Duration.ofMillis(500))
+                    .then(waitForRunCompletionAsync(run, runsAsyncClient));
+            } else {
+                if (run.getStatus() == RunStatus.FAILED && run.getLastError() != null) {
+                    System.out.println(run.getLastError().getMessage());
+                }
+                return Mono.just(run);
+            }
+        });
     }
 }
