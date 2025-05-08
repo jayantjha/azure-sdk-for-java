@@ -22,14 +22,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ThreadsAsyncClientTest extends ClientTestBase {
 
     private PersistentAgentsAdministrationClientBuilder clientBuilder;
-    private PersistentAgentsAdministrationAsyncClient asyncClient;
+    private PersistentAgentsAdministrationAsyncClient agentsAsyncClient;
     private ThreadsAsyncClient threadsAsyncClient;
     private PersistentAgent agent;
     private PersistentAgentThread thread;
 
     private void setup(HttpClient httpClient) {
         clientBuilder = getClientBuilder(httpClient);
-        asyncClient = clientBuilder.buildAsyncClient();
+        agentsAsyncClient = clientBuilder.buildAsyncClient();
         threadsAsyncClient = clientBuilder.buildThreadsAsyncClient();
         createAgent();
     }
@@ -38,7 +38,7 @@ public class ThreadsAsyncClientTest extends ClientTestBase {
         CreateAgentOptions options
             = new CreateAgentOptions("gpt-4o-mini").setName("TestAgent").setInstructions("You are a helpful agent");
 
-        agent = asyncClient.createAgent(options).block();
+        agent = agentsAsyncClient.createAgent(options).block();
         assertNotNull(agent, "Persistent agent should not be null");
     }
 
@@ -133,7 +133,7 @@ public class ThreadsAsyncClientTest extends ClientTestBase {
             }
         }
         if (agent != null) {
-            asyncClient.deleteAgent(agent.getId()).block();
+            agentsAsyncClient.deleteAgent(agent.getId()).block();
         }
     }
 }

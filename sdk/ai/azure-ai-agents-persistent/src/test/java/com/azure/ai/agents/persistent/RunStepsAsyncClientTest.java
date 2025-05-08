@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RunStepsAsyncClientTest extends ClientTestBase {
 
     private PersistentAgentsAdministrationClientBuilder clientBuilder;
-    private PersistentAgentsAdministrationAsyncClient adminAsyncClient;
+    private PersistentAgentsAdministrationAsyncClient agentsAsyncClient;
     private ThreadsAsyncClient threadsAsyncClient;
     private RunsAsyncClient runsAsyncClient;
     private RunStepsAsyncClient runStepsAsyncClient;
@@ -30,7 +30,7 @@ public class RunStepsAsyncClientTest extends ClientTestBase {
 
     private void setup(HttpClient httpClient) {
         clientBuilder = getClientBuilder(httpClient);
-        adminAsyncClient = clientBuilder.buildAsyncClient();
+        agentsAsyncClient = clientBuilder.buildAsyncClient();
         threadsAsyncClient = clientBuilder.buildThreadsAsyncClient();
         runsAsyncClient = clientBuilder.buildRunsAsyncClient();
         runStepsAsyncClient = clientBuilder.buildRunStepsAsyncClient();
@@ -40,7 +40,7 @@ public class RunStepsAsyncClientTest extends ClientTestBase {
         CreateAgentOptions options
             = new CreateAgentOptions("gpt-4o-mini").setName("TestAgent").setInstructions("You are a helpful agent");
 
-        StepVerifier.create(adminAsyncClient.createAgent(options)).assertNext(createdAgent -> {
+        StepVerifier.create(agentsAsyncClient.createAgent(options)).assertNext(createdAgent -> {
             assertNotNull(createdAgent, "Persistent agent should not be null");
             agent = createdAgent;
             assertAgent(createdAgent);
@@ -123,7 +123,7 @@ public class RunStepsAsyncClientTest extends ClientTestBase {
         }
 
         if (agent != null) {
-            adminAsyncClient.deleteAgent(agent.getId()).block();
+            agentsAsyncClient.deleteAgent(agent.getId()).block();
         }
     }
 }

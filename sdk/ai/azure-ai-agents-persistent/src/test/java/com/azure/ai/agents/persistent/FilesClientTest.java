@@ -26,6 +26,7 @@ public class FilesClientTest extends ClientTestBase {
     private PersistentAgentsAdministrationClientBuilder clientBuilder;
     private FilesClient filesClient;
     private List<FileInfo> uploadedFiles;
+    private static final String SAMPLE_TEXT = "Sample text for testing upload";
 
     private void setup(HttpClient httpClient) {
         clientBuilder = getClientBuilder(httpClient);
@@ -35,7 +36,7 @@ public class FilesClientTest extends ClientTestBase {
 
     private FileInfo uploadFile(String fileName) {
         FileDetails fileDetails
-            = new FileDetails(BinaryData.fromString("Sample text for testing upload")).setFilename(fileName);
+            = new FileDetails(BinaryData.fromString(SAMPLE_TEXT)).setFilename(fileName);
         UploadFileRequest uploadFileRequest = new UploadFileRequest(fileDetails, FilePurpose.AGENTS);
         FileInfo uploadedFile = filesClient.uploadFile(uploadFileRequest);
         assertNotNull(uploadedFile, "Uploaded file should not be null");

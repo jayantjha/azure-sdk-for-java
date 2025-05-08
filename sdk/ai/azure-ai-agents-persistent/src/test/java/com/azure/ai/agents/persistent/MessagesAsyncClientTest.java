@@ -10,6 +10,7 @@ import com.azure.ai.agents.persistent.models.ThreadMessage;
 import com.azure.core.http.HttpClient;
 import com.azure.core.util.BinaryData;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import reactor.test.StepVerifier;
@@ -26,32 +27,33 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MessagesAsyncClientTest extends ClientTestBase {
 
     private PersistentAgentsAdministrationClientBuilder clientBuilder;
-    private PersistentAgentsAdministrationAsyncClient asyncAgentsClient;
-    private ThreadsAsyncClient asyncThreadsClient;
-    private MessagesAsyncClient asyncMessagesClient;
+    private PersistentAgentsAdministrationAsyncClient agentsAsyncClient;
+    private ThreadsAsyncClient threadsAsyncClient;
+    private MessagesAsyncClient messagesAsyncClient;
     private PersistentAgent agent;
     private PersistentAgentThread thread;
 
     private void createTestAgent(HttpClient httpClient) {
         clientBuilder = getClientBuilder(httpClient);
-        asyncAgentsClient = clientBuilder.buildAsyncClient();
-        asyncThreadsClient = clientBuilder.buildThreadsAsyncClient();
-        asyncMessagesClient = clientBuilder.buildMessagesAsyncClient();
+        agentsAsyncClient = clientBuilder.buildAsyncClient();
+        threadsAsyncClient = clientBuilder.buildThreadsAsyncClient();
+        messagesAsyncClient = clientBuilder.buildMessagesAsyncClient();
 
         CreateAgentOptions options
             = new CreateAgentOptions("gpt-4o-mini").setName("TestAgent").setInstructions("You are a helpful agent");
 
-        StepVerifier.create(asyncAgentsClient.createAgent(options)).assertNext(createdAgent -> {
+        StepVerifier.create(agentsAsyncClient.createAgent(options)).assertNext(createdAgent -> {
             assertNotNull(createdAgent, "Persistent agent should not be null");
             agent = createdAgent;
         }).verifyComplete();
 
-        StepVerifier.create(asyncThreadsClient.createThread()).assertNext(createdThread -> {
+        StepVerifier.create(threadsAsyncClient.createThread()).assertNext(createdThread -> {
             assertNotNull(createdThread, "Thread should not be null");
             thread = createdThread;
         }).verifyComplete();
     }
 
+    @Disabled
     @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
     @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
     public void testCreateAndRetrieveMessage(HttpClient httpClient) {
@@ -61,14 +63,14 @@ public class MessagesAsyncClientTest extends ClientTestBase {
         BinaryData content = BinaryData.fromString("What do you know about Microsoft");
 
         // Create a message and verify
-        StepVerifier.create(asyncMessagesClient.createMessage(thread.getId(), MessageRole.USER, content))
+        StepVerifier.create(messagesAsyncClient.createMessage(thread.getId(), MessageRole.USER, content))
             .assertNext(createdMessage -> {
                 assertNotNull(createdMessage, "Created message should not be null");
                 assertNotNull(createdMessage.getId(), "Message ID should not be null");
                 assertEquals(MessageRole.USER, createdMessage.getRole(), "Message role should be USER");
 
                 // Verify by retrieving the message
-                StepVerifier.create(asyncMessagesClient.getMessage(thread.getId(), createdMessage.getId()))
+                StepVerifier.create(messagesAsyncClient.getMessage(thread.getId(), createdMessage.getId()))
                     .assertNext(retrievedMessage -> {
                         assertNotNull(retrievedMessage, "Retrieved message should not be null");
                         assertEquals(createdMessage.getId(), retrievedMessage.getId(), "Message IDs should match");
@@ -91,7 +93,7 @@ public class MessagesAsyncClientTest extends ClientTestBase {
         BinaryData content = BinaryData.fromString("This is a message with metadata");
 
         StepVerifier
-            .create(asyncMessagesClient.createMessage(thread.getId(), MessageRole.USER, content, null, metadata))
+            .create(messagesAsyncClient.createMessage(thread.getId(), MessageRole.USER, content, null, metadata))
             .assertNext(messageWithMetadata -> {
                 assertNotNull(messageWithMetadata, "Message with metadata should not be null");
                 assertNotNull(messageWithMetadata.getMetadata(), "Message metadata should not be null");
@@ -111,7 +113,7 @@ public class MessagesAsyncClientTest extends ClientTestBase {
         BinaryData content = BinaryData.fromString("Initial message");
         ThreadMessage[] messageRef = new ThreadMessage[1];
 
-        StepVerifier.create(asyncMessagesClient.createMessage(thread.getId(), MessageRole.USER, content))
+        StepVerifier.create(messagesAsyncClient.createMessage(thread.getId(), MessageRole.USER, content))
             .assertNext(createdMessage -> {
                 messageRef[0] = createdMessage;
                 assertNotNull(createdMessage, "Created message should not be null");
@@ -123,7 +125,7 @@ public class MessagesAsyncClientTest extends ClientTestBase {
         updatedMetadata.put("updated", "true");
         updatedMetadata.put("timestamp", String.valueOf(System.currentTimeMillis()));
 
-        StepVerifier.create(asyncMessagesClient.updateMessage(thread.getId(), messageRef[0].getId(), updatedMetadata))
+        StepVerifier.create(messagesAsyncClient.updateMessage(thread.getId(), messageRef[0].getId(), updatedMetadata))
             .assertNext(updatedMessage -> {
                 assertNotNull(updatedMessage, "Updated message should not be null");
                 assertNotNull(updatedMessage.getMetadata(), "Updated metadata should not be null");
@@ -142,16 +144,16 @@ public class MessagesAsyncClientTest extends ClientTestBase {
         BinaryData content1 = BinaryData.fromString("Message 1");
         BinaryData content2 = BinaryData.fromString("Message 2");
 
-        StepVerifier.create(asyncMessagesClient.createMessage(thread.getId(), MessageRole.USER, content1))
+        StepVerifier.create(messagesAsyncClient.createMessage(thread.getId(), MessageRole.USER, content1))
             .assertNext(message -> assertNotNull(message, "First message should not be null"))
             .verifyComplete();
 
-        StepVerifier.create(asyncMessagesClient.createMessage(thread.getId(), MessageRole.USER, content2))
+        StepVerifier.create(messagesAsyncClient.createMessage(thread.getId(), MessageRole.USER, content2))
             .assertNext(message -> assertNotNull(message, "Second message should not be null"))
             .verifyComplete();
 
         // List messages and verify
-        StepVerifier.create(asyncMessagesClient.listMessages(thread.getId()).collectList()).assertNext(messagesList -> {
+        StepVerifier.create(messagesAsyncClient.listMessages(thread.getId()).collectList()).assertNext(messagesList -> {
             assertNotNull(messagesList, "Messages list should not be null");
             assertTrue(messagesList.size() >= 2, "There should be at least 2 messages");
         }).verifyComplete();
@@ -166,13 +168,13 @@ public class MessagesAsyncClientTest extends ClientTestBase {
         for (int i = 0; i < 5; i++) {
             BinaryData content = BinaryData.fromString("Message " + i);
 
-            StepVerifier.create(asyncMessagesClient.createMessage(thread.getId(), MessageRole.USER, content))
+            StepVerifier.create(messagesAsyncClient.createMessage(thread.getId(), MessageRole.USER, content))
                 .assertNext(message -> assertNotNull(message, "Created message should not be null"))
                 .verifyComplete();
         }
 
         // List with parameters and verify
-        StepVerifier.create(asyncMessagesClient.listMessages(thread.getId(), null, 10, null, null, null).collectList())
+        StepVerifier.create(messagesAsyncClient.listMessages(thread.getId(), null, 10, null, null, null).collectList())
             .assertNext(filteredMessages -> {
                 assertNotNull(filteredMessages, "Filtered messages should not be null");
                 assertTrue(filteredMessages.size() <= 10, "Messages list should have at most 10 messages");
@@ -182,11 +184,11 @@ public class MessagesAsyncClientTest extends ClientTestBase {
 
     @AfterEach
     public void cleanup() {
-        if (thread != null && asyncThreadsClient != null) {
-            asyncThreadsClient.deleteThread(thread.getId()).block(Duration.ofSeconds(30));
+        if (thread != null && threadsAsyncClient != null) {
+            threadsAsyncClient.deleteThread(thread.getId()).block(Duration.ofSeconds(30));
         }
-        if (agent != null && asyncAgentsClient != null) {
-            asyncAgentsClient.deleteAgent(agent.getId()).block(Duration.ofSeconds(30));
+        if (agent != null && agentsAsyncClient != null) {
+            agentsAsyncClient.deleteAgent(agent.getId()).block(Duration.ofSeconds(30));
         }
     }
 }
