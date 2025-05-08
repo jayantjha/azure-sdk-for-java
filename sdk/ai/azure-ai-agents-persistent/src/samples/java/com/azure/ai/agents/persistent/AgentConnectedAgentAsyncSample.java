@@ -17,7 +17,6 @@ import reactor.core.publisher.Mono;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.azure.ai.agents.persistent.SampleUtils.cleanUpResources;
 import static com.azure.ai.agents.persistent.SampleUtils.printRunMessagesAsync;
 import static com.azure.ai.agents.persistent.SampleUtils.waitForRunCompletionAsync;
 

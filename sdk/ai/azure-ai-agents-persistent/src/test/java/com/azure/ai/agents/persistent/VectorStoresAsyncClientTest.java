@@ -3,14 +3,12 @@
 package com.azure.ai.agents.persistent;
 
 import com.azure.ai.agents.persistent.models.VectorStore;
-import com.azure.ai.agents.persistent.models.VectorStoreDeletionStatus;
 import com.azure.core.http.HttpClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

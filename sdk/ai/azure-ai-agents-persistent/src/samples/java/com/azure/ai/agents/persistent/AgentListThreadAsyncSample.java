@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 package com.azure.ai.agents.persistent;
 
-import com.azure.ai.agents.persistent.models.PersistentAgentThread;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 

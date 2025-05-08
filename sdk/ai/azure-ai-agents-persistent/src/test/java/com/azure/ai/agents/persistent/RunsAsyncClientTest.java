@@ -14,7 +14,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +62,7 @@ public class RunsAsyncClientTest extends ClientTestBase {
         // Poll run status until it completes or fails
         return Mono.defer(() -> runsAsyncClient.getRun(thread.getId(), run.getId())).flatMap(updatedRun -> {
             String status = updatedRun.getStatus().toString();
-            if (status.equals("completed") || status.equals("failed") || status.equals("cancelled")) {
+            if ("completed".equals(status) || "failed".equals(status) || "cancelled".equals(status)) {
                 return Mono.just(updatedRun);
             } else {
                 return Mono.delay(Duration.ofSeconds(2)).then(waitForRunCompletionAsync(updatedRun));

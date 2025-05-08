@@ -7,7 +7,6 @@ import com.azure.ai.agents.persistent.implementation.models.UploadFileRequest;
 import com.azure.ai.agents.persistent.models.FileInfo;
 import com.azure.ai.agents.persistent.models.FilePurpose;
 import com.azure.ai.agents.persistent.models.VectorStore;
-import com.azure.ai.agents.persistent.models.VectorStoreFile;
 import com.azure.ai.agents.persistent.models.VectorStoreFileBatch;
 import com.azure.core.http.HttpClient;
 import com.azure.core.util.BinaryData;
@@ -17,7 +16,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

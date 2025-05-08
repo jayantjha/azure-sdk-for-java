@@ -6,8 +6,6 @@ import com.azure.ai.agents.persistent.models.CodeInterpreterToolDefinition;
 import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.CreateRunOptions;
 import com.azure.ai.agents.persistent.models.MessageRole;
-import com.azure.ai.agents.persistent.models.PersistentAgent;
-import com.azure.ai.agents.persistent.models.PersistentAgentThread;
 import com.azure.ai.agents.persistent.models.ThreadMessageOptions;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;

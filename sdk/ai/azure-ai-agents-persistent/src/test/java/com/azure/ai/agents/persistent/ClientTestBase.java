@@ -15,9 +15,6 @@ import com.azure.core.test.models.TestProxySanitizerType;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
-import reactor.util.function.Tuples;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 

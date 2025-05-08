@@ -14,9 +14,7 @@ import com.azure.ai.agents.persistent.models.streaming.StreamMessageUpdate;
 import com.azure.core.http.rest.PagedIterable;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.SignalType;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 public class SampleUtils {
 

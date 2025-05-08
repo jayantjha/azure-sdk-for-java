@@ -13,7 +13,6 @@ import com.azure.ai.agents.persistent.models.MessageAttachment;
 import com.azure.ai.agents.persistent.models.MessageRole;
 import com.azure.ai.agents.persistent.models.PersistentAgent;
 import com.azure.ai.agents.persistent.models.PersistentAgentThread;
-import com.azure.ai.agents.persistent.models.RunStatus;
 import com.azure.ai.agents.persistent.models.ThreadMessage;
 import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.core.util.BinaryData;

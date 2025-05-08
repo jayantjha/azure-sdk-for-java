@@ -11,11 +11,9 @@ import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.core.http.HttpClient;
 import com.azure.core.http.rest.PagedIterable;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.azure.ai.agents.persistent.TestUtils.DISPLAY_NAME_WITH_ARGUMENTS;

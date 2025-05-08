@@ -6,16 +6,10 @@ import com.azure.ai.agents.persistent.models.CodeInterpreterToolDefinition;
 import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.CreateRunOptions;
 import com.azure.ai.agents.persistent.models.MessageRole;
-import com.azure.ai.agents.persistent.models.PersistentAgent;
-import com.azure.ai.agents.persistent.models.PersistentAgentThread;
-import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
-import org.jetbrains.annotations.NotNull;
-import reactor.core.publisher.SignalType;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 import static com.azure.ai.agents.persistent.SampleUtils.cleanUpResources;
 import static com.azure.ai.agents.persistent.SampleUtils.printRunMessagesAsync;

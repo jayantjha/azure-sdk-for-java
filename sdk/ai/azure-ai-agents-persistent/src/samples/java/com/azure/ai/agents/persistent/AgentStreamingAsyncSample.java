@@ -5,9 +5,7 @@ package com.azure.ai.agents.persistent;
 import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.CreateRunOptions;
 import com.azure.ai.agents.persistent.models.MessageRole;
-import com.azure.ai.agents.persistent.models.PersistentAgent;
 import com.azure.ai.agents.persistent.models.PersistentAgentStreamEvent;
-import com.azure.ai.agents.persistent.models.PersistentAgentThread;
 import com.azure.ai.agents.persistent.models.streaming.StreamMessageUpdate;
 import com.azure.ai.agents.persistent.models.streaming.StreamThreadRunCreation;
 import com.azure.ai.agents.persistent.models.streaming.StreamUpdate;
@@ -15,7 +13,6 @@ import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.azure.ai.agents.persistent.SampleUtils.cleanUpResources;

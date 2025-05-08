@@ -13,15 +13,10 @@ import com.azure.ai.agents.persistent.models.MessageInputContentBlock;
 import com.azure.ai.agents.persistent.models.MessageInputImageFileBlock;
 import com.azure.ai.agents.persistent.models.MessageInputTextBlock;
 import com.azure.ai.agents.persistent.models.MessageRole;
-import com.azure.ai.agents.persistent.models.PersistentAgent;
-import com.azure.ai.agents.persistent.models.PersistentAgentThread;
-import com.azure.ai.agents.persistent.models.ThreadMessage;
-import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import reactor.core.publisher.Mono;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;

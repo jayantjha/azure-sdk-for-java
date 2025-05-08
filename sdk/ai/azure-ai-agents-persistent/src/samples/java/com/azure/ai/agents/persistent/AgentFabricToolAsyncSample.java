@@ -13,7 +13,6 @@ import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
-import reactor.core.publisher.Mono;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 

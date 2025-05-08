@@ -7,7 +7,6 @@ import com.azure.ai.agents.persistent.models.CreateRunOptions;
 import com.azure.ai.agents.persistent.models.FunctionDefinition;
 import com.azure.ai.agents.persistent.models.FunctionToolDefinition;
 import com.azure.ai.agents.persistent.models.MessageRole;
-import com.azure.ai.agents.persistent.models.PersistentAgent;
 import com.azure.ai.agents.persistent.models.PersistentAgentStreamEvent;
 import com.azure.ai.agents.persistent.models.RequiredFunctionToolCall;
 import com.azure.ai.agents.persistent.models.RequiredToolCall;
@@ -27,7 +26,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

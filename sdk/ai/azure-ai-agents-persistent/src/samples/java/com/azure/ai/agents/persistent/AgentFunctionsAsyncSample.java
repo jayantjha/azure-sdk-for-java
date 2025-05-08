@@ -11,7 +11,6 @@ import com.azure.ai.agents.persistent.models.RequiredFunctionToolCall;
 import com.azure.ai.agents.persistent.models.RequiredToolCall;
 import com.azure.ai.agents.persistent.models.RunStatus;
 import com.azure.ai.agents.persistent.models.SubmitToolOutputsAction;
-import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.ai.agents.persistent.models.ToolOutput;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
@@ -20,7 +19,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import reactor.core.publisher.Mono;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

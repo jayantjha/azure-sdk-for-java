@@ -5,16 +5,12 @@ package com.azure.ai.agents.persistent;
 import com.azure.ai.agents.persistent.models.AgentDeletionStatus;
 import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.PersistentAgent;
-import com.azure.ai.agents.persistent.models.PersistentAgentThread;
 import com.azure.ai.agents.persistent.models.UpdateAgentOptions;
 import com.azure.core.http.HttpClient;
 import com.azure.core.http.rest.PagedIterable;
-import com.azure.core.util.IterableStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.List;
 
 import static com.azure.ai.agents.persistent.TestUtils.DISPLAY_NAME_WITH_ARGUMENTS;
 import static com.azure.ai.agents.persistent.TestUtils.size;

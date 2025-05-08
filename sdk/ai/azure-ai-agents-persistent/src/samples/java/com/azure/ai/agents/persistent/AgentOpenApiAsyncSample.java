@@ -13,7 +13,6 @@ import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.json.JsonProviders;
 import com.azure.json.JsonReader;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
