@@ -3,8 +3,11 @@
 package com.azure.ai.agents.persistent;
 
 import com.azure.core.http.HttpClient;
+import com.azure.core.http.rest.PagedIterable;
+import com.azure.core.http.rest.PagedResponse;
 import org.junit.jupiter.params.provider.Arguments;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -27,5 +30,26 @@ public class TestUtils {
         List<Arguments> argumentsList = new ArrayList<>();
         getHttpClients().forEach(httpClient -> argumentsList.add(Arguments.of(httpClient)));
         return argumentsList.stream();
+    }
+
+    static <T> int size(PagedIterable<T> pagedIterable) {
+        int length = 0;
+        if (pagedIterable != null) {
+            for (PagedResponse<T> page : pagedIterable.iterableByPage()) {
+                length += page.getValue().size();
+            }
+        }
+        return length;
+    }
+
+    static <T> T first(PagedIterable<T> pagedIterable) {
+        T firstElement = null;
+        if (pagedIterable != null) {
+            Iterator<T> iterator = pagedIterable.iterator();
+            if (iterator.hasNext()) {
+                firstElement = iterator.next();
+            }
+        }
+        return firstElement;
     }
 }

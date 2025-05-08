@@ -16,7 +16,6 @@ import static com.azure.ai.agents.persistent.TestUtils.FAKE_API_KEY;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-
 public class ClientTestBase extends TestProxyTestBase {
 
     protected PersistentAgentsAdministrationClientBuilder getClientBuilder(HttpClient httpClient) {
@@ -43,7 +42,6 @@ public class ClientTestBase extends TestProxyTestBase {
         return builder;
     }
 
-
     protected void assertAgent(PersistentAgent agent) {
         assertNotNull(agent, "Agent should not be null");
         assertNotNull(agent.getId(), "Agent ID should not be null");
@@ -59,10 +57,8 @@ public class ClientTestBase extends TestProxyTestBase {
                 fail("Thread sleep interrupted " + e.getMessage());
             }
             threadRun = runsClient.getRun(threadRun.getThreadId(), threadRun.getId());
-        }
-        while (
-            (--retryLeft > 0)
-                && ((threadRun.getStatus() == RunStatus.QUEUED)
+        } while ((--retryLeft > 0)
+            && ((threadRun.getStatus() == RunStatus.QUEUED)
                 || (threadRun.getStatus() == RunStatus.IN_PROGRESS)
                 || (threadRun.getStatus() == RunStatus.REQUIRES_ACTION)));
 

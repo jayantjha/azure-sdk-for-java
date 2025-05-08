@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.azure.ai.agents.persistent.TestUtils.DISPLAY_NAME_WITH_ARGUMENTS;
+import static com.azure.ai.agents.persistent.TestUtils.size;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,9 +44,8 @@ public class VectorStoreFileBatchesClientTest extends ClientTestBase {
     }
 
     private FileInfo uploadFile(String fileName) {
-        FileDetails fileDetails = new FileDetails(
-            BinaryData.fromString("Sample text for testing upload"))
-            .setFilename(fileName);
+        FileDetails fileDetails
+            = new FileDetails(BinaryData.fromString("Sample text for testing upload")).setFilename(fileName);
         UploadFileRequest uploadFileRequest = new UploadFileRequest(fileDetails, FilePurpose.AGENTS);
         FileInfo uploadedFile = filesClient.uploadFile(uploadFileRequest);
         assertNotNull(uploadedFile, "Uploaded file should not be null");
@@ -55,16 +55,15 @@ public class VectorStoreFileBatchesClientTest extends ClientTestBase {
 
     // Helper method to create a vector store
     private VectorStore createVectorStore(String name) {
-        VectorStore vectorStore = vectorStoresClient.createVectorStore(
-            null, name, null, null, null, null);
+        VectorStore vectorStore = vectorStoresClient.createVectorStore(null, name, null, null, null, null);
         assertNotNull(vectorStore, "Vector store should not be null");
         vectorStores.add(vectorStore);
         return vectorStore;
     }
 
     private VectorStoreFileBatch createVectorStoreFileBatch(String vectorStoreId, List<String> fileIds) {
-        VectorStoreFileBatch fileBatch = vectorStoreFileBatchesClient.createVectorStoreFileBatch(
-            vectorStoreId, fileIds, null, null);
+        VectorStoreFileBatch fileBatch
+            = vectorStoreFileBatchesClient.createVectorStoreFileBatch(vectorStoreId, fileIds, null, null);
         assertNotNull(fileBatch, "Vector store file batch should not be null");
         return fileBatch;
     }
@@ -98,8 +97,8 @@ public class VectorStoreFileBatchesClientTest extends ClientTestBase {
         VectorStoreFileBatch createdBatch = createVectorStoreFileBatch(vectorStore.getId(), fileIds);
 
         // Retrieve the file batch by its id.
-        VectorStoreFileBatch retrievedBatch = vectorStoreFileBatchesClient.getVectorStoreFileBatch(
-            vectorStore.getId(), createdBatch.getId());
+        VectorStoreFileBatch retrievedBatch
+            = vectorStoreFileBatchesClient.getVectorStoreFileBatch(vectorStore.getId(), createdBatch.getId());
         assertNotNull(retrievedBatch, "Retrieved file batch should not be null");
         assertEquals(createdBatch.getId(), retrievedBatch.getId(), "File batch IDs should match");
     }
@@ -118,12 +117,12 @@ public class VectorStoreFileBatchesClientTest extends ClientTestBase {
         VectorStoreFileBatch createdBatch = createVectorStoreFileBatch(vectorStore.getId(), fileIds);
 
         // List the file batches for the vector store.
-        PagedIterable<VectorStoreFile> vectorStoreFilesResponse = vectorStoreFileBatchesClient
-            .listVectorStoreFileBatchFiles(vectorStore.getId(), createdBatch.getId());
-        assertNotNull(vectorStoreFilesResponse, "Vector store batch files list response should not be null");
-        List<VectorStoreFile> vectorStoreFiles = vectorStoreFilesResponse.stream().toList();
+        PagedIterable<VectorStoreFile> vectorStoreFiles
+            = vectorStoreFileBatchesClient.listVectorStoreFileBatchFiles(vectorStore.getId(), createdBatch.getId());
+        assertNotNull(vectorStoreFiles, "Vector store batch files list response should not be null");
+
         // At least the two created file batches should be present.
-        assertTrue(vectorStoreFiles.size() > 0, "File batch list should not be empty");
+        assertTrue(size(vectorStoreFiles) > 0, "File batch list should not be empty");
     }
 
     @AfterEach

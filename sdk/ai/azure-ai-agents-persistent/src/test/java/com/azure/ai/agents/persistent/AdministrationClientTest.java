@@ -5,13 +5,19 @@ package com.azure.ai.agents.persistent;
 import com.azure.ai.agents.persistent.models.AgentDeletionStatus;
 import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.PersistentAgent;
+import com.azure.ai.agents.persistent.models.PersistentAgentThread;
 import com.azure.ai.agents.persistent.models.UpdateAgentOptions;
 import com.azure.core.http.HttpClient;
+import com.azure.core.http.rest.PagedIterable;
+import com.azure.core.util.IterableStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
+
 import static com.azure.ai.agents.persistent.TestUtils.DISPLAY_NAME_WITH_ARGUMENTS;
+import static com.azure.ai.agents.persistent.TestUtils.size;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -22,9 +28,8 @@ public class AdministrationClientTest extends ClientTestBase {
     private PersistentAgent agent;
 
     private PersistentAgent createAgent(String agentName) {
-        CreateAgentOptions options = new CreateAgentOptions("gpt-4o-mini")
-            .setName(agentName)
-            .setInstructions("You are a helpful agent");
+        CreateAgentOptions options
+            = new CreateAgentOptions("gpt-4o-mini").setName(agentName).setInstructions("You are a helpful agent");
         PersistentAgent createdAgent = agentsClient.createAgent(options);
         assertNotNull(createdAgent, "Persistent agent should not be null");
         return createdAgent;
@@ -49,9 +54,10 @@ public class AdministrationClientTest extends ClientTestBase {
         setup(httpClient);
 
         // Validate the agent listing
-        var agentList = agentsClient.listAgents().stream().toList();
-        assertNotNull(agentList, "Agent list should not be null");
-        assertTrue(agentList.size() > 0, "Agent list should not be empty");
+        PagedIterable<PersistentAgent> agents = agentsClient.listAgents();
+
+        assertNotNull(agents, "Agent list should not be null");
+        assertTrue(size(agents) > 0, "Agent list should not be empty");
     }
 
     @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
@@ -69,11 +75,12 @@ public class AdministrationClientTest extends ClientTestBase {
     public void testUpdateAgent(HttpClient httpClient) {
         setup(httpClient);
 
-        UpdateAgentOptions updateOptions = new UpdateAgentOptions(agent.getId())
-            .setInstructions("Updated instructions for the agent");
+        UpdateAgentOptions updateOptions
+            = new UpdateAgentOptions(agent.getId()).setInstructions("Updated instructions for the agent");
         PersistentAgent updatedAgent = agentsClient.updateAgent(updateOptions);
         assertAgent(updatedAgent);
-        assertTrue(updatedAgent.getInstructions().equals("Updated instructions for the agent"), "Updated agent instructions should match");
+        assertTrue(updatedAgent.getInstructions().equals("Updated instructions for the agent"),
+            "Updated agent instructions should match");
         assertTrue(updatedAgent.getId().equals(agent.getId()), "Updated agent ID should match created agent ID");
     }
 
@@ -87,7 +94,6 @@ public class AdministrationClientTest extends ClientTestBase {
         assertTrue(deletionStatus.isDeleted(), "Agent should be deleted");
         agent = null;
     }
-
 
     @AfterEach
     public void cleanup() {

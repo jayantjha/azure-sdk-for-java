@@ -27,9 +27,8 @@ public class ThreadsClientTest extends ClientTestBase {
     private PersistentAgentThread thread;
 
     private PersistentAgent createAgent(String agentName) {
-        CreateAgentOptions options = new CreateAgentOptions("gpt-4o-mini")
-            .setName(agentName)
-            .setInstructions("You are a helpful agent");
+        CreateAgentOptions options
+            = new CreateAgentOptions("gpt-4o-mini").setName(agentName).setInstructions("You are a helpful agent");
         PersistentAgent createdAgent = agentsClient.createAgent(options);
         assertNotNull(createdAgent, "Persistent agent should not be null");
         return createdAgent;

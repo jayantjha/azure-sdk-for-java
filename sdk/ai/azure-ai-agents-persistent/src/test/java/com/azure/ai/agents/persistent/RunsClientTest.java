@@ -6,6 +6,7 @@ import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.CreateRunOptions;
 import com.azure.ai.agents.persistent.models.PersistentAgent;
 import com.azure.ai.agents.persistent.models.PersistentAgentThread;
+import com.azure.ai.agents.persistent.models.ThreadDeletionStatus;
 import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.core.http.HttpClient;
 import com.azure.core.http.rest.PagedIterable;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.azure.ai.agents.persistent.TestUtils.DISPLAY_NAME_WITH_ARGUMENTS;
+import static com.azure.ai.agents.persistent.TestUtils.size;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,9 +34,8 @@ public class RunsClientTest extends ClientTestBase {
 
     private PersistentAgent createAgent(String agentName) {
         // Mimics agent creation as in other tests.
-        CreateAgentOptions options = new CreateAgentOptions("gpt-4o-mini")
-            .setName(agentName)
-            .setInstructions("You are a helpful agent");
+        CreateAgentOptions options
+            = new CreateAgentOptions("gpt-4o-mini").setName(agentName).setInstructions("You are a helpful agent");
         PersistentAgent createdAgent = agentsClient.createAgent(options);
         assertNotNull(createdAgent, "Persistent agent should not be null");
         return createdAgent;
@@ -77,8 +78,7 @@ public class RunsClientTest extends ClientTestBase {
         metadata.put("source", "test");
         metadata.put("priority", "high");
 
-        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
-            .setMetadata(metadata);
+        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId()).setMetadata(metadata);
         ThreadRun run = runsClient.createRun(createRunOptions);
         assertNotNull(run, "Run with metadata should not be null");
         assertNotNull(run.getMetadata(), "Run metadata should not be null");
@@ -133,23 +133,20 @@ public class RunsClientTest extends ClientTestBase {
             waitForRunCompletion(run, runsClient);
         }
 
-        PagedIterable<ThreadRun> runsList = runsClient.listRuns(
-            thread.getId(),
-            10,    // limit
+        PagedIterable<ThreadRun> runs = runsClient.listRuns(thread.getId(), 10,    // limit
             null,  // order
             null,  // after
             null   // before
         );
 
-        List<ThreadRun> filteredRuns = runsList.stream().toList();
-        assertNotNull(filteredRuns, "Filtered runs should not be null");
-        assertTrue(filteredRuns.size() <= 10, "Run list should have at most 10 runs");
+        assertNotNull(runs, "Filtered runs should not be null");
+        assertTrue(size(runs) <= 5, "Run list should have at most 5 runs");
     }
 
     @AfterEach
     public void cleanup() {
         if (thread != null) {
-            var deletionStatus = threadsClient.deleteThread(thread.getId());
+            ThreadDeletionStatus deletionStatus = threadsClient.deleteThread(thread.getId());
             assertNotNull(deletionStatus, "Thread deletion status should not be null");
             assertTrue(deletionStatus.isDeleted(), "Thread should be deleted");
         }

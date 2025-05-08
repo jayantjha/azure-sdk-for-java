@@ -7,6 +7,7 @@ import com.azure.ai.agents.persistent.models.CreateRunOptions;
 import com.azure.ai.agents.persistent.models.PersistentAgent;
 import com.azure.ai.agents.persistent.models.PersistentAgentThread;
 import com.azure.ai.agents.persistent.models.RunStep;
+import com.azure.ai.agents.persistent.models.ThreadDeletionStatus;
 import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.core.http.HttpClient;
 import com.azure.core.http.rest.PagedIterable;
@@ -16,6 +17,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.List;
 
 import static com.azure.ai.agents.persistent.TestUtils.DISPLAY_NAME_WITH_ARGUMENTS;
+import static com.azure.ai.agents.persistent.TestUtils.first;
+import static com.azure.ai.agents.persistent.TestUtils.size;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,9 +35,8 @@ public class RunStepsClientTest extends ClientTestBase {
 
     private PersistentAgent createAgent(String agentName) {
         // Mimics agent creation as in other tests.
-        CreateAgentOptions options = new CreateAgentOptions("gpt-4o-mini")
-            .setName(agentName)
-            .setInstructions("You are a helpful agent");
+        CreateAgentOptions options
+            = new CreateAgentOptions("gpt-4o-mini").setName(agentName).setInstructions("You are a helpful agent");
         PersistentAgent createdAgent = agentsClient.createAgent(options);
         assertNotNull(createdAgent, "Persistent agent should not be null");
         return createdAgent;
@@ -65,11 +67,9 @@ public class RunStepsClientTest extends ClientTestBase {
         ThreadRun run = createRun();
         waitForRunCompletion(run, runsClient);
 
-        PagedIterable<RunStep> runStepsResponse = runStepsClient.listRunSteps(run.getThreadId(), run.getId());
-        assertNotNull(runStepsResponse, "Run steps response should not be null");
-        List<RunStep> runSteps = runStepsResponse.stream().toList();
+        PagedIterable<RunStep> runSteps = runStepsClient.listRunSteps(run.getThreadId(), run.getId());
         assertNotNull(runSteps, "Run steps list should not be null");
-        assertTrue(runSteps.size() > 0, "Run steps list should contain at least one step");
+        assertTrue(size(runSteps) > 0, "Run steps list should contain at least one step");
     }
 
     @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
@@ -80,13 +80,11 @@ public class RunStepsClientTest extends ClientTestBase {
         ThreadRun run = createRun();
         waitForRunCompletion(run, runsClient);
 
-        PagedIterable<RunStep> runStepsResponse = runStepsClient.listRunSteps(run.getThreadId(), run.getId());
-        assertNotNull(runStepsResponse, "Run steps response should not be null");
-        List<RunStep> runSteps = runStepsResponse.stream().toList();
-        assertNotNull(runSteps, "Run steps list should not be null");
-        assertTrue(runSteps.size() > 0, "Run steps list should contain at least one step");
+        PagedIterable<RunStep> runSteps = runStepsClient.listRunSteps(run.getThreadId(), run.getId());
+        assertNotNull(runSteps, "Run steps response should not be null");
+        assertTrue(size(runSteps) > 0, "Run steps list should contain at least one step");
 
-        RunStep firstRunStep = runSteps.get(0);
+        RunStep firstRunStep = first(runSteps);
         RunStep retrievedRunStep = runStepsClient.getRunStep(run.getThreadId(), run.getId(), firstRunStep.getId());
         assertNotNull(retrievedRunStep, "Retrieved run step should not be null");
         assertEquals(firstRunStep.getId(), retrievedRunStep.getId(), "Run step IDs should match");
@@ -95,7 +93,7 @@ public class RunStepsClientTest extends ClientTestBase {
     @AfterEach
     public void cleanup() {
         if (thread != null) {
-            var deletionStatus = threadsClient.deleteThread(thread.getId());
+            ThreadDeletionStatus deletionStatus = threadsClient.deleteThread(thread.getId());
             assertNotNull(deletionStatus, "Thread deletion status should not be null");
             assertTrue(deletionStatus.isDeleted(), "Thread should be deleted");
         }

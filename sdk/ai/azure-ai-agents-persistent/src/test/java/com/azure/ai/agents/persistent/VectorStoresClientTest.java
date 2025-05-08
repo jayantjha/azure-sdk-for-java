@@ -32,8 +32,7 @@ public class VectorStoresClientTest extends ClientTestBase {
     }
 
     private VectorStore createVectorStore(String vectorStoreName) {
-        VectorStore vectorStore = vectorStoresClient.createVectorStore(
-            null, vectorStoreName, null, null, null, null);
+        VectorStore vectorStore = vectorStoresClient.createVectorStore(null, vectorStoreName, null, null, null, null);
         assertNotNull(vectorStore, "Vector store should not be null");
         vectorStores.add(vectorStore);
         return vectorStore;
@@ -79,17 +78,14 @@ public class VectorStoresClientTest extends ClientTestBase {
         Map<String, String> metadata = new HashMap<>();
         metadata.put("environment", "test");
 
-        VectorStore modifiedVectorStore = vectorStoresClient.modifyVectorStore(
-            vectorStore.getId(),
-            updatedName,
-            null, // not modifying expiration policy
-            metadata
-        );
+        VectorStore modifiedVectorStore = vectorStoresClient.modifyVectorStore(vectorStore.getId(), updatedName, null, // not modifying expiration policy
+            metadata);
 
         assertNotNull(modifiedVectorStore, "Modified vector store should not be null");
         assertEquals(updatedName, modifiedVectorStore.getName(), "Vector store name should be updated");
         assertNotNull(modifiedVectorStore.getMetadata(), "Vector store metadata should not be null");
-        assertEquals("test", modifiedVectorStore.getMetadata().get("environment"), "Metadata environment value should match");
+        assertEquals("test", modifiedVectorStore.getMetadata().get("environment"),
+            "Metadata environment value should match");
     }
 
     @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
@@ -123,8 +119,7 @@ public class VectorStoresClientTest extends ClientTestBase {
     public void cleanup() {
         for (VectorStore vectorStore : vectorStores) {
             try {
-                VectorStoreDeletionStatus deletionStatus = vectorStoresClient
-                    .deleteVectorStore(vectorStore.getId());
+                VectorStoreDeletionStatus deletionStatus = vectorStoresClient.deleteVectorStore(vectorStore.getId());
             } catch (Exception e) {
                 System.out.println("Failed to clean up vector store: " + vectorStore.getName());
                 System.out.println(e.getMessage());

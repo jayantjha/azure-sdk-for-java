@@ -31,9 +31,8 @@ public class MessagesClientTest extends ClientTestBase {
     private PersistentAgentThread thread;
 
     private PersistentAgent createAgent(String agentName) {
-        CreateAgentOptions options = new CreateAgentOptions("gpt-4o-mini")
-            .setName(agentName)
-            .setInstructions("You are a helpful agent");
+        CreateAgentOptions options
+            = new CreateAgentOptions("gpt-4o-mini").setName(agentName).setInstructions("You are a helpful agent");
         PersistentAgent createdAgent = agentsClient.createAgent(options);
         assertNotNull(createdAgent, "Persistent agent should not be null");
         return createdAgent;
@@ -53,10 +52,8 @@ public class MessagesClientTest extends ClientTestBase {
     public void testCreateAndRetrieveMessage(HttpClient httpClient) {
         setup(httpClient);
         // Create message
-        ThreadMessage createdMessage = messagesClient.createMessage(
-            thread.getId(),
-            MessageRole.USER,
-            "What do you know about Microsoft");
+        ThreadMessage createdMessage
+            = messagesClient.createMessage(thread.getId(), MessageRole.USER, "What do you know about Microsoft");
         assertNotNull(createdMessage, "Created message should not be null");
         assertNotNull(createdMessage.getId(), "Message ID should not be null");
         assertEquals(MessageRole.USER, createdMessage.getRole(), "Message role should be USER");
@@ -73,12 +70,8 @@ public class MessagesClientTest extends ClientTestBase {
         Map<String, String> metadata = new HashMap<>();
         metadata.put("source", "test");
         metadata.put("priority", "high");
-        ThreadMessage messageWithMetadata = messagesClient.createMessage(
-            thread.getId(),
-            MessageRole.USER,
-            "This is a message with metadata",
-            null,
-            metadata);
+        ThreadMessage messageWithMetadata = messagesClient.createMessage(thread.getId(), MessageRole.USER,
+            "This is a message with metadata", null, metadata);
         assertNotNull(messageWithMetadata, "Message with metadata should not be null");
         assertNotNull(messageWithMetadata.getMetadata(), "Message metadata should not be null");
         assertEquals("test", messageWithMetadata.getMetadata().get("source"), "Metadata source should match");
@@ -90,15 +83,14 @@ public class MessagesClientTest extends ClientTestBase {
     public void testUpdateMessage(HttpClient httpClient) {
         setup(httpClient);
         // Create initial message
-        ThreadMessage createdMessage = messagesClient.createMessage(
-            thread.getId(),
-            MessageRole.USER,
-            "Initial message");
+        ThreadMessage createdMessage
+            = messagesClient.createMessage(thread.getId(), MessageRole.USER, "Initial message");
         // Update message metadata
         Map<String, String> updatedMetadata = new HashMap<>();
         updatedMetadata.put("updated", "true");
         updatedMetadata.put("timestamp", String.valueOf(System.currentTimeMillis()));
-        ThreadMessage updatedMessage = messagesClient.updateMessage(thread.getId(), createdMessage.getId(), updatedMetadata);
+        ThreadMessage updatedMessage
+            = messagesClient.updateMessage(thread.getId(), createdMessage.getId(), updatedMetadata);
         assertNotNull(updatedMessage, "Updated message should not be null");
         assertNotNull(updatedMessage.getMetadata(), "Updated metadata should not be null");
         assertEquals("true", updatedMessage.getMetadata().get("updated"), "Metadata updated flag should be true");
@@ -125,9 +117,7 @@ public class MessagesClientTest extends ClientTestBase {
         for (int i = 0; i < 5; i++) {
             messagesClient.createMessage(thread.getId(), MessageRole.USER, "Message " + i);
         }
-        PagedIterable<ThreadMessage> filteredMessages = messagesClient.listMessages(
-            thread.getId(),
-            null,    // runId
+        PagedIterable<ThreadMessage> filteredMessages = messagesClient.listMessages(thread.getId(), null,    // runId
             10,      // limit
             null,    // order
             null,    // after

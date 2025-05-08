@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.azure.ai.agents.persistent.TestUtils.DISPLAY_NAME_WITH_ARGUMENTS;
+import static com.azure.ai.agents.persistent.TestUtils.size;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,8 +57,8 @@ public class VectorStoreFilesClientTest extends ClientTestBase {
 
     // Helper method to upload a file using FilesClient.
     private FileInfo uploadFile(String fileName) {
-        FileDetails fileDetails = new FileDetails(BinaryData.fromString("Sample text for vector store file upload"))
-            .setFilename(fileName);
+        FileDetails fileDetails
+            = new FileDetails(BinaryData.fromString("Sample text for vector store file upload")).setFilename(fileName);
         UploadFileRequest uploadFileRequest = new UploadFileRequest(fileDetails, FilePurpose.AGENTS);
         FileInfo uploadedFile = filesClient.uploadFile(uploadFileRequest);
         assertNotNull(uploadedFile, "Uploaded file should not be null");
@@ -66,7 +67,8 @@ public class VectorStoreFilesClientTest extends ClientTestBase {
     }
 
     private VectorStoreFile createVectorStoreFile(String vectorStoreId, String fileId) {
-        VectorStoreFile vectorStoreFile = vectorStoreFilesClient.createVectorStoreFile(vectorStoreId, fileId, null, null);
+        VectorStoreFile vectorStoreFile
+            = vectorStoreFilesClient.createVectorStoreFile(vectorStoreId, fileId, null, null);
         assertNotNull(vectorStoreFile, "Vector store file should not be null");
 
         vectorStoreFiles.add(vectorStoreFile);
@@ -94,7 +96,8 @@ public class VectorStoreFilesClientTest extends ClientTestBase {
         FileInfo uploadedFile = uploadFile("get_vector_store_file.txt");
         VectorStoreFile vectorStoreFile = createVectorStoreFile(vectorStore.getId(), uploadedFile.getId());
 
-        VectorStoreFile retrievedFile = vectorStoreFilesClient.getVectorStoreFile(vectorStore.getId(), vectorStoreFile.getId());
+        VectorStoreFile retrievedFile
+            = vectorStoreFilesClient.getVectorStoreFile(vectorStore.getId(), vectorStoreFile.getId());
         assertNotNull(retrievedFile, "Retrieved vector store file should not be null");
         assertEquals(vectorStoreFile.getId(), retrievedFile.getId(), "Vector store file IDs should match");
     }
@@ -112,11 +115,11 @@ public class VectorStoreFilesClientTest extends ClientTestBase {
         createVectorStoreFile(vectorStore.getId(), uploadedFile1.getId());
         createVectorStoreFile(vectorStore.getId(), uploadedFile2.getId());
 
-        PagedIterable<VectorStoreFile> listResponse = vectorStoreFilesClient.listVectorStoreFiles(vectorStore.getId());
-        assertNotNull(listResponse, "List response should not be null");
-        List<VectorStoreFile> vectorStoreFiles = listResponse.stream().toList();
+        PagedIterable<VectorStoreFile> vectorStoreFiles
+            = vectorStoreFilesClient.listVectorStoreFiles(vectorStore.getId());
+
         assertNotNull(vectorStoreFiles, "Vector store files list should not be null");
-        assertTrue(vectorStoreFiles.size() > 0, "There should be at least one vector store file");
+        assertTrue(size(vectorStoreFiles) > 0, "There should be at least one vector store file");
     }
 
     // Test deleting a vector store file.
@@ -128,7 +131,8 @@ public class VectorStoreFilesClientTest extends ClientTestBase {
         FileInfo uploadedFile = uploadFile("delete_vector_store_file.txt");
         VectorStoreFile vectorStoreFile = createVectorStoreFile(vectorStore.getId(), uploadedFile.getId());
 
-        VectorStoreFileDeletionStatus deletionStatus = vectorStoreFilesClient.deleteVectorStoreFile(vectorStore.getId(), vectorStoreFile.getId());
+        VectorStoreFileDeletionStatus deletionStatus
+            = vectorStoreFilesClient.deleteVectorStoreFile(vectorStore.getId(), vectorStoreFile.getId());
         assertNotNull(deletionStatus, "Deletion status should not be null");
         assertTrue(deletionStatus.isDeleted(), "Vector store file should be marked as deleted");
     }

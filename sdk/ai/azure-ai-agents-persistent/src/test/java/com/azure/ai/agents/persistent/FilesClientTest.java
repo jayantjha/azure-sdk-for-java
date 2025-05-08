@@ -34,9 +34,8 @@ public class FilesClientTest extends ClientTestBase {
     }
 
     private FileInfo uploadFile(String fileName) {
-        FileDetails fileDetails = new FileDetails(
-            BinaryData.fromString("Sample text for testing upload"))
-            .setFilename(fileName);
+        FileDetails fileDetails
+            = new FileDetails(BinaryData.fromString("Sample text for testing upload")).setFilename(fileName);
         UploadFileRequest uploadFileRequest = new UploadFileRequest(fileDetails, FilePurpose.AGENTS);
         FileInfo uploadedFile = filesClient.uploadFile(uploadFileRequest);
         assertNotNull(uploadedFile, "Uploaded file should not be null");
@@ -84,7 +83,6 @@ public class FilesClientTest extends ClientTestBase {
         FileDeletionStatus deletionStatus = filesClient.deleteFile(uploadedFile.getId());
         assertTrue(deletionStatus.isDeleted(), "File should be marked as deleted");
     }
-
 
     @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
     @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
