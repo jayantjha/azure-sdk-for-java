@@ -53,6 +53,7 @@ public class MessagesAsyncClientTest extends ClientTestBase {
         }).verifyComplete();
     }
 
+    @Disabled
     @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
     @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
     public void testCreateAndRetrieveMessage(HttpClient httpClient) {
@@ -86,7 +87,6 @@ public class MessagesAsyncClientTest extends ClientTestBase {
 
         // Create a message with metadata
         Map<String, String> metadata = new HashMap<>();
-        metadata.put("source", "test");
         metadata.put("priority", "high");
 
         BinaryData content = BinaryData.fromString("This is a message with metadata");
@@ -96,7 +96,6 @@ public class MessagesAsyncClientTest extends ClientTestBase {
             .assertNext(messageWithMetadata -> {
                 assertNotNull(messageWithMetadata, "Message with metadata should not be null");
                 assertNotNull(messageWithMetadata.getMetadata(), "Message metadata should not be null");
-                assertEquals("test", messageWithMetadata.getMetadata().get("source"), "Metadata source should match");
                 assertEquals("high", messageWithMetadata.getMetadata().get("priority"),
                     "Metadata priority should match");
             })

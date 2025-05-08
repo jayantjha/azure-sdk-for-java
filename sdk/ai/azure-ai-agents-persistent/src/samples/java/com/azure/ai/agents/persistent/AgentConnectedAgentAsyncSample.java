@@ -8,6 +8,7 @@ import com.azure.ai.agents.persistent.models.ConnectedAgentToolDefinition;
 import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.CreateRunOptions;
 import com.azure.ai.agents.persistent.models.MessageRole;
+import com.azure.ai.agents.persistent.models.PersistentAgent;
 import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
@@ -66,11 +67,7 @@ public final class AgentConnectedAgentAsyncSample {
                 
                 return agentsAsyncClient.createAgentWithResponse(BinaryData.fromObject(createAgentRequest), requestOptions)
                     .flatMap(response -> {
-                        if (!response.getStatusCode().isSuccess()) {
-                            return Mono.error(new RuntimeException("Failed to create main agent: " + response.getStatusCode()));
-                        }
-                        
-                        return Mono.just(response.getValue().toObject(com.azure.ai.agents.persistent.models.PersistentAgent.class));
+                        return Mono.just(response.getValue().toObject(PersistentAgent.class));
                     });
             })
             .flatMap(mainAgent -> {

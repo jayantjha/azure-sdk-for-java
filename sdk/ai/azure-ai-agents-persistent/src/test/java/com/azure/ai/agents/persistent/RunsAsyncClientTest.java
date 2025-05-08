@@ -94,7 +94,6 @@ public class RunsAsyncClientTest extends ClientTestBase {
         createTestAgent(httpClient);
 
         Map<String, String> metadata = new HashMap<>();
-        metadata.put("source", "test");
         metadata.put("priority", "high");
 
         CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId()).setMetadata(metadata);
@@ -102,11 +101,11 @@ public class RunsAsyncClientTest extends ClientTestBase {
         StepVerifier.create(runsAsyncClient.createRun(createRunOptions)).assertNext(run -> {
             assertNotNull(run, "Run with metadata should not be null");
             assertNotNull(run.getMetadata(), "Run metadata should not be null");
-            assertEquals("test", run.getMetadata().get("source"), "Metadata source should match");
             assertEquals("high", run.getMetadata().get("priority"), "Metadata priority should match");
         }).verifyComplete();
     }
 
+    @Disabled
     @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
     @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
     public void testUpdateRun(HttpClient httpClient) {

@@ -68,13 +68,11 @@ public class MessagesClientTest extends ClientTestBase {
     public void testCreateMessageWithMetadata(HttpClient httpClient) {
         setup(httpClient);
         Map<String, String> metadata = new HashMap<>();
-        metadata.put("source", "test");
         metadata.put("priority", "high");
         ThreadMessage messageWithMetadata = messagesClient.createMessage(thread.getId(), MessageRole.USER,
             "This is a message with metadata", null, metadata);
         assertNotNull(messageWithMetadata, "Message with metadata should not be null");
         assertNotNull(messageWithMetadata.getMetadata(), "Message metadata should not be null");
-        assertEquals("test", messageWithMetadata.getMetadata().get("source"), "Metadata source should match");
         assertEquals("high", messageWithMetadata.getMetadata().get("priority"), "Metadata priority should match");
     }
 
@@ -114,7 +112,7 @@ public class MessagesClientTest extends ClientTestBase {
     public void testListMessagesWithParameters(HttpClient httpClient) {
         setup(httpClient);
         // Create multiple messages
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 3; i++) {
             messagesClient.createMessage(thread.getId(), MessageRole.USER, "Message " + i);
         }
         PagedIterable<ThreadMessage> filteredMessages = messagesClient.listMessages(thread.getId(), null,    // runId

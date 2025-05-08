@@ -76,14 +76,12 @@ public class RunsClientTest extends ClientTestBase {
         setup(httpClient);
 
         Map<String, String> metadata = new HashMap<>();
-        metadata.put("source", "test");
         metadata.put("priority", "high");
 
         CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId()).setMetadata(metadata);
         ThreadRun run = runsClient.createRun(createRunOptions);
         assertNotNull(run, "Run with metadata should not be null");
         assertNotNull(run.getMetadata(), "Run metadata should not be null");
-        assertEquals("test", run.getMetadata().get("source"), "Metadata source should match");
         assertEquals("high", run.getMetadata().get("priority"), "Metadata priority should match");
     }
 

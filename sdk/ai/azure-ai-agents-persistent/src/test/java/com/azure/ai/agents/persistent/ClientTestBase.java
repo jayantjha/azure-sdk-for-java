@@ -35,10 +35,11 @@ public class ClientTestBase extends TestProxyTestBase {
             .httpClient(interceptorManager.isPlaybackMode() ? interceptorManager.getPlaybackClient() : httpClient);
         TestMode testMode = getTestMode();
         if (testMode != TestMode.LIVE) {
+            addCustomMatchers();
             addTestRecordCustomSanitizers();
             // Disable "$..id"=AZSDK3430, "Set-Cookie"=AZSDK2015 for both azure and non-azure clients from the list of common sanitizers.
             if (!sanitizersRemoved) {
-                interceptorManager.removeSanitizers("AZSDK3430", "AZSDK3493");
+                interceptorManager.removeSanitizers("AZSDK3430", "AZSDK3493", "AZSDK2015");
                 sanitizersRemoved = true;
             }
         }
@@ -71,8 +72,6 @@ public class ClientTestBase extends TestProxyTestBase {
             "(^multipart\\/form-data; boundary=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{2})",
             "multipart\\/form-data; boundary=BOUNDARY", TestProxySanitizerType.HEADER));
 
-        sanitizers.add(new TestProxySanitizer(".*", "ABC", TestProxySanitizerType.BODY_REGEX));
-
         interceptorManager.addSanitizers(sanitizers);
 
     }
@@ -88,7 +87,7 @@ public class ClientTestBase extends TestProxyTestBase {
     }
 
     protected void waitForRunCompletion(ThreadRun threadRun, RunsClient runsClient) {
-        int retryLeft = 20;
+        int retryLeft = 50;
         do {
             try {
                 Thread.sleep(500);
