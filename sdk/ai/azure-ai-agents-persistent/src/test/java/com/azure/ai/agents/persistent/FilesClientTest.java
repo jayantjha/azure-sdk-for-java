@@ -35,8 +35,7 @@ public class FilesClientTest extends ClientTestBase {
     }
 
     private FileInfo uploadFile(String fileName) {
-        FileDetails fileDetails
-            = new FileDetails(BinaryData.fromString(SAMPLE_TEXT)).setFilename(fileName);
+        FileDetails fileDetails = new FileDetails(BinaryData.fromString(SAMPLE_TEXT)).setFilename(fileName);
         UploadFileRequest uploadFileRequest = new UploadFileRequest(fileDetails, FilePurpose.AGENTS);
         FileInfo uploadedFile = filesClient.uploadFile(uploadFileRequest);
         assertNotNull(uploadedFile, "Uploaded file should not be null");

@@ -49,13 +49,11 @@ public class VectorStoresAsyncClientTest extends ClientTestBase {
     public void testCreateVectorStore(HttpClient httpClient) {
         setup(httpClient);
         String vectorStoreName = "test_create_vector_store_async";
-        
-        StepVerifier.create(createVectorStore(vectorStoreName))
-            .assertNext(vectorStore -> {
-                assertNotNull(vectorStore, "Vector store should not be null");
-                assertEquals(vectorStoreName, vectorStore.getName(), "Vector store name should match");
-            })
-            .verifyComplete();
+
+        StepVerifier.create(createVectorStore(vectorStoreName)).assertNext(vectorStore -> {
+            assertNotNull(vectorStore, "Vector store should not be null");
+            assertEquals(vectorStoreName, vectorStore.getName(), "Vector store name should match");
+        }).verifyComplete();
     }
 
     @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
@@ -63,9 +61,10 @@ public class VectorStoresAsyncClientTest extends ClientTestBase {
     public void testGetVectorStore(HttpClient httpClient) {
         setup(httpClient);
         String vectorStoreName = "test_get_vector_store_async";
-        
-        StepVerifier.create(createVectorStore(vectorStoreName)
-            .flatMap(createdStore -> vectorStoresAsyncClient.getVectorStore(createdStore.getId())))
+
+        StepVerifier
+            .create(createVectorStore(vectorStoreName)
+                .flatMap(createdStore -> vectorStoresAsyncClient.getVectorStore(createdStore.getId())))
             .assertNext(retrievedVectorStore -> {
                 assertNotNull(retrievedVectorStore, "Retrieved vector store should not be null");
                 assertEquals(vectorStoreName, retrievedVectorStore.getName(), "Vector store names should match");
@@ -83,9 +82,8 @@ public class VectorStoresAsyncClientTest extends ClientTestBase {
         metadata.put("environment", "test");
 
         StepVerifier
-            .create(createVectorStore(vectorStoreName)
-                .flatMap(createdStore -> vectorStoresAsyncClient.modifyVectorStore(
-                    createdStore.getId(), updatedName, null, metadata)))
+            .create(createVectorStore(vectorStoreName).flatMap(createdStore -> vectorStoresAsyncClient
+                .modifyVectorStore(createdStore.getId(), updatedName, null, metadata)))
             .assertNext(modifiedVectorStore -> {
                 assertNotNull(modifiedVectorStore, "Modified vector store should not be null");
                 assertEquals(updatedName, modifiedVectorStore.getName(), "Vector store name should be updated");
@@ -101,9 +99,10 @@ public class VectorStoresAsyncClientTest extends ClientTestBase {
     public void testListVectorStores(HttpClient httpClient) {
         setup(httpClient);
         String vectorStoreName = "test_list_vector_store_async";
-        
-        StepVerifier.create(createVectorStore(vectorStoreName)
-            .then(Mono.defer(() -> vectorStoresAsyncClient.listVectorStores().take(10).collectList())))
+
+        StepVerifier
+            .create(createVectorStore(vectorStoreName)
+                .then(Mono.defer(() -> vectorStoresAsyncClient.listVectorStores().take(10).collectList())))
             .assertNext(vectorStoreList -> {
                 assertNotNull(vectorStoreList, "Vector store list should not be null");
                 assertTrue(vectorStoreList.size() > 0, "Vector store list should not be empty");
@@ -116,20 +115,16 @@ public class VectorStoresAsyncClientTest extends ClientTestBase {
     public void testDeleteVectorStore(HttpClient httpClient) {
         setup(httpClient);
         String vectorStoreName = "test_delete_vector_store_async";
-        
-        StepVerifier.create(createVectorStore(vectorStoreName)
-            .flatMap(createdStore -> {
-                return vectorStoresAsyncClient.deleteVectorStore(createdStore.getId())
-                    .doOnNext(status -> {
-                        // Remove from cleanup list since it's already deleted
-                        vectorStores.remove(createdStore);
-                    });
-            }))
-            .assertNext(deletionStatus -> {
-                assertNotNull(deletionStatus, "Deletion status should not be null");
-                assertTrue(deletionStatus.isDeleted(), "Vector store should be marked as deleted");
-            })
-            .verifyComplete();
+
+        StepVerifier.create(createVectorStore(vectorStoreName).flatMap(createdStore -> {
+            return vectorStoresAsyncClient.deleteVectorStore(createdStore.getId()).doOnNext(status -> {
+                // Remove from cleanup list since it's already deleted
+                vectorStores.remove(createdStore);
+            });
+        })).assertNext(deletionStatus -> {
+            assertNotNull(deletionStatus, "Deletion status should not be null");
+            assertTrue(deletionStatus.isDeleted(), "Vector store should be marked as deleted");
+        }).verifyComplete();
     }
 
     @AfterEach

@@ -47,13 +47,12 @@ public class VectorStoreFilesAsyncClientTest extends ClientTestBase {
 
     // Helper method to create a vector store.
     private Mono<VectorStore> createVectorStore(String name) {
-        return vectorStoresAsyncClient.createVectorStore(null, name, null, null, null, null)
-            .map(store -> {
-                assertNotNull(store, "Vector store should not be null");
-                vectorStores.add(store);
-                vectorStore = store;
-                return store;
-            });
+        return vectorStoresAsyncClient.createVectorStore(null, name, null, null, null, null).map(store -> {
+            assertNotNull(store, "Vector store should not be null");
+            vectorStores.add(store);
+            vectorStore = store;
+            return store;
+        });
     }
 
     // Helper method to upload a file using FilesAsyncClient.
@@ -62,12 +61,11 @@ public class VectorStoreFilesAsyncClientTest extends ClientTestBase {
             = new FileDetails(BinaryData.fromString("Sample text for vector store file upload")).setFilename(fileName);
         UploadFileRequest uploadFileRequest = new UploadFileRequest(fileDetails, FilePurpose.AGENTS);
 
-        return filesAsyncClient.uploadFile(uploadFileRequest)
-            .map(uploadedFile -> {
-                assertNotNull(uploadedFile, "Uploaded file should not be null");
-                uploadedFiles.add(uploadedFile);
-                return uploadedFile;
-            });
+        return filesAsyncClient.uploadFile(uploadFileRequest).map(uploadedFile -> {
+            assertNotNull(uploadedFile, "Uploaded file should not be null");
+            uploadedFiles.add(uploadedFile);
+            return uploadedFile;
+        });
     }
 
     private Mono<VectorStoreFile> createVectorStoreFile(String vectorStoreId, String fileId) {
@@ -85,9 +83,10 @@ public class VectorStoreFilesAsyncClientTest extends ClientTestBase {
     public void testCreateVectorStoreFile(HttpClient httpClient) {
         setup(httpClient);
 
-        StepVerifier.create(createVectorStore("VectorStoreFilesAsyncClientTest")
-            .flatMap(store -> uploadFile("create_vector_store_file_async.txt")
-                .flatMap(uploadedFile -> createVectorStoreFile(store.getId(), uploadedFile.getId()))))
+        StepVerifier
+            .create(createVectorStore("VectorStoreFilesAsyncClientTest")
+                .flatMap(store -> uploadFile("create_vector_store_file_async.txt")
+                    .flatMap(uploadedFile -> createVectorStoreFile(store.getId(), uploadedFile.getId()))))
             .assertNext(vectorStoreFile -> {
                 assertNotNull(vectorStoreFile.getId(), "Vector store file ID should not be null");
             })
@@ -100,10 +99,15 @@ public class VectorStoreFilesAsyncClientTest extends ClientTestBase {
     public void testGetVectorStoreFile(HttpClient httpClient) {
         setup(httpClient);
 
-        StepVerifier.create(createVectorStore("VectorStoreFilesAsyncClientTest")
-            .flatMap(store -> uploadFile("get_vector_store_file_async.txt")
-                .flatMap(uploadedFile -> createVectorStoreFile(store.getId(), uploadedFile.getId()))
-                .flatMap(vectorStoreFile -> vectorStoreFilesAsyncClient.getVectorStoreFile(store.getId(), vectorStoreFile.getId()))))
+        StepVerifier
+            .create(
+                createVectorStore(
+                    "VectorStoreFilesAsyncClientTest")
+                        .flatMap(
+                            store -> uploadFile("get_vector_store_file_async.txt")
+                                .flatMap(uploadedFile -> createVectorStoreFile(store.getId(), uploadedFile.getId()))
+                                .flatMap(vectorStoreFile -> vectorStoreFilesAsyncClient
+                                    .getVectorStoreFile(store.getId(), vectorStoreFile.getId()))))
             .assertNext(retrievedFile -> {
                 assertNotNull(retrievedFile, "Retrieved vector store file should not be null");
             })
@@ -116,12 +120,13 @@ public class VectorStoreFilesAsyncClientTest extends ClientTestBase {
     public void testListVectorStoreFiles(HttpClient httpClient) {
         setup(httpClient);
 
-        StepVerifier.create(createVectorStore("VectorStoreFilesAsyncClientTest")
-            .flatMap(store -> uploadFile("list_vector_store_file1_async.txt")
-                .flatMap(uploadedFile1 -> createVectorStoreFile(store.getId(), uploadedFile1.getId()))
-                .then(uploadFile("list_vector_store_file2_async.txt"))
-                .flatMap(uploadedFile2 -> createVectorStoreFile(store.getId(), uploadedFile2.getId()))
-                .then(vectorStoreFilesAsyncClient.listVectorStoreFiles(store.getId()).take(10).collectList())))
+        StepVerifier
+            .create(createVectorStore("VectorStoreFilesAsyncClientTest")
+                .flatMap(store -> uploadFile("list_vector_store_file1_async.txt")
+                    .flatMap(uploadedFile1 -> createVectorStoreFile(store.getId(), uploadedFile1.getId()))
+                    .then(uploadFile("list_vector_store_file2_async.txt"))
+                    .flatMap(uploadedFile2 -> createVectorStoreFile(store.getId(), uploadedFile2.getId()))
+                    .then(vectorStoreFilesAsyncClient.listVectorStoreFiles(store.getId()).take(10).collectList())))
             .assertNext(files -> {
                 assertNotNull(files, "Vector store files list should not be null");
                 assertTrue(!files.isEmpty(), "There should be at least one vector store file");
@@ -135,10 +140,15 @@ public class VectorStoreFilesAsyncClientTest extends ClientTestBase {
     public void testDeleteVectorStoreFile(HttpClient httpClient) {
         setup(httpClient);
 
-        StepVerifier.create(createVectorStore("VectorStoreFilesAsyncClientTest")
-            .flatMap(store -> uploadFile("delete_vector_store_file_async.txt")
-                .flatMap(uploadedFile -> createVectorStoreFile(store.getId(), uploadedFile.getId()))
-                .flatMap(vectorStoreFile -> vectorStoreFilesAsyncClient.deleteVectorStoreFile(store.getId(), vectorStoreFile.getId()))))
+        StepVerifier
+            .create(
+                createVectorStore(
+                    "VectorStoreFilesAsyncClientTest")
+                        .flatMap(
+                            store -> uploadFile("delete_vector_store_file_async.txt")
+                                .flatMap(uploadedFile -> createVectorStoreFile(store.getId(), uploadedFile.getId()))
+                                .flatMap(vectorStoreFile -> vectorStoreFilesAsyncClient
+                                    .deleteVectorStoreFile(store.getId(), vectorStoreFile.getId()))))
             .assertNext(deletionStatus -> {
                 assertNotNull(deletionStatus, "Deletion status should not be null");
                 assertTrue(deletionStatus.isDeleted(), "Vector store file should be marked as deleted");

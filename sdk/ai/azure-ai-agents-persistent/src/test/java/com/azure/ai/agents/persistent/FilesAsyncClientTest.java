@@ -39,16 +39,14 @@ public class FilesAsyncClientTest extends ClientTestBase {
     }
 
     private Mono<FileInfo> uploadFile(String fileName, FilePurpose filePurpose) {
-        FileDetails fileDetails
-            = new FileDetails(BinaryData.fromString(SAMPLE_TEXT)).setFilename(fileName);
+        FileDetails fileDetails = new FileDetails(BinaryData.fromString(SAMPLE_TEXT)).setFilename(fileName);
         UploadFileRequest uploadFileRequest = new UploadFileRequest(fileDetails, filePurpose);
 
-        return filesAsyncClient.uploadFile(uploadFileRequest)
-            .map(uploadedFile -> {
-                uploadedFiles.add(uploadedFile);
-                assertNotNull(uploadedFile, "Uploaded file should not be null");
-                return uploadedFile;
-            });
+        return filesAsyncClient.uploadFile(uploadFileRequest).map(uploadedFile -> {
+            uploadedFiles.add(uploadedFile);
+            assertNotNull(uploadedFile, "Uploaded file should not be null");
+            return uploadedFile;
+        });
     }
 
     private Mono<FileInfo> uploadFile(String fileName) {
@@ -62,11 +60,10 @@ public class FilesAsyncClientTest extends ClientTestBase {
 
         // upload new file
         String fileName = "upload_file_test.txt";
-        StepVerifier.create(uploadFile(fileName))
-            .assertNext(uploadedFile -> {
-                assertNotNull(uploadedFile, "Uploaded file should not be null");
-                assertEquals(fileName, uploadedFile.getFilename(), "File name should match");
-            }).verifyComplete();
+        StepVerifier.create(uploadFile(fileName)).assertNext(uploadedFile -> {
+            assertNotNull(uploadedFile, "Uploaded file should not be null");
+            assertEquals(fileName, uploadedFile.getFilename(), "File name should match");
+        }).verifyComplete();
     }
 
     @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
@@ -76,15 +73,13 @@ public class FilesAsyncClientTest extends ClientTestBase {
 
         // upload new file
         String fileName = "get_file_test.txt";
-        StepVerifier.create(uploadFile(fileName)
-            .flatMap(uploadedFile -> {
-                String fileId = uploadedFile.getId();
-                return filesAsyncClient.getFile(fileId);
-            }))
-            .assertNext(fileInfo -> {
-                assertNotNull(fileInfo, "FileInfo should not be null");
-                assertEquals(fileName, fileInfo.getFilename(), "Retrieved file name should match");
-            }).verifyComplete();
+        StepVerifier.create(uploadFile(fileName).flatMap(uploadedFile -> {
+            String fileId = uploadedFile.getId();
+            return filesAsyncClient.getFile(fileId);
+        })).assertNext(fileInfo -> {
+            assertNotNull(fileInfo, "FileInfo should not be null");
+            assertEquals(fileName, fileInfo.getFilename(), "Retrieved file name should match");
+        }).verifyComplete();
     }
 
     @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
@@ -94,15 +89,13 @@ public class FilesAsyncClientTest extends ClientTestBase {
 
         // upload new file
         String fileName = "delete_file_test.txt";
-        StepVerifier.create(uploadFile(fileName)
-            .flatMap(uploadedFile -> {
-                String fileId = uploadedFile.getId();
-                return filesAsyncClient.deleteFile(fileId);
-            }))
-            .assertNext(deletionStatus -> {
-                assertNotNull(deletionStatus, "Deletion status should not be null");
-                assertTrue(deletionStatus.isDeleted(), "File should be marked as deleted");
-            }).verifyComplete();
+        StepVerifier.create(uploadFile(fileName).flatMap(uploadedFile -> {
+            String fileId = uploadedFile.getId();
+            return filesAsyncClient.deleteFile(fileId);
+        })).assertNext(deletionStatus -> {
+            assertNotNull(deletionStatus, "Deletion status should not be null");
+            assertTrue(deletionStatus.isDeleted(), "File should be marked as deleted");
+        }).verifyComplete();
 
         // Remove the file from our tracking list since it's been deleted
         uploadedFiles.clear();
@@ -115,14 +108,12 @@ public class FilesAsyncClientTest extends ClientTestBase {
 
         // upload new file
         String fileName = "list_files_test.txt";
-        StepVerifier.create(uploadFile(fileName)
-            .then(filesAsyncClient.listFiles()))
-            .assertNext(listResponse -> {
-                assertNotNull(listResponse, "File list response should not be null");
-                List<FileInfo> fileInfos = listResponse.getData();
-                assertNotNull(fileInfos, "File list should not be null");
-                assertTrue(fileInfos.size() > 0, "File list should not be empty");
-            }).verifyComplete();
+        StepVerifier.create(uploadFile(fileName).then(filesAsyncClient.listFiles())).assertNext(listResponse -> {
+            assertNotNull(listResponse, "File list response should not be null");
+            List<FileInfo> fileInfos = listResponse.getData();
+            assertNotNull(fileInfos, "File list should not be null");
+            assertTrue(fileInfos.size() > 0, "File list should not be empty");
+        }).verifyComplete();
     }
 
     @AfterEach

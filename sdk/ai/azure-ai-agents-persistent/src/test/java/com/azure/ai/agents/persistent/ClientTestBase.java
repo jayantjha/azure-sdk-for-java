@@ -9,9 +9,14 @@ import com.azure.core.credential.AzureKeyCredential;
 import com.azure.core.http.HttpClient;
 import com.azure.core.test.TestMode;
 import com.azure.core.test.TestProxyTestBase;
+import com.azure.core.test.models.CustomMatcher;
+import com.azure.core.test.models.TestProxySanitizer;
+import com.azure.core.test.models.TestProxySanitizerType;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import reactor.core.publisher.Mono;
+
+import java.util.Arrays;
 
 import static com.azure.ai.agents.persistent.TestUtils.FAKE_API_KEY;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -19,11 +24,21 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class ClientTestBase extends TestProxyTestBase {
 
+    private boolean sanitizersRemoved = false;
+
     protected PersistentAgentsAdministrationClientBuilder getClientBuilder(HttpClient httpClient) {
 
         PersistentAgentsAdministrationClientBuilder builder = new PersistentAgentsAdministrationClientBuilder()
             .httpClient(interceptorManager.isPlaybackMode() ? interceptorManager.getPlaybackClient() : httpClient);
         TestMode testMode = getTestMode();
+        if (testMode != TestMode.LIVE) {
+            addTestRecordCustomSanitizers();
+            // Disable "$..id"=AZSDK3430, "Set-Cookie"=AZSDK2015 for both azure and non-azure clients from the list of common sanitizers.
+            if (!sanitizersRemoved) {
+                interceptorManager.removeSanitizers("AZSDK3430", "AZSDK3493");
+                sanitizersRemoved = true;
+            }
+        }
 
         if (testMode == TestMode.PLAYBACK) {
             builder.endpoint("https://localhost:8080").credential(new AzureKeyCredential(FAKE_API_KEY));
@@ -41,6 +56,22 @@ public class ClientTestBase extends TestProxyTestBase {
             builder.serviceVersion(AgentsServiceVersion.valueOf(serviceVersion));
         }
         return builder;
+    }
+
+    private void addTestRecordCustomSanitizers() {
+        String sanitizedRequestUri = "https://REDACTED/";
+        String requestUriRegex = "https://.*?/(?=assistants)";
+        interceptorManager.addSanitizers(
+            Arrays.asList(
+                new TestProxySanitizer("$..key", null, "REDACTED", TestProxySanitizerType.BODY_KEY),
+                new TestProxySanitizer("$..endpoint", requestUriRegex, sanitizedRequestUri, TestProxySanitizerType.URL),
+                new TestProxySanitizer("Content-Type",
+                    "(^multipart\\/form-data; boundary=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{2})",
+                    "multipart\\/form-data; boundary=BOUNDARY", TestProxySanitizerType.HEADER)));
+    }
+
+    private void addCustomMatchers() {
+        interceptorManager.addMatchers(new CustomMatcher().setExcludedHeaders(Arrays.asList("Cookie", "Set-Cookie")));
     }
 
     protected void assertAgent(PersistentAgent agent) {

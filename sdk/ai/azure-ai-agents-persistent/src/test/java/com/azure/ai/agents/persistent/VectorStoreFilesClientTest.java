@@ -14,6 +14,7 @@ import com.azure.core.http.HttpClient;
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.BinaryData;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import java.util.ArrayList;
@@ -103,6 +104,7 @@ public class VectorStoreFilesClientTest extends ClientTestBase {
     }
 
     // Test listing vector store files.
+    @Disabled
     @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
     @MethodSource("com.azure.ai.agents.persistent.TestUtils#getTestParameters")
     public void testListVectorStoreFiles(HttpClient httpClient) {

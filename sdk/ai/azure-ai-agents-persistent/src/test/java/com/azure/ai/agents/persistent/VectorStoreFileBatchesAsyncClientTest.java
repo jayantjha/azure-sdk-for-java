@@ -48,22 +48,20 @@ public class VectorStoreFileBatchesAsyncClientTest extends ClientTestBase {
             = new FileDetails(BinaryData.fromString("Sample text for testing upload")).setFilename(fileName);
         UploadFileRequest uploadFileRequest = new UploadFileRequest(fileDetails, FilePurpose.AGENTS);
 
-        return filesAsyncClient.uploadFile(uploadFileRequest)
-            .map(uploadedFile -> {
-                uploadedFiles.add(uploadedFile);
-                assertNotNull(uploadedFile, "Uploaded file should not be null");
-                return uploadedFile;
-            });
+        return filesAsyncClient.uploadFile(uploadFileRequest).map(uploadedFile -> {
+            uploadedFiles.add(uploadedFile);
+            assertNotNull(uploadedFile, "Uploaded file should not be null");
+            return uploadedFile;
+        });
     }
 
     // Helper method to create a vector store
     private Mono<VectorStore> createVectorStore(String name) {
-        return vectorStoresAsyncClient.createVectorStore(null, name, null, null, null, null)
-            .map(vectorStore -> {
-                assertNotNull(vectorStore, "Vector store should not be null");
-                vectorStores.add(vectorStore);
-                return vectorStore;
-            });
+        return vectorStoresAsyncClient.createVectorStore(null, name, null, null, null, null).map(vectorStore -> {
+            assertNotNull(vectorStore, "Vector store should not be null");
+            vectorStores.add(vectorStore);
+            return vectorStore;
+        });
     }
 
     private Mono<VectorStoreFileBatch> createVectorStoreFileBatch(String vectorStoreId, List<String> fileIds) {
@@ -81,22 +79,15 @@ public class VectorStoreFileBatchesAsyncClientTest extends ClientTestBase {
         setup(httpClient);
 
         String vectorStoreName = "test_create_vector_store_file_batch_async";
-        
-        StepVerifier.create(
-            createVectorStore(vectorStoreName)
-                .flatMap(vectorStore -> 
-                    uploadFile("testCreateVectorStoreFileBatchAsync.txt")
-                        .flatMap(uploadedFile -> {
-                            List<String> fileIds = Arrays.asList(uploadedFile.getId());
-                            return vectorStoreFileBatchesAsyncClient.createVectorStoreFileBatch(
-                                vectorStore.getId(), fileIds, null, null);
-                        })
-                )
-            )
-            .assertNext(createdBatch -> {
+
+        StepVerifier.create(createVectorStore(vectorStoreName)
+            .flatMap(vectorStore -> uploadFile("testCreateVectorStoreFileBatchAsync.txt").flatMap(uploadedFile -> {
+                List<String> fileIds = Arrays.asList(uploadedFile.getId());
+                return vectorStoreFileBatchesAsyncClient.createVectorStoreFileBatch(vectorStore.getId(), fileIds, null,
+                    null);
+            }))).assertNext(createdBatch -> {
                 assertNotNull(createdBatch.getId(), "Vector store file batch ID should not be null");
-            })
-            .verifyComplete();
+            }).verifyComplete();
     }
 
     // Test retrieval of a vector store file batch
@@ -105,23 +96,18 @@ public class VectorStoreFileBatchesAsyncClientTest extends ClientTestBase {
     public void testGetVectorStoreFileBatch(HttpClient httpClient) {
         setup(httpClient);
         String vectorStoreName = "test_get_vector_store_file_batch_async";
-        
+
         AtomicReference<String> batchIdRef = new AtomicReference<>();
 
-        StepVerifier.create(
-            createVectorStore(vectorStoreName)
-                .flatMap(vectorStore -> 
-                    uploadFile("testGetVectorStoreFileBatchAsync.txt")
-                        .flatMap(uploadedFile -> {
-                            List<String> fileIds = Arrays.asList(uploadedFile.getId());
-                            return vectorStoreFileBatchesAsyncClient.createVectorStoreFileBatch(
-                                vectorStore.getId(), fileIds, null, null);
-                        })
-                        .doOnNext(batch -> batchIdRef.set(batch.getId()))
-                        .flatMap(batch -> vectorStoreFileBatchesAsyncClient.getVectorStoreFileBatch(
-                            vectorStore.getId(), batch.getId()))
-                )
-            )
+        StepVerifier.create(createVectorStore(vectorStoreName)
+            .flatMap(vectorStore -> uploadFile("testGetVectorStoreFileBatchAsync.txt").flatMap(uploadedFile -> {
+                List<String> fileIds = Arrays.asList(uploadedFile.getId());
+                return vectorStoreFileBatchesAsyncClient.createVectorStoreFileBatch(vectorStore.getId(), fileIds, null,
+                    null);
+            })
+                .doOnNext(batch -> batchIdRef.set(batch.getId()))
+                .flatMap(batch -> vectorStoreFileBatchesAsyncClient.getVectorStoreFileBatch(vectorStore.getId(),
+                    batch.getId()))))
             .assertNext(retrievedBatch -> {
                 assertNotNull(retrievedBatch, "Retrieved file batch should not be null");
                 assertEquals(batchIdRef.get(), retrievedBatch.getId(), "File batch IDs should match");
@@ -135,22 +121,17 @@ public class VectorStoreFileBatchesAsyncClientTest extends ClientTestBase {
     public void testListVectorStoreFileBatchFiles(HttpClient httpClient) {
         setup(httpClient);
         String vectorStoreName = "test_list_vector_store_file_batches_async";
-        
-        StepVerifier.create(
-            createVectorStore(vectorStoreName)
-                .flatMap(vectorStore -> 
-                    uploadFile("testListVectorStoreFileBatchesAsync.txt")
-                        .flatMap(uploadedFile -> {
-                            List<String> fileIds = Arrays.asList(uploadedFile.getId());
-                            return vectorStoreFileBatchesAsyncClient.createVectorStoreFileBatch(
-                                vectorStore.getId(), fileIds, null, null);
-                        })
-                        .flatMap(batch -> vectorStoreFileBatchesAsyncClient.listVectorStoreFileBatchFiles(
-                            vectorStore.getId(), batch.getId())
-                            .take(10)
-                            .collectList())
-                )
-            )
+
+        StepVerifier.create(createVectorStore(vectorStoreName)
+            .flatMap(vectorStore -> uploadFile("testListVectorStoreFileBatchesAsync.txt").flatMap(uploadedFile -> {
+                List<String> fileIds = Arrays.asList(uploadedFile.getId());
+                return vectorStoreFileBatchesAsyncClient.createVectorStoreFileBatch(vectorStore.getId(), fileIds, null,
+                    null);
+            })
+                .flatMap(batch -> vectorStoreFileBatchesAsyncClient
+                    .listVectorStoreFileBatchFiles(vectorStore.getId(), batch.getId())
+                    .take(10)
+                    .collectList())))
             .assertNext(files -> {
                 assertNotNull(files, "Vector store batch files list should not be null");
                 // Files might not be processed yet, so we don't assert count
@@ -163,20 +144,15 @@ public class VectorStoreFileBatchesAsyncClientTest extends ClientTestBase {
     public void testCancelVectorStoreFileBatch(HttpClient httpClient) {
         setup(httpClient);
         String vectorStoreName = "test_cancel_vector_store_file_batch_async";
-        
-        StepVerifier.create(
-            createVectorStore(vectorStoreName)
-                .flatMap(vectorStore -> 
-                    uploadFile("testCancelVectorStoreFileBatchAsync.txt")
-                        .flatMap(uploadedFile -> {
-                            List<String> fileIds = Arrays.asList(uploadedFile.getId());
-                            return vectorStoreFileBatchesAsyncClient.createVectorStoreFileBatch(
-                                vectorStore.getId(), fileIds, null, null);
-                        })
-                        .flatMap(batch -> vectorStoreFileBatchesAsyncClient.cancelVectorStoreFileBatch(
-                            vectorStore.getId(), batch.getId()))
-                )
-            )
+
+        StepVerifier.create(createVectorStore(vectorStoreName)
+            .flatMap(vectorStore -> uploadFile("testCancelVectorStoreFileBatchAsync.txt").flatMap(uploadedFile -> {
+                List<String> fileIds = Arrays.asList(uploadedFile.getId());
+                return vectorStoreFileBatchesAsyncClient.createVectorStoreFileBatch(vectorStore.getId(), fileIds, null,
+                    null);
+            })
+                .flatMap(batch -> vectorStoreFileBatchesAsyncClient.cancelVectorStoreFileBatch(vectorStore.getId(),
+                    batch.getId()))))
             .assertNext(cancelledBatch -> {
                 assertNotNull(cancelledBatch, "Cancelled batch should not be null");
             })
