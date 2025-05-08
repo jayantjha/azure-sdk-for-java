@@ -181,11 +181,8 @@ public final class AgentFunctionsStreamingAsyncSample {
                                     .setAdditionalInstructions("");
                                 
                                 System.out.println("----- Run started! -----");
-                                
-                                return handleStreamingRun(
-                                    runsAsyncClient.createRunStreaming(createRunOptions),
-                                    runsAsyncClient,
-                                    getResolvedToolOutput);
+                                return runsAsyncClient.createRunStreaming(createRunOptions)
+                                    .map(su -> handleStreamingRun(su, runsAsyncClient, getResolvedToolOutput));
                             });
                     });
             })
@@ -241,7 +238,7 @@ public final class AgentFunctionsStreamingAsyncSample {
         return runsAsyncClient.submitToolOutputsToRunStreaming(
             run.getThreadId(),
             run.getId(),
-            toolOutputs);
+            toolOutputs).flatMapMany(su -> su);
     }
 
     // Use "Map.of" if available

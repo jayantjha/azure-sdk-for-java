@@ -695,7 +695,7 @@ public final class RunsAsyncClient {
      * Creates a new streaming run for an agent thread.
      *
      * @param options Options for createRun API.
-     * @return A flux of streaming updates from the run.
+     * @return A mono of flux streaming updates from the run.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -704,7 +704,7 @@ public final class RunsAsyncClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Flux<StreamUpdate> createRunStreaming(CreateRunOptions options) {
+    public Mono<Flux<StreamUpdate>> createRunStreaming(CreateRunOptions options) {
         // Generated convenience method for createRunWithResponse
         RequestOptions requestOptions = new RequestOptions();
         String threadId = options.getThreadId();
@@ -734,7 +734,7 @@ public final class RunsAsyncClient {
                 false);
         }
 
-        return createRunWithResponse(threadId, createRunRequest, requestOptions).flatMapMany(response -> {
+        return createRunWithResponse(threadId, createRunRequest, requestOptions).map(response -> {
             PersistentAgentServerSentEvents eventStream
                 = new PersistentAgentServerSentEvents(response.getValue().toFluxByteBuffer());
             return eventStream.getEvents();
@@ -964,7 +964,7 @@ public final class RunsAsyncClient {
      * @param threadId Identifier of the thread.
      * @param runId Identifier of the run.
      * @param toolOutputs A list of tools for which the outputs are being submitted.
-     * @return A flux of streaming updates from the run.
+     * @return A mono of flux of streaming updates from the run.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws HttpResponseException thrown if the request is rejected by server.
      * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
@@ -973,7 +973,7 @@ public final class RunsAsyncClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Flux<StreamUpdate> submitToolOutputsToRunStreaming(String threadId, String runId,
+    public Mono<Flux<StreamUpdate>> submitToolOutputsToRunStreaming(String threadId, String runId,
         List<ToolOutput> toolOutputs) {
         RequestOptions requestOptions = new RequestOptions();
         SubmitToolOutputsToRunRequest submitToolOutputsToRunRequestObj
@@ -981,7 +981,7 @@ public final class RunsAsyncClient {
         BinaryData submitToolOutputsToRunRequest = BinaryData.fromObject(submitToolOutputsToRunRequestObj);
 
         return submitToolOutputsToRunWithResponse(threadId, runId, submitToolOutputsToRunRequest, requestOptions)
-            .flatMapMany(response -> {
+            .map(response -> {
                 PersistentAgentServerSentEvents eventStream
                     = new PersistentAgentServerSentEvents(response.getValue().toFluxByteBuffer());
                 return eventStream.getEvents();

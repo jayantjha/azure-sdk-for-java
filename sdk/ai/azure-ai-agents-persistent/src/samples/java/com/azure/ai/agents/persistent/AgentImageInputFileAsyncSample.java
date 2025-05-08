@@ -37,7 +37,7 @@ public final class AgentImageInputFileAsyncSample {
         PersistentAgentsAdministrationClientBuilder clientBuilder = new PersistentAgentsAdministrationClientBuilder()
             .endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
             .credential(new DefaultAzureCredentialBuilder().build());
-        
+
         PersistentAgentsAdministrationAsyncClient agentsAsyncClient = clientBuilder.buildAsyncClient();
         ThreadsAsyncClient threadsAsyncClient = clientBuilder.buildThreadsAsyncClient();
         MessagesAsyncClient messagesAsyncClient = clientBuilder.buildMessagesAsyncClient();
@@ -58,53 +58,54 @@ public final class AgentImageInputFileAsyncSample {
                     .setFilename("sample_image.jpg"),
                 FilePurpose.AGENTS));
 
-        uploadFileMono.flatMap(uploadedAgentFile -> {
-            MessageImageFileParam fileParam = new MessageImageFileParam(uploadedAgentFile.getId());
-            List<MessageInputContentBlock> messageBlock = Arrays.asList(
-                new MessageInputTextBlock("Hello, what is in the image"),
-                new MessageInputImageFileBlock(fileParam));
+        uploadFileMono
+            .flatMap(uploadedAgentFile -> {
+                MessageImageFileParam fileParam = new MessageImageFileParam(uploadedAgentFile.getId());
+                List<MessageInputContentBlock> messageBlock = Arrays.asList(
+                    new MessageInputTextBlock("Hello, what is in the image"),
+                    new MessageInputImageFileBlock(fileParam));
 
-            String agentName = "image_input_async_example";
-            CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o")
-                .setName(agentName)
-                .setInstructions("You are a helpful agent");
-            
-            return agentsAsyncClient.createAgent(createAgentOptions)
-                .flatMap(agent -> {
-                    System.out.println("Created agent: " + agent.getId());
-                    agentId.set(agent.getId());
-                    
-                    return threadsAsyncClient.createThread()
-                        .flatMap(thread -> {
-                            System.out.println("Created thread: " + thread.getId());
-                            threadId.set(thread.getId());
-                            
-                            return messagesAsyncClient.createMessage(
-                                thread.getId(),
-                                MessageRole.USER,
-                                BinaryData.fromObject(messageBlock))
-                                .flatMap(message -> {
-                                    System.out.println("Created message with image file");
-                                    
-                                    CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
-                                        .setAdditionalInstructions("");
-                                    
-                                    return runsAsyncClient.createRun(createRunOptions)
-                                        .flatMap(threadRun -> {
-                                            System.out.println("Created run, waiting for completion...");
-                                            return waitForRunCompletionAsync(thread.getId(), threadRun, runsAsyncClient);
-                                        })
-                                        .flatMap(completedRun -> {
-                                            System.out.println("Run completed with status: " + completedRun.getStatus());
-                                            return printRunMessagesAsync(messagesAsyncClient, thread.getId());
-                                        });
-                                });
-                        });
-                });
-        })
-        .doFinally(signalType -> cleanUpResources(threadId, threadsAsyncClient, agentId, agentsAsyncClient))
-        .doOnError(error -> System.err.println("An error occurred: " + error.getMessage()))
-        .block(); // Only block at the end of the reactive chain
+                String agentName = "image_input_async_example";
+                CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o")
+                    .setName(agentName)
+                    .setInstructions("You are a helpful agent");
+
+                return agentsAsyncClient.createAgent(createAgentOptions)
+                    .flatMap(agent -> {
+                        System.out.println("Created agent: " + agent.getId());
+                        agentId.set(agent.getId());
+
+                        return threadsAsyncClient.createThread()
+                            .flatMap(thread -> {
+                                System.out.println("Created thread: " + thread.getId());
+                                threadId.set(thread.getId());
+
+                                return messagesAsyncClient.createMessage(
+                                        thread.getId(),
+                                        MessageRole.USER,
+                                        BinaryData.fromObject(messageBlock))
+                                    .flatMap(message -> {
+                                        System.out.println("Created message with image file");
+
+                                        CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
+                                            .setAdditionalInstructions("");
+
+                                        return runsAsyncClient.createRun(createRunOptions)
+                                            .flatMap(threadRun -> {
+                                                System.out.println("Created run, waiting for completion...");
+                                                return waitForRunCompletionAsync(thread.getId(), threadRun, runsAsyncClient);
+                                            })
+                                            .flatMap(completedRun -> {
+                                                System.out.println("Run completed with status: " + completedRun.getStatus());
+                                                return printRunMessagesAsync(messagesAsyncClient, thread.getId());
+                                            });
+                                    });
+                            });
+                    });
+            })
+            .doFinally(signalType -> cleanUpResources(threadId, threadsAsyncClient, agentId, agentsAsyncClient))
+            .doOnError(error -> System.err.println("An error occurred: " + error.getMessage()))
+            .block(); // Only block at the end of the reactive chain
     }
 
     private static Path getFile(String fileName) throws FileNotFoundException, URISyntaxException {

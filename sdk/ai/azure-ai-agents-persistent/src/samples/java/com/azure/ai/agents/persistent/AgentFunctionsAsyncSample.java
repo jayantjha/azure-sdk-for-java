@@ -132,8 +132,8 @@ public class AgentFunctionsAsyncSample {
                 // Poll the run until it's completed
                 return Mono.fromSupplier(() -> threadRun)
                     .expand(run -> {
-                        if (run.getStatus() == RunStatus.QUEUED || 
-                            run.getStatus() == RunStatus.IN_PROGRESS) {
+                        if (run.getStatus() == RunStatus.QUEUED
+                            || run.getStatus() == RunStatus.IN_PROGRESS) {
                             return Mono.delay(java.time.Duration.ofMillis(500))
                                 .then(runsAsyncClient.getRun(threadId.get(), run.getId()));
                         } else if (run.getStatus() == RunStatus.REQUIRES_ACTION) {
@@ -143,8 +143,8 @@ public class AgentFunctionsAsyncSample {
                                     (SubmitToolOutputsAction) run.getRequiredAction();
                                 
                                 ArrayList<ToolOutput> toolOutputs = new ArrayList<>();
-                                for (RequiredToolCall toolCall : 
-                                     submitToolsOutputAction.getSubmitToolOutputs().getToolCalls()) {
+                                for (RequiredToolCall toolCall
+                                    : submitToolsOutputAction.getSubmitToolOutputs().getToolCalls()) {
                                     toolOutputs.add(getResolvedToolOutput.apply(toolCall));
                                 }
                                 

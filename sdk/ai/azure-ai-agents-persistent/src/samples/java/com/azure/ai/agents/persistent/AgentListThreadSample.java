@@ -12,7 +12,7 @@ public class AgentListThreadSample {
     public static void main(String[] args) {
         PersistentAgentsAdministrationClientBuilder clientBuilder = new PersistentAgentsAdministrationClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
             .credential(new DefaultAzureCredentialBuilder().build());
-        ThreadsClient threadsClient = clientBuilder.buildThreadsClient();;
+        ThreadsClient threadsClient = clientBuilder.buildThreadsClient();
 
         PagedIterable<PersistentAgentThread> threads = threadsClient.listThreads();
         for (PersistentAgentThread thread : threads) {
