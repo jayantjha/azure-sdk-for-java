@@ -12,7 +12,11 @@ import com.azure.ai.agents.persistent.models.ThreadMessage;
 import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.ai.agents.persistent.models.streaming.StreamMessageUpdate;
 import com.azure.core.http.rest.PagedIterable;
+import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.SignalType;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 public class SampleUtils {
 
@@ -134,5 +138,27 @@ public class SampleUtils {
             });
 
         // END: com.azure.ai.agents.persistent.SampleUtils.waitForRunCompletionAsync
+    }
+
+    @NotNull
+    public static void cleanUpResources(AtomicReference<String> threadId, ThreadsAsyncClient threadsAsyncClient, AtomicReference<String> agentId, PersistentAgentsAdministrationAsyncClient agentsAsyncClient) {
+        // Always clean up resources regardless of success or failure
+        System.out.println("Cleaning up resources...");
+
+        // Clean up thread if created
+        if (threadId.get() != null) {
+            threadsAsyncClient.deleteThread(threadId.get())
+                .doOnSuccess(ignored -> System.out.println("Thread deleted: " + threadId.get()))
+                .doOnError(error -> System.err.println("Failed to delete thread: " + error.getMessage()))
+                .subscribe();
+        }
+
+        // Clean up agent if created
+        if (agentId.get() != null) {
+            agentsAsyncClient.deleteAgent(agentId.get())
+                .doOnSuccess(ignored -> System.out.println("Agent deleted: " + agentId.get()))
+                .doOnError(error -> System.err.println("Failed to delete agent: " + error.getMessage()))
+                .subscribe();
+        }
     }
 }

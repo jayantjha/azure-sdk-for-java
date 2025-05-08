@@ -15,7 +15,10 @@ import com.azure.core.test.models.TestProxySanitizerType;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.azure.ai.agents.persistent.TestUtils.FAKE_API_KEY;
@@ -59,15 +62,19 @@ public class ClientTestBase extends TestProxyTestBase {
     }
 
     private void addTestRecordCustomSanitizers() {
-        String sanitizedRequestUri = "https://REDACTED/";
-        String requestUriRegex = "https://.*?/(?=assistants)";
-        interceptorManager.addSanitizers(
-            Arrays.asList(
-                new TestProxySanitizer("$..key", null, "REDACTED", TestProxySanitizerType.BODY_KEY),
-                new TestProxySanitizer("$..endpoint", requestUriRegex, sanitizedRequestUri, TestProxySanitizerType.URL),
-                new TestProxySanitizer("Content-Type",
-                    "(^multipart\\/form-data; boundary=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{2})",
-                    "multipart\\/form-data; boundary=BOUNDARY", TestProxySanitizerType.HEADER)));
+
+        ArrayList<TestProxySanitizer> sanitizers = new ArrayList<>();
+        sanitizers.add(new TestProxySanitizer("$..key", null, "REDACTED", TestProxySanitizerType.BODY_KEY));
+        sanitizers.add(new TestProxySanitizer("$..endpoint", "https://.+?/api/projects/.+?/", "https://REDACTED/",
+            TestProxySanitizerType.URL));
+        sanitizers.add(new TestProxySanitizer("Content-Type",
+            "(^multipart\\/form-data; boundary=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{2})",
+            "multipart\\/form-data; boundary=BOUNDARY", TestProxySanitizerType.HEADER));
+
+        sanitizers.add(new TestProxySanitizer(".*", "ABC", TestProxySanitizerType.BODY_REGEX));
+
+        interceptorManager.addSanitizers(sanitizers);
+
     }
 
     private void addCustomMatchers() {
