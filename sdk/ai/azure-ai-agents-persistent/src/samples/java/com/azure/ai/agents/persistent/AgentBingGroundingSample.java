@@ -32,6 +32,7 @@ public class AgentBingGroundingSample {
 
         String bingConnectionId = Configuration.getGlobalConfiguration().get("BING_CONNECTION_ID", "");
 
+        // BEGIN: com.azure.ai.agents.persistent.AgentBingGroundingSample
         BingGroundingSearchConfiguration searchConfiguration = new BingGroundingSearchConfiguration(bingConnectionId);
         BingGroundingSearchConfigurationList searchConfigurationList = new BingGroundingSearchConfigurationList(Arrays.asList(searchConfiguration));
 
@@ -43,6 +44,7 @@ public class AgentBingGroundingSample {
             .setInstructions("You are a helpful agent")
             .setTools(Arrays.asList(bingGroundingTool));
         PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
+        // END: com.azure.ai.agents.persistent.AgentBingGroundingSample
 
         PersistentAgentThread thread = threadsClient.createThread();
         ThreadMessage createdMessage = messagesClient.createMessage(

@@ -45,7 +45,7 @@ public final class AgentAdditionalMessageSample {
             "What is the impedance formula?");
 
         try {
-            //run agent
+            // BEGIN: com.azure.ai.agents.persistent.AgentAdditionalMessageSample
             CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
                 .setAdditionalMessages(Arrays.asList(new ThreadMessageOptions(
                     MessageRole.AGENT, BinaryData.fromString("E=mc^2")
@@ -53,7 +53,7 @@ public final class AgentAdditionalMessageSample {
                     MessageRole.USER, BinaryData.fromString("What is the impedance formula?")
                 )));
             ThreadRun threadRun = runsClient.createRun(createRunOptions);
-
+            // END: com.azure.ai.agents.persistent.AgentAdditionalMessageSample
             waitForRunCompletion(thread.getId(), threadRun, runsClient);
             printRunMessages(messagesClient, thread.getId());
         } catch (InterruptedException e) {

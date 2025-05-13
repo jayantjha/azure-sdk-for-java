@@ -37,6 +37,7 @@ public class AgentAzureFunctionSample {
         MessagesClient messagesClient = clientBuilder.buildMessagesClient();
         RunsClient runsClient = clientBuilder.buildRunsClient();
 
+        // BEGIN: com.azure.ai.agents.persistent.AgentAzureFunctionSample
         String storageQueueUri = Configuration.getGlobalConfiguration().get("STORAGE_QUEUE_URI", "");
         String azureFunctionName = Configuration.getGlobalConfiguration().get("AZURE_FUNCTION_NAME", "");
 
@@ -71,6 +72,7 @@ public class AgentAzureFunctionSample {
         BinaryData createAgentRequest = BinaryData.fromObject(createAgentRequestObj);
         PersistentAgent agent = agentsClient.createAgentWithResponse(createAgentRequest, requestOptions)
             .getValue().toObject(PersistentAgent.class);
+        // END: com.azure.ai.agents.persistent.AgentAzureFunctionSample
 
         PersistentAgentThread thread = threadsClient.createThread();
         ThreadMessage createdMessage = messagesClient.createMessage(

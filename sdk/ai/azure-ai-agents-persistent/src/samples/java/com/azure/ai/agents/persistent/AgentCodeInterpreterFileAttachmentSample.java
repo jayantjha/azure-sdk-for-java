@@ -40,6 +40,7 @@ public class AgentCodeInterpreterFileAttachmentSample {
         RunsClient runsClient = clientBuilder.buildRunsClient();
         FilesClient filesClient = clientBuilder.buildFilesClient();
 
+        // BEGIN: com.azure.ai.agents.persistent.AgentCodeInterpreterFileAttachmentSample
         Path htmlFile = getFile("sample.html");
 
         String agentName = "code_interpreter_file_attachment_example";
@@ -60,6 +61,7 @@ public class AgentCodeInterpreterFileAttachmentSample {
             "What does the attachment say?",
             Arrays.asList(messageAttachment),
             null);
+        // END: com.azure.ai.agents.persistent.AgentCodeInterpreterFileAttachmentSample
 
         try {
             //run agent

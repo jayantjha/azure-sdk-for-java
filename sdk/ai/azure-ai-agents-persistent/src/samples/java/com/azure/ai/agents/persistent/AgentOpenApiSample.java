@@ -39,6 +39,7 @@ public class AgentOpenApiSample {
         MessagesClient messagesClient = clientBuilder.buildMessagesClient();
         RunsClient runsClient = clientBuilder.buildRunsClient();
 
+        // BEGIN: com.azure.ai.agents.persistent.AgentOpenApiSample
         Path filePath = getFile("weather_openapi.json");
         JsonReader reader = JsonProviders.createReader(Files.readAllBytes(filePath));
 
@@ -55,6 +56,7 @@ public class AgentOpenApiSample {
             .setInstructions("You are a helpful agent")
             .setTools(Arrays.asList(openApiTool));
         PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
+        // END: com.azure.ai.agents.persistent.AgentOpenApiSample
 
         PersistentAgentThread thread = threadsClient.createThread();
         ThreadMessage createdMessage = messagesClient.createMessage(

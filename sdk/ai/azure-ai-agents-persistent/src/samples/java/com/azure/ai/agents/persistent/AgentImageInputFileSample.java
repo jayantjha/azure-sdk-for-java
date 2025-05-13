@@ -43,6 +43,7 @@ public final class AgentImageInputFileSample {
         RunsClient runsClient = clientBuilder.buildRunsClient();
         FilesClient filesClient = clientBuilder.buildFilesClient();
 
+        // BEGIN: com.azure.ai.agents.persistent.AgentImageInputFileSample
         Path file = getFile("sample_image.jpg");
 
         FileInfo uploadedAgentFile = filesClient.uploadFile(
@@ -62,6 +63,7 @@ public final class AgentImageInputFileSample {
             .setName(agentName)
             .setInstructions("You are a helpful agent");
         PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
+        // END: com.azure.ai.agents.persistent.AgentImageInputFileSample
 
         PersistentAgentThread thread = threadsClient.createThread();
         ThreadMessage createdMessage = messagesClient.createMessage(

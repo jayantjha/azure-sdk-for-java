@@ -38,6 +38,7 @@ public final class AgentImageInputUrlSample {
         MessagesClient messagesClient = clientBuilder.buildMessagesClient();
         RunsClient runsClient = clientBuilder.buildRunsClient();
 
+        // BEGIN: com.azure.ai.agents.persistent.AgentImageInputUrlSample
         String imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg";
 
         List<MessageInputContentBlock> messageBlock = Arrays.asList(new MessageInputTextBlock("Hello, what is in the image"),
@@ -48,6 +49,7 @@ public final class AgentImageInputUrlSample {
             .setName(agentName)
             .setInstructions("You are a helpful agent");
         PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
+        // END: com.azure.ai.agents.persistent.AgentImageInputUrlSample
 
         PersistentAgentThread thread = threadsClient.createThread();
         ThreadMessage createdMessage = messagesClient.createMessage(

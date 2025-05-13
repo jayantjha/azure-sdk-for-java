@@ -31,6 +31,7 @@ public class AgentAzureAISearchSample {
         MessagesClient messagesClient = clientBuilder.buildMessagesClient();
         RunsClient runsClient = clientBuilder.buildRunsClient();
 
+        // BEGIN: com.azure.ai.agents.persistent.AgentAzureAISearchSample
         String aiSearchConnectionId = Configuration.getGlobalConfiguration().get("AI_SEARCH_CONNECTION_ID", "");
 
         ToolResources toolResources = new ToolResources()
@@ -44,6 +45,7 @@ public class AgentAzureAISearchSample {
             .setTools(Arrays.asList(new AzureAISearchToolDefinition()))
             .setToolResources(toolResources);
         PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
+        // END: com.azure.ai.agents.persistent.AgentAzureAISearchSample
 
         PersistentAgentThread thread = threadsClient.createThread();
         ThreadMessage createdMessage = messagesClient.createMessage(

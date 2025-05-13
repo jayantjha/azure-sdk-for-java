@@ -32,6 +32,7 @@ public final class AgentConnectedAgentSample {
         MessagesClient messagesClient = clientBuilder.buildMessagesClient();
         RunsClient runsClient = clientBuilder.buildRunsClient();
 
+        // BEGIN: com.azure.ai.agents.persistent.AgentConnectedAgentSample
         String connectedAgentName = "stock_price_bot";
         CreateAgentOptions connectedAgentCreateOptions = new CreateAgentOptions("gpt-4o-mini")
             .setName(connectedAgentName)
@@ -50,6 +51,7 @@ public final class AgentConnectedAgentSample {
             .setHeader("x-ms-enable-preview", "true");
         PersistentAgent agent = agentsClient.createAgentWithResponse(BinaryData.fromObject(createAgentRequest), requestOptions)
             .getValue().toObject(PersistentAgent.class);
+        // END: com.azure.ai.agents.persistent.AgentConnectedAgentSample
 
         PersistentAgentThread thread = threadsClient.createThread();
         ThreadMessage createdMessage = messagesClient.createMessage(

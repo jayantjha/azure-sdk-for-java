@@ -40,6 +40,7 @@ public final class AgentImageInputBase64Sample {
         MessagesClient messagesClient = clientBuilder.buildMessagesClient();
         RunsClient runsClient = clientBuilder.buildRunsClient();
 
+        // BEGIN: com.azure.ai.agents.persistent.AgentImageInputBase64Sample
         Path file = getFile("sample_image.jpg");
         byte[] imageContent = Files.readAllBytes(file);
         String imageBase64 = Base64.getEncoder().encodeToString(imageContent);
@@ -53,6 +54,7 @@ public final class AgentImageInputBase64Sample {
             .setName(agentName)
             .setInstructions("You are a helpful agent");
         PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
+        // END: com.azure.ai.agents.persistent.AgentImageInputBase64Sample
 
         PersistentAgentThread thread = threadsClient.createThread();
         ThreadMessage createdMessage = messagesClient.createMessage(

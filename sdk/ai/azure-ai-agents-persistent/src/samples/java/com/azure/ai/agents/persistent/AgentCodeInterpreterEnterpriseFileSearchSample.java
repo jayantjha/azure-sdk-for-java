@@ -32,6 +32,7 @@ public class AgentCodeInterpreterEnterpriseFileSearchSample {
         MessagesClient messagesClient = clientBuilder.buildMessagesClient();
         RunsClient runsClient = clientBuilder.buildRunsClient();
 
+        // BEGIN: com.azure.ai.agents.persistent.AgentCodeInterpreterEnterpriseFileSearchSample
         String agentName = "code_interpreter_enterprise_file_search_example";
         CodeInterpreterToolDefinition ciTool = new CodeInterpreterToolDefinition();
         CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
@@ -57,6 +58,7 @@ public class AgentCodeInterpreterEnterpriseFileSearchSample {
             Arrays.asList(messageAttachment),
             null
         );
+        // END: com.azure.ai.agents.persistent.AgentCodeInterpreterEnterpriseFileSearchSample
 
         try {
             //run agent

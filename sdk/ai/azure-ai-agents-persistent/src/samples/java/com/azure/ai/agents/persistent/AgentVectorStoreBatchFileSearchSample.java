@@ -44,6 +44,7 @@ public class AgentVectorStoreBatchFileSearchSample {
         VectorStoresClient vectorStoresClient = clientBuilder.buildVectorStoresClient();
         VectorStoreFileBatchesClient vectorStoreFileBatchesClient = clientBuilder.buildVectorStoreFileBatchesClient();
 
+        // BEGIN: com.azure.ai.agents.persistent.AgentVectorStoreBatchFileSearchSample
         Path productFile = getFile("product_info.md");
 
         VectorStore vectorStore = vectorStoresClient.createVectorStore(
@@ -69,6 +70,7 @@ public class AgentVectorStoreBatchFileSearchSample {
             .setTools(Arrays.asList(new FileSearchToolDefinition()))
             .setToolResources(new ToolResources().setFileSearch(fileSearchToolResource));
         PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
+        // END: com.azure.ai.agents.persistent.AgentVectorStoreBatchFileSearchSample
 
         PersistentAgentThread thread = threadsClient.createThread();
         ThreadMessage createdMessage = messagesClient.createMessage(
