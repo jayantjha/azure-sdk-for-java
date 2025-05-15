@@ -14,6 +14,7 @@ import com.azure.ai.inference.models.ChatRequestUserMessage;
 import com.azure.ai.inference.models.EmbeddingItem;
 import com.azure.ai.inference.models.EmbeddingsResult;
 import com.azure.ai.inference.models.ImageEmbeddingInput;
+import com.azure.core.credential.KeyCredential;
 import com.azure.core.util.Configuration;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import java.io.FileNotFoundException;
@@ -25,33 +26,46 @@ import java.util.List;
 
 public class InferenceSample {
 
+    private static String projectsEndpoint = Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint");
+    private static String inferenceEndpoint = projectsEndpoint.replaceAll("(https://[^/]+/).*", "$1models");
+    private static KeyCredential credential = new KeyCredential(Configuration.getGlobalConfiguration().get("PROJECT_KEY", ""));
+
     private static ChatCompletionsClient chatCompletionsClient
-        = new ChatCompletionsClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
-        .credential(new DefaultAzureCredentialBuilder().build())
+        = new ChatCompletionsClientBuilder().endpoint(inferenceEndpoint)
+        .credential(credential)
         .buildClient();
 
     private static ImageEmbeddingsClient imageEmbeddingsClient
-        = new ImageEmbeddingsClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
-        .credential(new DefaultAzureCredentialBuilder().build())
+        = new ImageEmbeddingsClientBuilder().endpoint(inferenceEndpoint)
+        .credential(credential)
         .buildClient();
 
     private static EmbeddingsClient embeddingsClient
-        = new EmbeddingsClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
-        .credential(new DefaultAzureCredentialBuilder().build())
+        = new EmbeddingsClientBuilder().endpoint(inferenceEndpoint)
+        .credential(credential)
         .buildClient();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException, URISyntaxException {
+        //chatCompletionsClientSample();
         embeddingsClientSample();
+        //imageEmbeddingsClientSample();
     }
 
     public static void embeddingsClientSample() {
         // BEGIN: com.azure.ai.projects.InferenceSample.embeddingsClientSample
 
+        String embeddingsModelName = Configuration.getGlobalConfiguration().get("EMBEDDINGS_MODEL_NAME", "");
         List<String> promptList = new ArrayList<>();
         String prompt = "Tell me 3 jokes about trains";
         promptList.add(prompt);
 
-        EmbeddingsResult embeddings = embeddingsClient.embed(promptList);
+        EmbeddingsResult embeddings = embeddingsClient.embed(
+            promptList,
+            null,
+            null,
+            null,
+            embeddingsModelName,
+            null);
 
         for (EmbeddingItem item : embeddings.getData()) {
             System.out.printf("Index: %d.%n", item.getIndex());
@@ -68,7 +82,7 @@ public class InferenceSample {
 
         ChatCompletionsOptions options = new ChatCompletionsOptions(Arrays.asList(
             new ChatRequestUserMessage("How many feet are in a mile?")
-        ));
+        )).setModel("gpt-4o");
 
         ChatCompletions chatCompletions = chatCompletionsClient.complete(options);
         System.out.println(chatCompletions.getChoice().getMessage().getContent());
@@ -79,6 +93,7 @@ public class InferenceSample {
     public static void imageEmbeddingsClientSample() throws FileNotFoundException, URISyntaxException {
         // BEGIN: com.azure.ai.projects.InferenceSample.imageEmbeddingsClientSample
 
+        String embeddingsModelName = Configuration.getGlobalConfiguration().get("EMBEDDINGS_MODEL_NAME", "");
         String imageUrl = "sample.png";
         Path imagePath = SampleUtils.getPath(imageUrl);
 
