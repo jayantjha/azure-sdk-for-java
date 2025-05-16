@@ -29,13 +29,14 @@ public final class AgentBasicSample {
         MessagesClient messagesClient = clientBuilder.buildMessagesClient();
         RunsClient runsClient = clientBuilder.buildRunsClient();
 
+        // BEGIN: com.azure.ai.agents.persistent.AgentBasicSample
         String agentName = "basic_example";
         CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You are a helpful agent")
             .setTools(Arrays.asList(new CodeInterpreterToolDefinition()));
         PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
-
+        // END: com.azure.ai.agents.persistent.AgentBasicSample
         PersistentAgentThread thread = threadsClient.createThread();
         ThreadMessage createdMessage = messagesClient.createMessage(
             thread.getId(),

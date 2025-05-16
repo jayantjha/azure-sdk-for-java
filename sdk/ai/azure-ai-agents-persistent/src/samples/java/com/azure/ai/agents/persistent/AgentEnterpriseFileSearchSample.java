@@ -35,6 +35,7 @@ public class AgentEnterpriseFileSearchSample {
         RunsClient runsClient = clientBuilder.buildRunsClient();
         VectorStoresClient vectorStoresClient = clientBuilder.buildVectorStoresClient();
 
+        // BEGIN: com.azure.ai.agents.persistent.AgentEnterpriseFileSearchSample
         String dataUri = Configuration.getGlobalConfiguration().get("DATA_URI", "");
         VectorStoreDataSource vectorStoreDataSource = new VectorStoreDataSource(
             "assistant-6FP6sNAo21Z7pVR2ouGoPp", VectorStoreDataSourceAssetType.URI_ASSET);
@@ -55,6 +56,7 @@ public class AgentEnterpriseFileSearchSample {
             .setTools(Arrays.asList(new FileSearchToolDefinition()))
             .setToolResources(new ToolResources().setFileSearch(fileSearchToolResource));
         PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
+        // END: com.azure.ai.agents.persistent.AgentEnterpriseFileSearchSample
 
         PersistentAgentThread thread = threadsClient.createThread();
         ThreadMessage createdMessage = messagesClient.createMessage(

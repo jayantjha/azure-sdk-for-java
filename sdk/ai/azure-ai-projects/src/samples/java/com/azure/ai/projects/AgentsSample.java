@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 package com.azure.ai.projects;
 
-import com.azure.ai.agents.persistent.AgentsServiceVersion;
 import com.azure.ai.agents.persistent.PersistentAgentsAdministrationClient;
 import com.azure.ai.agents.persistent.PersistentAgentsAdministrationClientBuilder;
 import com.azure.ai.agents.persistent.models.AgentDeletionStatus;
@@ -16,7 +15,6 @@ public class AgentsSample {
     private static PersistentAgentsAdministrationClient agentsClient
         = new PersistentAgentsAdministrationClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
         .credential(new DefaultAzureCredentialBuilder().build())
-        .serviceVersion(AgentsServiceVersion.V2025_05_15_PREVIEW)
         .buildClient();
 
     public static void main(String[] args) {

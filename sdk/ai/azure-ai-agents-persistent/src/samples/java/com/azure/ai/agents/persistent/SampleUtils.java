@@ -12,16 +12,57 @@ import com.azure.ai.agents.persistent.models.StreamMessageUpdate;
 import com.azure.ai.agents.persistent.models.ThreadMessage;
 import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.core.http.rest.PagedIterable;
+import com.azure.core.util.Configuration;
+import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class SampleUtils {
 
+    public static void buildClients() {
+        // BEGIN: com.azure.ai.agents.persistent.SampleUtils.buildClients
+        PersistentAgentsAdministrationClientBuilder clientBuilder = new PersistentAgentsAdministrationClientBuilder().endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
+            .credential(new DefaultAzureCredentialBuilder().build());
+        
+        // Main administration clients
+        PersistentAgentsAdministrationClient agentsClient = clientBuilder.buildClient();
+        PersistentAgentsAdministrationAsyncClient agentsAsyncClient = clientBuilder.buildAsyncClient();
+        
+        // Thread clients
+        ThreadsClient threadsClient = clientBuilder.buildThreadsClient();
+        ThreadsAsyncClient threadsAsyncClient = clientBuilder.buildThreadsAsyncClient();
+        
+        // Message clients
+        MessagesClient messagesClient = clientBuilder.buildMessagesClient();
+        MessagesAsyncClient messagesAsyncClient = clientBuilder.buildMessagesAsyncClient();
+        
+        // Run clients
+        RunsClient runsClient = clientBuilder.buildRunsClient();
+        RunsAsyncClient runsAsyncClient = clientBuilder.buildRunsAsyncClient();
+        RunStepsClient runStepsClient = clientBuilder.buildRunStepsClient();
+        
+        // File clients
+        FilesClient filesClient = clientBuilder.buildFilesClient();
+        FilesAsyncClient filesAsyncClient = clientBuilder.buildFilesAsyncClient();
+        
+        // Vector store clients
+        VectorStoresClient vectorStoresClient = clientBuilder.buildVectorStoresClient();
+        VectorStoresAsyncClient vectorStoresAsyncClient = clientBuilder.buildVectorStoresAsyncClient();
+        
+        // Vector store files clients
+        VectorStoreFilesClient vectorStoreFilesClient = clientBuilder.buildVectorStoreFilesClient();
+        VectorStoreFilesAsyncClient vectorStoreFilesAsyncClient = clientBuilder.buildVectorStoreFilesAsyncClient();
+        
+        // Vector store file batches clients
+        VectorStoreFileBatchesClient vectorStoreFileBatchesClient = clientBuilder.buildVectorStoreFileBatchesClient();
+        VectorStoreFileBatchesAsyncClient vectorStoreFileBatchesAsyncClient = clientBuilder.buildVectorStoreFileBatchesAsyncClient();
+        // END: com.azure.ai.agents.persistent.SampleUtils.buildClients
+    }
+
     public static void printRunMessages(MessagesClient messagesClient, String threadId) {
 
         // BEGIN: com.azure.ai.agents.persistent.SampleUtils.printRunMessages
-
         PagedIterable<ThreadMessage> runMessages = messagesClient.listMessages(threadId);
         for (ThreadMessage message : runMessages) {
             System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
@@ -35,13 +76,11 @@ public class SampleUtils {
                 System.out.println();
             }
         }
-
         // END: com.azure.ai.agents.persistent.SampleUtils.printRunMessages
     }
 
     public static Mono<Void> printRunMessagesAsync(MessagesAsyncClient messagesAsyncClient, String threadId) {
         // BEGIN: com.azure.ai.agents.persistent.SampleUtils.printRunMessagesAsync
-
         return messagesAsyncClient.listMessages(threadId)
             .doOnNext(message -> {
                 System.out.print(String.format("%1$s - %2$s : ", message.getCreatedAt(), message.getRole()));
@@ -56,7 +95,6 @@ public class SampleUtils {
                 });
             })
             .then();
-
         // END: com.azure.ai.agents.persistent.SampleUtils.printRunMessagesAsync
     }
 
@@ -64,7 +102,6 @@ public class SampleUtils {
     public static void printStreamUpdate(StreamMessageUpdate messageUpdate) {
 
         // BEGIN: com.azure.ai.agents.persistent.SampleUtils.printStreamUpdate
-
         messageUpdate.getMessage().getDelta().getContent().stream().forEach(delta -> {
             if (delta instanceof MessageDeltaImageFileContent) {
                 MessageDeltaImageFileContent imgContent = (MessageDeltaImageFileContent) delta;
@@ -74,13 +111,11 @@ public class SampleUtils {
                 System.out.print(textContent.getText().getValue());
             }
         });
-
         // END: com.azure.ai.agents.persistent.SampleUtils.printStreamUpdate
     }
 
     public static Mono<Void> printStreamUpdateAsync(StreamMessageUpdate messageUpdate) {
         // BEGIN: com.azure.ai.agents.persistent.SampleUtils.printStreamUpdateAsync
-
         return Mono.fromRunnable(() -> {
             messageUpdate.getMessage().getDelta().getContent().stream().forEach(delta -> {
                 if (delta instanceof MessageDeltaImageFileContent) {
@@ -92,7 +127,6 @@ public class SampleUtils {
                 }
             });
         });
-
         // END: com.azure.ai.agents.persistent.SampleUtils.printStreamUpdateAsync
     }
 
@@ -100,7 +134,6 @@ public class SampleUtils {
         throws InterruptedException {
 
         // BEGIN: com.azure.ai.agents.persistent.SampleUtils.waitForRunCompletion
-
         do {
             Thread.sleep(500);
             threadRun = runsClient.getRun(threadId, threadRun.getId());
@@ -113,13 +146,11 @@ public class SampleUtils {
         if (threadRun.getStatus() == RunStatus.FAILED) {
             System.out.println(threadRun.getLastError().getMessage());
         }
-
         // END: com.azure.ai.agents.persistent.SampleUtils.waitForRunCompletion
     }
 
     public static Mono<ThreadRun> waitForRunCompletionAsync(String threadId, ThreadRun threadRun, RunsAsyncClient runsAsyncClient) {
         // BEGIN: com.azure.ai.agents.persistent.SampleUtils.waitForRunCompletionAsync
-
         return Mono.defer(() -> runsAsyncClient.getRun(threadId, threadRun.getId()))
             .flatMap(run -> {
                 if (run.getStatus() == RunStatus.QUEUED
@@ -134,7 +165,6 @@ public class SampleUtils {
                     return Mono.just(run);
                 }
             });
-
         // END: com.azure.ai.agents.persistent.SampleUtils.waitForRunCompletionAsync
     }
 
@@ -160,3 +190,4 @@ public class SampleUtils {
         }
     }
 }
+

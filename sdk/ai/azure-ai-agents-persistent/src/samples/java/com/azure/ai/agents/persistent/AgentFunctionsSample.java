@@ -42,6 +42,7 @@ public class AgentFunctionsSample {
         MessagesClient messagesClient = clientBuilder.buildMessagesClient();
         RunsClient runsClient = clientBuilder.buildRunsClient();
 
+        // BEGIN: com.azure.ai.agents.persistent.AgentFunctionsSample
         Supplier<String> getUserFavoriteCity = () -> "Seattle, WA";
         FunctionToolDefinition getUserFavoriteCityTool = new FunctionToolDefinition(
             new FunctionDefinition(
@@ -101,6 +102,7 @@ public class AgentFunctionsSample {
                 + "nicknames for cities whenever possible.")
             .setTools(Arrays.asList(getUserFavoriteCityTool, getCityNicknameTool));
         PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
+        // END: com.azure.ai.agents.persistent.AgentFunctionsSample
 
         PersistentAgentThread thread = threadsClient.createThread();
         ThreadMessage createdMessage = messagesClient.createMessage(

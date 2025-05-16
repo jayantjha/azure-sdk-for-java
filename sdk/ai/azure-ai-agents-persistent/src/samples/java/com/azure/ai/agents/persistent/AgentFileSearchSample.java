@@ -39,6 +39,7 @@ public class AgentFileSearchSample {
         FilesClient filesClient = clientBuilder.buildFilesClient();
         VectorStoresClient vectorStoresClient = clientBuilder.buildVectorStoresClient();
 
+        // BEGIN: com.azure.ai.agents.persistent.AgentFileSearchSample
         FileInfo uploadedAgentFile = filesClient.uploadFile(
             new UploadFileRequest(
                 new FileDetails(
@@ -67,6 +68,7 @@ public class AgentFileSearchSample {
             .setTools(Arrays.asList(new FileSearchToolDefinition()))
             .setToolResources(new ToolResources().setFileSearch(fileSearchToolResource));
         PersistentAgent agent = agentsClient.createAgent(createAgentOptions);
+        // END: com.azure.ai.agents.persistent.AgentFileSearchSample
 
         PersistentAgentThread thread = threadsClient.createThread();
         ThreadMessage createdMessage = messagesClient.createMessage(

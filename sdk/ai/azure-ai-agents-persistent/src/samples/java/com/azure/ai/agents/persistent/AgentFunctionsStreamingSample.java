@@ -166,6 +166,7 @@ public final class AgentFunctionsStreamingSample {
             .setAdditionalInstructions("");
 
         try {
+            // BEGIN: com.azure.ai.agents.persistent.AgentFunctionsStreamingSample
             Stream<StreamUpdate> streamUpdates = runsClient.createRunStreaming(createRunOptions);
 
             streamUpdates.forEach(
@@ -205,7 +206,7 @@ public final class AgentFunctionsStreamingSample {
                     }
                 }
             );
-
+            // END: com.azure.ai.agents.persistent.AgentFunctionsStreamingSample
             System.out.println();
         } catch (Exception ex) {
             throw ex;
