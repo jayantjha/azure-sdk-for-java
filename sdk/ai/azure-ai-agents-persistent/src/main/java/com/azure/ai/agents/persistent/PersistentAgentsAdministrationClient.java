@@ -36,6 +36,8 @@ public final class PersistentAgentsAdministrationClient {
     @Generated
     private final PersistentAgentsAdministrationImpl serviceClient;
 
+    private final PersistentAgentsAdministrationClientTracer clientTracer;
+
     /**
      * Retrieves an existing agent.
      * <p><strong>Response Body Schema</strong></p>
@@ -731,9 +733,10 @@ public final class PersistentAgentsAdministrationClient {
      * Initializes an instance of PersistentAgentsAdministrationClient class.
      *
      * @param serviceClient the service client implementation.
+     * @param clientTracer the client tracer for tracing.
      */
-    @Generated
-    PersistentAgentsAdministrationClient(PersistentAgentsAdministrationImpl serviceClient) {
+    PersistentAgentsAdministrationClient(PersistentAgentsAdministrationImpl serviceClient, PersistentAgentsAdministrationClientTracer clientTracer) {
         this.serviceClient = serviceClient;
+        this.clientTracer = clientTracer;
     }
 }

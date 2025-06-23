@@ -18,7 +18,9 @@ import com.azure.core.exception.ResourceNotFoundException;
 import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.BinaryData;
+import com.azure.core.util.Configuration;
 import com.azure.core.util.FluxUtil;
+import com.azure.core.util.tracing.Tracer;
 import reactor.core.publisher.Mono;
 
 /**
@@ -30,14 +32,21 @@ public final class PersistentAgentsAsyncClient {
     @Generated
     private final PersistentAgentsClientImpl serviceClient;
 
+    private final Configuration configuration;
+
+    private final Tracer tracer;
+
     /**
      * Initializes an instance of PersistentAgentsAsyncClient class.
      *
      * @param serviceClient the service client implementation.
+     * @param configuration the configuration for the client.
+     * @param tracer the tracer for the client.
      */
-    @Generated
-    PersistentAgentsAsyncClient(PersistentAgentsClientImpl serviceClient) {
+    PersistentAgentsAsyncClient(PersistentAgentsClientImpl serviceClient, Configuration configuration, Tracer tracer) {
         this.serviceClient = serviceClient;
+        this.configuration = configuration;
+        this.tracer = tracer;
     }
 
     /**

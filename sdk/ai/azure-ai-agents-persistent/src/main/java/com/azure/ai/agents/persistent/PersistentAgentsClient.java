@@ -18,6 +18,8 @@ import com.azure.core.exception.ResourceNotFoundException;
 import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.BinaryData;
+import com.azure.core.util.Configuration;
+import com.azure.core.util.tracing.Tracer;
 
 /**
  * Initializes a new instance of the synchronous PersistentAgentsClient type.
@@ -28,14 +30,21 @@ public final class PersistentAgentsClient {
     @Generated
     private final PersistentAgentsClientImpl serviceClient;
 
+    private final Configuration configuration;
+
+    private final Tracer tracer;
+
     /**
      * Initializes an instance of PersistentAgentsClient class.
      *
      * @param serviceClient the service client implementation.
+     * @param configuration the configuration for the client.
+     * @param tracer the tracer for the client.
      */
-    @Generated
-    PersistentAgentsClient(PersistentAgentsClientImpl serviceClient) {
+    PersistentAgentsClient(PersistentAgentsClientImpl serviceClient, Configuration configuration, Tracer tracer) {
         this.serviceClient = serviceClient;
+        this.configuration = configuration;
+        this.tracer = tracer;
     }
 
     /**
@@ -44,7 +53,8 @@ public final class PersistentAgentsClient {
      * @return an instance of PersistentAgentsAdministrationClient class.
      */
     public PersistentAgentsAdministrationClient getPersistentAgentsAdministrationClient() {
-        return new PersistentAgentsAdministrationClient(serviceClient.getPersistentAgentsAdministration());
+        PersistentAgentsAdministrationClientTracer clientTracer = new PersistentAgentsAdministrationClientTracer(serviceClient.getEndpoint(), configuration, tracer);
+        return new PersistentAgentsAdministrationClient(serviceClient.getPersistentAgentsAdministration(), clientTracer);
     }
 
     /**
