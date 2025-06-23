@@ -735,7 +735,8 @@ public final class PersistentAgentsAdministrationClient {
      * @param serviceClient the service client implementation.
      * @param clientTracer the client tracer for tracing.
      */
-    PersistentAgentsAdministrationClient(PersistentAgentsAdministrationImpl serviceClient, PersistentAgentsAdministrationClientTracer clientTracer) {
+    PersistentAgentsAdministrationClient(PersistentAgentsAdministrationImpl serviceClient,
+        PersistentAgentsAdministrationClientTracer clientTracer) {
         this.serviceClient = serviceClient;
         this.clientTracer = clientTracer;
     }

@@ -53,8 +53,10 @@ public final class PersistentAgentsClient {
      * @return an instance of PersistentAgentsAdministrationClient class.
      */
     public PersistentAgentsAdministrationClient getPersistentAgentsAdministrationClient() {
-        PersistentAgentsAdministrationClientTracer clientTracer = new PersistentAgentsAdministrationClientTracer(serviceClient.getEndpoint(), configuration, tracer);
-        return new PersistentAgentsAdministrationClient(serviceClient.getPersistentAgentsAdministration(), clientTracer);
+        PersistentAgentsAdministrationClientTracer clientTracer
+            = new PersistentAgentsAdministrationClientTracer(serviceClient.getEndpoint(), configuration, tracer);
+        return new PersistentAgentsAdministrationClient(serviceClient.getPersistentAgentsAdministration(),
+            clientTracer);
     }
 
     /**
