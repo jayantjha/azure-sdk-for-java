@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 package com.azure.ai.agents.persistent;
 
+import com.azure.ai.agents.persistent.implementation.PersistentAgentsAdministrationClientTracer;
 import com.azure.ai.agents.persistent.models.CodeInterpreterToolDefinition;
 import com.azure.ai.agents.persistent.models.CreateAgentOptions;
 import com.azure.ai.agents.persistent.models.CreateRunOptions;
@@ -22,13 +23,13 @@ import static com.azure.ai.agents.persistent.SampleUtils.configureOpenTelemetry;
 import static com.azure.ai.agents.persistent.SampleUtils.printRunMessages;
 import static com.azure.ai.agents.persistent.SampleUtils.waitForRunCompletion;
 
-public final class AgentBasicConsoleTracingSample {
+public final class AgentBasicTracingSample {
 
     public static void main(String[] args) {
         final OpenTelemetrySdk telemetrySdk = configureOpenTelemetry();
         final Tracer tracer = telemetrySdk.getTracer(PersistentAgentsAdministrationClientTracer.class.getName());
 
-        final Span span = tracer.spanBuilder("AgentBasicConsoleTracingSample.main").startSpan();
+        final Span span = tracer.spanBuilder("AgentBasicTracingSample.main").startSpan();
         try (AutoCloseable scope = span.makeCurrent()) {
 
             PersistentAgentsClientBuilder clientBuilder = new PersistentAgentsClientBuilder()
