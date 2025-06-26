@@ -46,7 +46,7 @@ public final class PersistentAgentsAdministrationAsyncClient {
     /**
      * Retrieves an existing agent.
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -130,7 +130,7 @@ public final class PersistentAgentsAdministrationAsyncClient {
     /**
      * Creates a new agent.
      * <p><strong>Request Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -192,9 +192,9 @@ public final class PersistentAgentsAdministrationAsyncClient {
      * }
      * }
      * </pre>
-     *
+     * 
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -279,7 +279,7 @@ public final class PersistentAgentsAdministrationAsyncClient {
     /**
      * Modifies an existing agent.
      * <p><strong>Request Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -341,9 +341,9 @@ public final class PersistentAgentsAdministrationAsyncClient {
      * }
      * }
      * </pre>
-     *
+     * 
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -446,7 +446,7 @@ public final class PersistentAgentsAdministrationAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -697,7 +697,7 @@ public final class PersistentAgentsAdministrationAsyncClient {
     /**
      * Deletes an agent.
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {

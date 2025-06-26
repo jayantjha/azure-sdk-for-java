@@ -58,7 +58,7 @@ public final class ThreadsAsyncClient {
     /**
      * Creates a new thread. Threads contain messages and can be run by agents.
      * <p><strong>Request Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -126,9 +126,9 @@ public final class ThreadsAsyncClient {
      * }
      * }
      * </pre>
-     *
+     * 
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -218,7 +218,7 @@ public final class ThreadsAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -288,7 +288,7 @@ public final class ThreadsAsyncClient {
     /**
      * Gets information about an existing thread.
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -360,7 +360,7 @@ public final class ThreadsAsyncClient {
     /**
      * Modifies an existing thread.
      * <p><strong>Request Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -410,9 +410,9 @@ public final class ThreadsAsyncClient {
      * }
      * }
      * </pre>
-     *
+     * 
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -705,7 +705,7 @@ public final class ThreadsAsyncClient {
     /**
      * Deletes an existing thread.
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {

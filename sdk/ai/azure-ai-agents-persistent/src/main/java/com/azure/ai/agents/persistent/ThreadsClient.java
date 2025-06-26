@@ -9,7 +9,10 @@ import com.azure.ai.agents.persistent.implementation.ThreadsImpl;
 import com.azure.ai.agents.persistent.implementation.models.CreateThreadRequest;
 import com.azure.ai.agents.persistent.implementation.models.ThreadDeletionStatus;
 import com.azure.ai.agents.persistent.implementation.models.UpdateThreadRequest;
-import com.azure.ai.agents.persistent.models.*;
+import com.azure.ai.agents.persistent.models.ListSortOrder;
+import com.azure.ai.agents.persistent.models.PersistentAgentThread;
+import com.azure.ai.agents.persistent.models.ThreadMessageOptions;
+import com.azure.ai.agents.persistent.models.ToolResources;
 import com.azure.core.annotation.Generated;
 import com.azure.core.annotation.ReturnType;
 import com.azure.core.annotation.ServiceClient;
@@ -52,7 +55,7 @@ public final class ThreadsClient {
     /**
      * Creates a new thread. Threads contain messages and can be run by agents.
      * <p><strong>Request Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -120,9 +123,9 @@ public final class ThreadsClient {
      * }
      * }
      * </pre>
-     *
+     * 
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -211,7 +214,7 @@ public final class ThreadsClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -281,7 +284,7 @@ public final class ThreadsClient {
     /**
      * Gets information about an existing thread.
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -352,7 +355,7 @@ public final class ThreadsClient {
     /**
      * Modifies an existing thread.
      * <p><strong>Request Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -402,9 +405,9 @@ public final class ThreadsClient {
      * }
      * }
      * </pre>
-     *
+     * 
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -671,7 +674,7 @@ public final class ThreadsClient {
     /**
      * Deletes an existing thread.
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {

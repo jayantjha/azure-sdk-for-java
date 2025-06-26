@@ -51,7 +51,7 @@ public final class MessagesClient {
     /**
      * Creates a new message on a specified thread.
      * <p><strong>Request Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -75,9 +75,9 @@ public final class MessagesClient {
      * }
      * }
      * </pre>
-     *
+     * 
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -155,7 +155,7 @@ public final class MessagesClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -213,7 +213,7 @@ public final class MessagesClient {
     /**
      * Retrieves an existing message.
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -273,7 +273,7 @@ public final class MessagesClient {
     /**
      * Modifies an existing message on an existing thread.
      * <p><strong>Request Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -283,9 +283,9 @@ public final class MessagesClient {
      * }
      * }
      * </pre>
-     *
+     * 
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {

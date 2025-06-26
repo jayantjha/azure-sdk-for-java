@@ -25,13 +25,13 @@ import static com.azure.ai.agents.persistent.SampleUtils.waitForRunCompletion;
 
 public final class AgentBasicTracingSample {
 
+    @SuppressWarnings("try")
     public static void main(String[] args) {
         final OpenTelemetrySdk telemetrySdk = configureOpenTelemetry();
         final Tracer tracer = telemetrySdk.getTracer(PersistentAgentsAdministrationClientTracer.class.getName());
 
         final Span span = tracer.spanBuilder("AgentBasicTracingSample.main").startSpan();
         try (AutoCloseable scope = span.makeCurrent()) {
-
             PersistentAgentsClientBuilder clientBuilder = new PersistentAgentsClientBuilder()
                 .endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
                 .credential(new DefaultAzureCredentialBuilder().build());

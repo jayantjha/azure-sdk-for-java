@@ -1,7 +1,13 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 package com.azure.ai.agents.persistent.implementation;
 
 import com.azure.core.http.rest.RequestOptions;
-import com.azure.core.util.*;
+import com.azure.core.util.Configuration;
+import com.azure.core.util.ConfigurationProperty;
+import com.azure.core.util.ConfigurationPropertyBuilder;
+import com.azure.core.util.Context;
+import com.azure.core.util.CoreUtils;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.tracing.SpanKind;
 import com.azure.core.util.tracing.StartSpanOptions;
@@ -10,7 +16,6 @@ import com.azure.json.JsonProviders;
 import com.azure.json.JsonWriter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;

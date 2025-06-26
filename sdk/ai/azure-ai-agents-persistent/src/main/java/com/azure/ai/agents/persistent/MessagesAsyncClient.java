@@ -57,7 +57,7 @@ public final class MessagesAsyncClient {
     /**
      * Creates a new message on a specified thread.
      * <p><strong>Request Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -81,9 +81,9 @@ public final class MessagesAsyncClient {
      * }
      * }
      * </pre>
-     *
+     * 
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -162,7 +162,7 @@ public final class MessagesAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -220,7 +220,7 @@ public final class MessagesAsyncClient {
     /**
      * Retrieves an existing message.
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -281,7 +281,7 @@ public final class MessagesAsyncClient {
     /**
      * Modifies an existing message on an existing thread.
      * <p><strong>Request Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -291,9 +291,9 @@ public final class MessagesAsyncClient {
      * }
      * }
      * </pre>
-     *
+     * 
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -466,7 +466,6 @@ public final class MessagesAsyncClient {
         if (before != null) {
             requestOptions.addQueryParam("before", before, false);
         }
-
         ClientTracer.Operation<PagedFlux<ThreadMessage>> operation = (arg) -> {
             PagedFlux<BinaryData> pagedFluxResponse = listMessages(threadId, arg);
             return PagedFlux.create(() -> (continuationTokenParam, pageSizeParam) -> {
