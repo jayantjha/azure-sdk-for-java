@@ -19,7 +19,7 @@ import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import java.util.Arrays;
 
-import static com.azure.ai.agents.persistent.SampleUtils.configureOpenTelemetry;
+import static com.azure.ai.agents.persistent.SampleUtils.configureOpenTelemetryEndpointTracing;
 import static com.azure.ai.agents.persistent.SampleUtils.printRunMessages;
 import static com.azure.ai.agents.persistent.SampleUtils.waitForRunCompletion;
 
@@ -27,7 +27,7 @@ public final class AgentBasicTracingSample {
 
     @SuppressWarnings("try")
     public static void main(String[] args) {
-        final OpenTelemetrySdk telemetrySdk = configureOpenTelemetry();
+        final OpenTelemetrySdk telemetrySdk = configureOpenTelemetryEndpointTracing();
         final Tracer tracer = telemetrySdk.getTracer(PersistentAgentsAdministrationClientTracer.class.getName());
 
         final Span span = tracer.spanBuilder("AgentBasicTracingSample.main").startSpan();

@@ -165,26 +165,37 @@ public class SampleUtils {
         }
     }
 
-    public static OpenTelemetrySdk configureOpenTelemetry() {
-        // With the below configuration, the runtime sends OpenTelemetry data to the local OTLP/gRPC endpoint.
-        //
-        // For debugging purposes, Aspire Dashboard can be run locally that listens for telemetry data and offer a UI
-        // for viewing the collected data. To run Aspire Dashboard, run the following docker command:
-        //
-        // docker run --rm -p 18888:18888 -p 4317:18889 -p 4318:18890 --name aspire-dashboard mcr.microsoft.com/dotnet/nightly/aspire-dashboard:latest
-        //
-        // The output of the docker command includes a link to the dashboard. For more information on Aspire Dashboard,
-        // see https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/overview
-        //
-        // See https://learn.microsoft.com/azure/developer/java/sdk/tracing for more information on tracing with Azure SDK.
-
+    /**
+     *  With the below configuration, the runtime sends OpenTelemetry data to the local OTLP/gRPC endpoint.
+     *  Change to your endpoint address, "http://localhost:4317" is used by default
+     *      `properties.put("otel.exporter.otlp.endpoint", "http://localhost:4317");`
+     *  For debugging purposes, Aspire Dashboard can be run locally that listens for telemetry data and offer a UI for viewing the collected data.
+     *  To run Aspire Dashboard, run the following docker command:
+     *      `docker run --rm -p 18888:18888 -p 4317:18889 -p 4318:18890 --name aspire-dashboard mcr.microsoft.com/dotnet/nightly/aspire-dashboard:latest`
+     *  The output of the docker command includes a link to the dashboard. For more information on Aspire Dashboard,
+     *      see <a href="https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/overview">Aspire Dashboard</a>
+     *  See <a href="https://learn.microsoft.com/azure/developer/java/sdk/tracing">documentation</a> for more information on tracing with Azure SDK.
+     */
+    public static OpenTelemetrySdk configureOpenTelemetryEndpointTracing() {
         final AutoConfiguredOpenTelemetrySdkBuilder sdkBuilder = AutoConfiguredOpenTelemetrySdk.builder();
         return sdkBuilder
             .addPropertiesSupplier(() -> {
                 final Map<String, String> properties = new HashMap<>();
                 properties.put("otel.service.name", "agents-persistent");
-                // change to your endpoint address, "http://localhost:4317" is used by default
-                // properties.put("otel.exporter.otlp.endpoint", "http://localhost:4317");
+                return properties;
+            })
+            .setResultAsGlobal()
+            .build()
+            .getOpenTelemetrySdk();
+    }
+
+    public static OpenTelemetrySdk configureOpenTelemetryConsoleTracing() {
+        final AutoConfiguredOpenTelemetrySdkBuilder sdkBuilder = AutoConfiguredOpenTelemetrySdk.builder();
+        return sdkBuilder
+            .addPropertiesSupplier(() -> {
+                final Map<String, String> properties = new HashMap<>();
+                properties.put("otel.service.name", "agents-persistent");
+                properties.put("otel.traces.exporter", "logging");
                 return properties;
             })
             .setResultAsGlobal()
