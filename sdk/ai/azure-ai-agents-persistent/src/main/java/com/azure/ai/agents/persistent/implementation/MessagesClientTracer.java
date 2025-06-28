@@ -15,6 +15,7 @@ import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 import com.azure.core.util.Context;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.core.util.metrics.Meter;
 import com.azure.core.util.tracing.Tracer;
 import reactor.core.publisher.Mono;
 
@@ -40,7 +41,6 @@ public class MessagesClientTracer extends ClientTracer {
     static final String GEN_AI_RUN_ID_KEY = "gen_ai.thread.run.id";
     static final String GEN_AI_MESSAGE_STATUS_KEY = "gen_ai.message.status";
     static final String GEN_AI_MESSAGE_ROLE_KEY = "gen_ai.message.role";
-    static final String GEN_AI_SYSTEM_VALUE = "az.ai.agents";
     static final String OPERATION_CREATE_MESSAGE = "create_message";
     static final String OPERATION_LIST_MESSAGE = "list_messages";
     static final String EVENT_NAME_USER_MESSAGE = "gen_ai.user.message";
@@ -53,8 +53,9 @@ public class MessagesClientTracer extends ClientTracer {
      *     if {@code null} is passed then {@link Configuration#getGlobalConfiguration()} will be used.
      * @param tracer the Tracer instance.
      */
-    public MessagesClientTracer(String endpoint, Configuration configuration, Tracer tracer) {
-        super(endpoint, configuration, tracer);
+    public MessagesClientTracer(
+        String endpoint, Configuration configuration, Tracer tracer, Meter meter) {
+        super(endpoint, configuration, tracer, meter);
     }
 
     //<editor-fold desc="Tracing CreateMessage">
@@ -108,10 +109,6 @@ public class MessagesClientTracer extends ClientTracer {
      */
     void traceCreateMessageInvocationAttributes(String threadId, MessageRole role, BinaryData content,
         List<MessageAttachment> attachments, Context span) {
-
-        // Set common span attributes
-        this.traceCommonAttributes(span, GEN_AI_SYSTEM_VALUE, OPERATION_CREATE_MESSAGE);
-
         // Set request attributes
         this.setAttributeIfNotNull(GEN_AI_THREAD_ID_KEY, threadId, span);
 
@@ -253,9 +250,6 @@ public class MessagesClientTracer extends ClientTracer {
      * @param span The current span context.
      */
     void traceListMessagesInvocationAttributes(Context span, String threadId, String runId) {
-        // Set common span attributes
-        this.traceCommonAttributes(span, GEN_AI_SYSTEM_VALUE, OPERATION_LIST_MESSAGE);
-
         // Set request attributes
         this.setAttributeIfNotNull(GEN_AI_THREAD_ID_KEY, threadId, span);
         this.setAttributeIfNotNull(GEN_AI_RUN_ID_KEY, runId, span);

@@ -24,6 +24,7 @@ import com.azure.core.http.rest.Response;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 import com.azure.core.util.FluxUtil;
+import com.azure.core.util.metrics.Meter;
 import com.azure.core.util.tracing.Tracer;
 import reactor.core.publisher.Mono;
 
@@ -39,6 +40,7 @@ public final class PersistentAgentsAsyncClient {
     private final Configuration configuration;
 
     private final Tracer tracer;
+    private final Meter meter;
 
     /**
      * Initializes an instance of PersistentAgentsAsyncClient class.
@@ -47,10 +49,13 @@ public final class PersistentAgentsAsyncClient {
      * @param configuration the configuration for the client.
      * @param tracer the tracer for the client.
      */
-    PersistentAgentsAsyncClient(PersistentAgentsClientImpl serviceClient, Configuration configuration, Tracer tracer) {
+    PersistentAgentsAsyncClient(
+        PersistentAgentsClientImpl serviceClient, Configuration configuration,
+        Tracer tracer, Meter meter) {
         this.serviceClient = serviceClient;
         this.configuration = configuration;
         this.tracer = tracer;
+        this.meter = meter;
     }
 
     /**
@@ -60,7 +65,7 @@ public final class PersistentAgentsAsyncClient {
      */
     public PersistentAgentsAdministrationAsyncClient getPersistentAgentsAdministrationAsyncClient() {
         PersistentAgentsAdministrationClientTracer clientTracer
-            = new PersistentAgentsAdministrationClientTracer(serviceClient.getEndpoint(), configuration, tracer);
+            = new PersistentAgentsAdministrationClientTracer(serviceClient.getEndpoint(), configuration, tracer, meter);
         return new PersistentAgentsAdministrationAsyncClient(serviceClient.getPersistentAgentsAdministration(),
             clientTracer);
     }
@@ -81,7 +86,7 @@ public final class PersistentAgentsAsyncClient {
      */
     public MessagesAsyncClient getMessagesAsyncClient() {
         MessagesClientTracer clientTracer
-            = new MessagesClientTracer(serviceClient.getEndpoint(), configuration, tracer);
+            = new MessagesClientTracer(serviceClient.getEndpoint(), configuration, tracer, meter);
         return new MessagesAsyncClient(serviceClient.getMessages(), clientTracer);
     }
 
@@ -91,7 +96,7 @@ public final class PersistentAgentsAsyncClient {
      * @return an instance of RunsAsyncClient class.
      */
     public RunsAsyncClient getRunsAsyncClient() {
-        RunsClientTracer clientTracer = new RunsClientTracer(serviceClient.getEndpoint(), configuration, tracer);
+        RunsClientTracer clientTracer = new RunsClientTracer(serviceClient.getEndpoint(), configuration, tracer, meter);
         return new RunsAsyncClient(serviceClient.getRuns(), clientTracer);
     }
 
@@ -101,7 +106,7 @@ public final class PersistentAgentsAsyncClient {
      * @return an instance of ThreadsAsyncClient class.
      */
     public ThreadsAsyncClient getThreadsAsyncClient() {
-        ThreadsClientTracer clientTracer = new ThreadsClientTracer(serviceClient.getEndpoint(), configuration, tracer);
+        ThreadsClientTracer clientTracer = new ThreadsClientTracer(serviceClient.getEndpoint(), configuration, tracer, meter);
         return new ThreadsAsyncClient(serviceClient.getThreads(), clientTracer);
     }
 
@@ -117,7 +122,7 @@ public final class PersistentAgentsAsyncClient {
     /**
      * Creates a new agent thread and immediately starts a run using that new thread.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -211,9 +216,9 @@ public final class PersistentAgentsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {

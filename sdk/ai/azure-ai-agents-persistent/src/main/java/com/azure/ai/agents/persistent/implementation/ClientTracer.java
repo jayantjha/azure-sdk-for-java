@@ -9,6 +9,9 @@ import com.azure.core.util.ConfigurationPropertyBuilder;
 import com.azure.core.util.Context;
 import com.azure.core.util.CoreUtils;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.core.util.metrics.DoubleHistogram;
+import com.azure.core.util.metrics.LongCounter;
+import com.azure.core.util.metrics.Meter;
 import com.azure.core.util.tracing.SpanKind;
 import com.azure.core.util.tracing.StartSpanOptions;
 import com.azure.core.util.tracing.Tracer;
@@ -65,11 +68,13 @@ public abstract class ClientTracer {
     protected static final String AZ_NAMESPACE_KEY = "az.namespace";
     protected static final String SERVER_ADDRESS_KEY = "server.address";
     protected static final String SERVER_PORT_KEY = "server.port";
-
+    protected static final String GEN_AI_SYSTEM_VALUE = "az.ai.agents";
     protected static final String GEN_AI_OPERATION_NAME_KEY = "gen_ai.operation.name";
     protected static final String GEN_AI_SYSTEM_KEY = "gen_ai.system";
     protected static final String GEN_AI_EVENT_CONTENT = "gen_ai.event.content";
     protected static final String EVENT_NAME_SYSTEM_MESSAGE = "gen_ai.system.message";
+    protected static final String GEN_AI_CLIENT_OPERATION_DURATION_METRIC_NAME = "gen_ai.client.operation.duration";
+    protected static final String GEN_AI_CLIENT_TOKEN_USAGE_METRIC_NAME = "gen_ai.client.token.usage";
 
     protected static final String AZURE_RP_NAMESPACE_VALUE = "Microsoft.CognitiveServices";
 
@@ -79,6 +84,9 @@ public abstract class ClientTracer {
     protected final int port;
     protected final boolean captureContent;
     protected final Tracer tracer;
+    protected final Meter meter;
+    protected final DoubleHistogram durationHistogram;
+    protected final LongCounter tokensCounter;
 
     protected Function<Context, Mono<Void>> getAsyncComplete() {
         return ((span) -> {
@@ -112,7 +120,7 @@ public abstract class ClientTracer {
      *     if {@code null} is passed then {@link Configuration#getGlobalConfiguration()} will be used.
      * @param tracer the Tracer instance.
      */
-    protected ClientTracer(String endpoint, Configuration configuration, Tracer tracer) {
+    protected ClientTracer(String endpoint, Configuration configuration, Tracer tracer, Meter meter) {
         final URL url = parse(endpoint);
         if (url != null) {
             this.host = url.getHost();
@@ -125,10 +133,15 @@ public abstract class ClientTracer {
             ? GLOBAL_CONFIG.get(CAPTURE_MESSAGE_CONTENT)
             : configuration.get(CAPTURE_MESSAGE_CONTENT);
         this.tracer = tracer;
+        this.meter = meter;
+        this.durationHistogram = meter.createDoubleHistogram(GEN_AI_CLIENT_OPERATION_DURATION_METRIC_NAME,
+            "Measures GenAI operation duration.", "s");
+        this.tokensCounter = meter.createLongCounter(GEN_AI_CLIENT_TOKEN_USAGE_METRIC_NAME,
+            "Measures the number of input and output token used.", "{token}");
     }
 
-    protected void traceCommonAttributes(Context span, String systemName, String operationName) {
-        tracer.setAttribute(GEN_AI_SYSTEM_KEY, systemName, span);
+    private void traceCommonAttributes(Context span, String operationName) {
+        tracer.setAttribute(GEN_AI_SYSTEM_KEY, GEN_AI_SYSTEM_VALUE, span);
         tracer.setAttribute(GEN_AI_OPERATION_NAME_KEY, operationName, span);
         tracer.setAttribute(AZ_NAMESPACE_KEY, AZURE_RP_NAMESPACE_VALUE, span);
 
@@ -142,12 +155,13 @@ public abstract class ClientTracer {
     }
 
     @SuppressWarnings("try")
-    protected <T> T traceSyncOperation(String spanName, Operation<T> operation, RequestOptions requestOptions,
+    protected <T> T traceSyncOperation(String operationName, Operation<T> operation, RequestOptions requestOptions,
         TraceBeforeInvocation traceBeforeInvocation, TraceAfterInvocation<T> traceAfterInvocation) {
         if (!tracer.isEnabled()) {
             return operation.invoke(requestOptions);
         }
-        final Context span = tracer.start(spanName, START_SPAN_OPTIONS, parentSpan(requestOptions));
+        final Context span = tracer.start(operationName, START_SPAN_OPTIONS, parentSpan(requestOptions));
+        this.traceCommonAttributes(span, operationName);
         if (tracer.isRecording(span)) {
             traceBeforeInvocation.invoke(span);
         }

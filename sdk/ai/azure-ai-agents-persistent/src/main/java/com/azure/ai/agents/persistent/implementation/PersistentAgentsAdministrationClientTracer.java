@@ -10,6 +10,7 @@ import com.azure.core.util.Configuration;
 import com.azure.core.util.Context;
 import com.azure.core.util.CoreUtils;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.core.util.metrics.Meter;
 import com.azure.core.util.tracing.Tracer;
 import reactor.core.publisher.Mono;
 
@@ -43,8 +44,9 @@ public class PersistentAgentsAdministrationClientTracer extends ClientTracer {
      *     if {@code null} is passed then {@link Configuration#getGlobalConfiguration()} will be used.
      * @param tracer the Tracer instance.
      */
-    public PersistentAgentsAdministrationClientTracer(String endpoint, Configuration configuration, Tracer tracer) {
-        super(endpoint, configuration, tracer);
+    public PersistentAgentsAdministrationClientTracer(
+        String endpoint, Configuration configuration, Tracer tracer, Meter meter) {
+        super(endpoint, configuration, tracer, meter);
     }
 
     //<editor-fold desc="Tracing CreateAgent">
@@ -93,9 +95,6 @@ public class PersistentAgentsAdministrationClientTracer extends ClientTracer {
     }
 
     void traceCreateAgentInvocationAttributes(CreateAgentOptions createAgentOptions, Context span) {
-        // Set common span attributes
-        this.traceCommonAttributes(span, GEN_AI_SYSTEM_VALUE, OPERATION_CREATE_AGENT);
-
         // Set request attributes
         if (createAgentOptions != null) {
             this.setAttributeIfNotNull(GEN_AI_REQUEST_MODEL_KEY, createAgentOptions.getModel(), span);

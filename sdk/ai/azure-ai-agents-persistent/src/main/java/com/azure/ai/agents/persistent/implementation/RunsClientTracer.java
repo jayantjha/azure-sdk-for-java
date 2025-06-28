@@ -16,6 +16,7 @@ import com.azure.core.util.Configuration;
 import com.azure.core.util.Context;
 import com.azure.core.util.CoreUtils;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.core.util.metrics.Meter;
 import com.azure.core.util.tracing.Tracer;
 import reactor.core.publisher.Mono;
 
@@ -40,7 +41,6 @@ public class RunsClientTracer extends ClientTracer {
     static final String GEN_AI_AGENT_ID_KEY = "gen_ai.agent.id";
     static final String GEN_AI_RUN_ID_KEY = "gen_ai.thread.run.id";
     static final String GEN_AI_RUN_STATUS_KEY = "gen_ai.thread.run.status";
-    static final String GEN_AI_SYSTEM_VALUE = "az.ai.agents";
     static final String OPERATION_CREATE_THREAD_RUN = "create_thread_run";
     static final String OPERATION_SUBMIT_TOOL_OUTPUTS = "submit_tool_outputs";
     static final String OPERATION_LIST_RUN_STEPS = "list_run_steps";
@@ -55,8 +55,9 @@ public class RunsClientTracer extends ClientTracer {
      *     if {@code null} is passed then {@link Configuration#getGlobalConfiguration()} will be used.
      * @param tracer the Tracer instance.
      */
-    public RunsClientTracer(String endpoint, Configuration configuration, Tracer tracer) {
-        super(endpoint, configuration, tracer);
+    public RunsClientTracer(
+        String endpoint, Configuration configuration, Tracer tracer, Meter meter) {
+        super(endpoint, configuration, tracer, meter);
     }
 
     //<editor-fold desc="Tracing CreateRun">
@@ -100,14 +101,7 @@ public class RunsClientTracer extends ClientTracer {
      * @param span The current span context.
      */
     void traceCreateRunInvocationAttributes(CreateRunOptions options, Context span) {
-        // Set common span attributes
-        this.traceCommonAttributes(span, GEN_AI_SYSTEM_VALUE, OPERATION_CREATE_THREAD_RUN);
-
         // Set request attributes
-        traceCreateRunOptions(options, span);
-    }
-
-    private void traceCreateRunOptions(CreateRunOptions options, Context span) {
         if (options != null) {
             this.setAttributeIfNotNull(GEN_AI_THREAD_ID_KEY, options.getThreadId(), span);
             this.setAttributeIfNotNull(GEN_AI_AGENT_ID_KEY, options.getAssistantId(), span);
@@ -115,7 +109,6 @@ public class RunsClientTracer extends ClientTracer {
             // Record system instructions as an event if content capture is enabled (same as non-streaming)
             if (captureContent && !CoreUtils.isNullOrEmpty(options.getInstructions())) {
                 Map<String, Object> eventAttributes = new HashMap<>();
-                eventAttributes.put(GEN_AI_SYSTEM_KEY, GEN_AI_SYSTEM_VALUE);
                 eventAttributes.put(GEN_AI_THREAD_ID_KEY, options.getThreadId());
                 eventAttributes.put(GEN_AI_AGENT_ID_KEY, options.getAssistantId());
 
@@ -202,10 +195,6 @@ public class RunsClientTracer extends ClientTracer {
      */
     void traceSubmitToolOutputsInvocationAttributes(String threadId, String runId, List<ToolOutput> toolOutputs,
         Context span) {
-
-        // Set common span attributes
-        this.traceCommonAttributes(span, GEN_AI_SYSTEM_VALUE, OPERATION_SUBMIT_TOOL_OUTPUTS);
-
         // Set request attributes
         this.setAttributeIfNotNull(GEN_AI_THREAD_ID_KEY, threadId, span);
         this.setAttributeIfNotNull(GEN_AI_RUN_ID_KEY, runId, span);
@@ -218,7 +207,6 @@ public class RunsClientTracer extends ClientTracer {
                 }
 
                 Map<String, Object> eventAttributes = new HashMap<>();
-                eventAttributes.put(GEN_AI_SYSTEM_KEY, GEN_AI_SYSTEM_VALUE);
                 eventAttributes.put(GEN_AI_THREAD_ID_KEY, threadId);
                 eventAttributes.put(GEN_AI_RUN_ID_KEY, runId);
 
@@ -301,9 +289,6 @@ public class RunsClientTracer extends ClientTracer {
      * @param span The current span context.
      */
     void traceListRunStepsInvocationAttributes(String threadId, String runId, Context span) {
-        // Set common span attributes
-        this.traceCommonAttributes(span, GEN_AI_SYSTEM_VALUE, OPERATION_LIST_RUN_STEPS);
-
         // Set request attributes
         this.setAttributeIfNotNull(GEN_AI_THREAD_ID_KEY, threadId, span);
         this.setAttributeIfNotNull(GEN_AI_RUN_ID_KEY, runId, span);

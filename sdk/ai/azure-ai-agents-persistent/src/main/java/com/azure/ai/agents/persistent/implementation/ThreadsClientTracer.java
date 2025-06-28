@@ -11,6 +11,7 @@ import com.azure.core.util.Configuration;
 import com.azure.core.util.Context;
 import com.azure.core.util.CoreUtils;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.core.util.metrics.Meter;
 import com.azure.core.util.tracing.Tracer;
 import reactor.core.publisher.Mono;
 
@@ -24,7 +25,6 @@ public class ThreadsClientTracer extends ClientTracer {
 
     // Thread-specific constants
     static final String GEN_AI_THREAD_ID_KEY = "gen_ai.thread.id";
-    static final String GEN_AI_SYSTEM_VALUE = "az.ai.agents";
     static final String OPERATION_CREATE_THREAD = "create_thread";
     static final String EVENT_NAME_USER_MESSAGE = "gen_ai.user.message";
 
@@ -36,8 +36,8 @@ public class ThreadsClientTracer extends ClientTracer {
      *     if {@code null} is passed then {@link Configuration#getGlobalConfiguration()} will be used.
      * @param tracer the Tracer instance.
      */
-    public ThreadsClientTracer(String endpoint, Configuration configuration, Tracer tracer) {
-        super(endpoint, configuration, tracer);
+    public ThreadsClientTracer(String endpoint, Configuration configuration, Tracer tracer, Meter meter) {
+        super(endpoint, configuration, tracer, meter);
     }
 
     //<editor-fold desc="Tracing CreateThread">
@@ -79,47 +79,29 @@ public class ThreadsClientTracer extends ClientTracer {
      */
     void traceCreateThreadInvocationAttributes(Context span, List<ThreadMessageOptions> messages,
         ToolResources toolResources) {
-        // Set common span attributes
-        this.traceCommonAttributes(span, GEN_AI_SYSTEM_VALUE, OPERATION_CREATE_THREAD);
-
         // Process and record messages if content capture is enabled
         if (captureContent && messages != null && !messages.isEmpty()) {
-            traceCreateThreadMessages(messages, span);
-        }
-    }
+            for (ThreadMessageOptions message : messages) {
+                if (message == null) {
+                    continue;
+                }
 
-    /**
-     * Trace the user messages included in the thread creation.
-     *
-     * @param messages The messages to be included in the thread.
-     * @param span The current span context.
-     */
-    void traceCreateThreadMessages(List<ThreadMessageOptions> messages, Context span) {
-        if (!captureContent || messages == null || messages.isEmpty()) {
-            return;
-        }
+                Map<String, Object> eventAttributes = new HashMap<>();
 
-        for (ThreadMessageOptions message : messages) {
-            if (message == null) {
-                continue;
-            }
+                // Create the content body
+                Map<String, Object> contentMap = new HashMap<>();
+                if (message.getContent() != null) {
+                    contentMap.put("content", message.getContent().toString());
+                }
+                if (message.getRole() != null) {
+                    contentMap.put("role", message.getRole().toString());
+                }
 
-            Map<String, Object> eventAttributes = new HashMap<>();
-            eventAttributes.put(GEN_AI_SYSTEM_KEY, GEN_AI_SYSTEM_VALUE);
-
-            // Create the content body
-            Map<String, Object> contentMap = new HashMap<>();
-            if (message.getContent() != null) {
-                contentMap.put("content", message.getContent().toString());
-            }
-            if (message.getRole() != null) {
-                contentMap.put("role", message.getRole().toString());
-            }
-
-            String eventContent = toJsonString(contentMap);
-            if (eventContent != null) {
-                eventAttributes.put(GEN_AI_EVENT_CONTENT, eventContent);
-                tracer.addEvent(EVENT_NAME_USER_MESSAGE, eventAttributes, null, span);
+                String eventContent = toJsonString(contentMap);
+                if (eventContent != null) {
+                    eventAttributes.put(GEN_AI_EVENT_CONTENT, eventContent);
+                    tracer.addEvent(EVENT_NAME_USER_MESSAGE, eventAttributes, null, span);
+                }
             }
         }
     }
