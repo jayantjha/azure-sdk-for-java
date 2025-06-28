@@ -134,7 +134,7 @@ public class RunsClientTracer extends ClientTracer {
      * @param span The current span context.
      * @param run The thread run created.
      */
-    void traceCreateRunResponseAttributes(Context span, ThreadRun run) {
+    void traceCreateRunResponseAttributes(Context span, Map<String, Object> traceAttributes, ThreadRun run) {
         if (run != null) {
             this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, run.getId(), span);
             this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, run.getThreadId(), span);
@@ -233,9 +233,8 @@ public class RunsClientTracer extends ClientTracer {
      * @param span The current span context.
      * @param run The thread run after submitting tool outputs.
      */
-    void traceSubmitToolOutputsResponseAttributes(Context span, ThreadRun run) {
-        // Reuse the same response attribute recording as create run
-        traceCreateRunResponseAttributes(span, run);
+    void traceSubmitToolOutputsResponseAttributes(Context span, Map<String, Object> traceAttributes, ThreadRun run) {
+        traceCreateRunResponseAttributes(span, traceAttributes, run);
     }
     //</editor-fold>
 
@@ -255,7 +254,7 @@ public class RunsClientTracer extends ClientTracer {
 
         return this.traceSyncOperation(OPERATION_LIST_RUN_STEPS, operation, requestOptions, (span) -> {
             traceListRunStepsInvocationAttributes(threadId, runId, span);
-        }, (span, result) -> {
+        }, (span, attributes, result) -> {
             // For paged collections, we trace thread and run IDs since we can't access actual items yet
             traceListRunStepsResponseAttributes(span, threadId, runId);
         });
@@ -275,7 +274,7 @@ public class RunsClientTracer extends ClientTracer {
 
         return this.traceAsyncFluxOperation(OPERATION_LIST_RUN_STEPS, operation, requestOptions, (span) -> {
             traceListRunStepsInvocationAttributes(threadId, runId, span);
-        }, (span, result) -> {
+        }, (span, attributes, result) -> {
             // For paged collections, we trace thread and run IDs since we can't access actual items yet
             traceListRunStepsResponseAttributes(span, threadId, runId);
         });

@@ -121,7 +121,7 @@ public class PersistentAgentsAdministrationClientTracer extends ClientTracer {
         }
     }
 
-    void traceCreateAgentResponseAttributes(Context span, PersistentAgent agent) {
+    void traceCreateAgentResponseAttributes(Context span, Map<String, Object> traceAttributes, PersistentAgent agent) {
         if (agent != null && !CoreUtils.isNullOrEmpty(agent.getId())) {
             tracer.setAttribute(GEN_AI_AGENT_ID_KEY, agent.getId(), span);
         }

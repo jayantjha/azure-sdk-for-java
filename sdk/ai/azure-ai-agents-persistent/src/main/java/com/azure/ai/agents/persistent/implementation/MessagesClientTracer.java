@@ -190,7 +190,7 @@ public class MessagesClientTracer extends ClientTracer {
      * @param span The current span context.
      * @param message The persistent message created.
      */
-    void traceCreateMessageResponseAttributes(Context span, ThreadMessage message) {
+    void traceCreateMessageResponseAttributes(Context span, Map<String, Object> traceAttributes, ThreadMessage message) {
         if (message != null) {
             this.setAttributeIfNotNullOrEmpty(GEN_AI_MESSAGE_ID_KEY, message.getId(), span);
             this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, message.getThreadId(), span);
@@ -217,7 +217,7 @@ public class MessagesClientTracer extends ClientTracer {
 
         return this.traceSyncOperation(OPERATION_LIST_MESSAGE, operation, requestOptions, (span) -> {
             traceListMessagesInvocationAttributes(span, threadId, runId);
-        }, (span, result) -> {
+        }, (span, attributes, result) -> {
             // For paged collections, we trace thread and run IDs since we can't access actual items yet
             traceListMessagesResponseAttributes(span, threadId, runId);
         });
@@ -237,7 +237,7 @@ public class MessagesClientTracer extends ClientTracer {
 
         return this.traceAsyncFluxOperation(OPERATION_LIST_MESSAGE, operation, requestOptions, (span) -> {
             traceListMessagesInvocationAttributes(span, threadId, runId);
-        }, (span, result) -> {
+        }, (span, attributes, result) -> {
             traceListMessagesResponseAttributes(span, threadId, runId);
         });
     }

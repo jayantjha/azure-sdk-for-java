@@ -30,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -169,7 +170,7 @@ public abstract class ClientTracer {
             return operation.invoke(requestOptions);
         }
         final Context span = tracer.start(operationName, START_SPAN_OPTIONS, parentSpan(requestOptions));
-        Instant start = Instant.now();
+        Instant startTime = Instant.now();
         Map<String, Object> traceAttributes = this.traceCommonAttributes(span, operationName);
         if (tracer.isRecording(span)) {
             traceBeforeInvocation.invoke(span);
@@ -181,8 +182,7 @@ public abstract class ClientTracer {
             if (tracer.isRecording(span) && result != null) {
                 traceAfterInvocation.invoke(span, traceAttributes, result);
             }
-            durationHistogram.record(Instant.now().getEpochSecond() - start.getEpochSecond(),
-                meter.createAttributes(traceAttributes), span);
+            recordDuration(span, startTime, traceAttributes);
             tracer.end(null, null, span);
             return result;
         } catch (Exception e) {
@@ -190,8 +190,7 @@ public abstract class ClientTracer {
                 traceErrorAttributes(span, e);
             }
             traceAttributes.put(ERROR_TYPE_KEY, e.getClass().getName());
-            durationHistogram.record(Instant.now().getEpochSecond() - start.getEpochSecond(),
-                meter.createAttributes(traceAttributes), span);
+            recordDuration(span, startTime, traceAttributes);
             tracer.end(null, e, span);
             sneakyThrows(e);
         }
@@ -206,22 +205,29 @@ public abstract class ClientTracer {
             return operation.invoke(requestOptions);
         }
 
-        final Mono<Context> resourceSupplier = Mono.fromSupplier(() -> {
-            final Context span = tracer.start(spanName, START_SPAN_OPTIONS, parentSpan(requestOptions));
+        final Mono<Context> resourceSupplier = Mono.fromSupplier(()
+            -> tracer.start(spanName, START_SPAN_OPTIONS, parentSpan(requestOptions)));
+
+        final Function<Context, Mono<R>> resourceClosure = span -> {
+            final Map<String, Object> traceAttributes = this.traceCommonAttributes(span, spanName);
+            final Instant startTime = Instant.now();
+
             if (tracer.isRecording(span)) {
                 traceBeforeInvocation.invoke(span);
             }
-            return span;
-        });
-
-        final Function<Context, Mono<R>> resourceClosure = span -> {
-            final RequestOptions rOptions = requestOptions.setContext(span);
-
-            return operation.invoke(rOptions).map(response -> {
+            return operation.invoke(requestOptions.setContext(span)).map(response -> {
                 if (tracer.isRecording(span)) {
-                    traceAfterInvocation.invoke(span, response);
+                    traceAfterInvocation.invoke(span, traceAttributes, response);
                 }
+                recordDuration(span, startTime, traceAttributes);
                 return response;
+            }).onErrorResume(error -> {
+                if (tracer.isRecording(span)) {
+                    traceErrorAttributes(span, error);
+                }
+                traceAttributes.put(ERROR_TYPE_KEY, error.getClass().getName());
+                recordDuration(span, startTime, traceAttributes);
+                return Mono.error(error);
             });
         };
 
@@ -237,27 +243,41 @@ public abstract class ClientTracer {
             return operation.invoke(requestOptions);
         }
 
-        final Mono<Context> resourceSupplier = Mono.fromSupplier(() -> {
-            final Context span = tracer.start(spanName, START_SPAN_OPTIONS, parentSpan(requestOptions));
+        final Mono<Context> resourceSupplier = Mono.fromSupplier(()
+            -> tracer.start(spanName, START_SPAN_OPTIONS, parentSpan(requestOptions)));
+
+        final Function<Context, Flux<R>> resourceClosure = span -> {
+            final Map<String, Object> traceAttributes = this.traceCommonAttributes(span, spanName);
+            final Instant startTime = Instant.now();
+
             if (tracer.isRecording(span)) {
                 traceBeforeInvocation.invoke(span);
             }
-            return span;
-        });
-
-        final Function<Context, Flux<R>> resourceClosure = span -> {
-            final RequestOptions rOptions = requestOptions.setContext(span);
-
-            return operation.invoke(rOptions).map(response -> {
+            return operation.invoke(requestOptions.setContext(span)).map(response -> {
                 if (tracer.isRecording(span)) {
-                    traceAfterInvocation.invoke(span, response);
+                    traceAfterInvocation.invoke(span, traceAttributes, response);
                 }
+                recordDuration(span, startTime, traceAttributes);
                 return response;
+            })
+            .onErrorResume(error -> {
+                if (tracer.isRecording(span)) {
+                    traceErrorAttributes(span, error);
+                }
+                traceAttributes.put(ERROR_TYPE_KEY, error.getClass().getName());
+                recordDuration(span, startTime, traceAttributes);
+                return Flux.error(error);
             });
         };
 
         return (T) Flux.usingWhen(resourceSupplier, resourceClosure, getAsyncComplete(), getAsyncError(),
             getAsyncCancel());
+    }
+
+    // Helper method to record duration metrics
+    private void recordDuration(Context span, Instant startTime, Map<String, Object> traceAttributes) {
+        durationHistogram.record(Instant.now().getEpochSecond() - startTime.getEpochSecond(),
+            meter.createAttributes(traceAttributes), span);
     }
 
     protected void setAttributeIfNotNull(String key, Object value, Context span) {
