@@ -80,7 +80,7 @@ public class ThreadsClientTracer extends ClientTracer {
     void traceCreateThreadInvocationAttributes(Context span, List<ThreadMessageOptions> messages,
         ToolResources toolResources) {
         // Process and record messages if content capture is enabled
-        if (captureContent && messages != null && !messages.isEmpty()) {
+        if (traceContent && messages != null && !messages.isEmpty()) {
             for (ThreadMessageOptions message : messages) {
                 if (message == null) {
                     continue;

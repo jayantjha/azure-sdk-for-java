@@ -118,7 +118,7 @@ public class MessagesClientTracer extends ClientTracer {
         }
 
         // Record message content as an event if content capture is enabled
-        if (captureContent) {
+        if (traceContent) {
             Map<String, Object> eventAttributes = new HashMap<>();
             eventAttributes.put(GEN_AI_SYSTEM_KEY, GEN_AI_SYSTEM_VALUE);
             eventAttributes.put(GEN_AI_THREAD_ID_KEY, threadId);

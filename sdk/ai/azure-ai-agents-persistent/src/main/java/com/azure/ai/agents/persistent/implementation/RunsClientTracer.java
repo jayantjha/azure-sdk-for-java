@@ -44,8 +44,8 @@ public class RunsClientTracer extends ClientTracer {
     static final String OPERATION_CREATE_THREAD_RUN = "create_thread_run";
     static final String OPERATION_SUBMIT_TOOL_OUTPUTS = "submit_tool_outputs";
     static final String OPERATION_LIST_RUN_STEPS = "list_run_steps";
-    static final String EVENT_NAME_TOOL_MESSAGE = "gen_ai.tool.message";
-    static final String EVENT_NAME_SYSTEM_MESSAGE = "gen_ai.system.message";
+    static final String EVENT_GEN_AI_TOOL_MESSAGE = "gen_ai.tool.message";
+    static final String EVENT_GENT_AI_SYSTEM_MESSAGE = "gen_ai.system.message";
 
     /**
      * Creates RunsClientTracer.
@@ -107,7 +107,7 @@ public class RunsClientTracer extends ClientTracer {
             this.setAttributeIfNotNull(GEN_AI_AGENT_ID_KEY, options.getAssistantId(), span);
 
             // Record system instructions as an event if content capture is enabled (same as non-streaming)
-            if (captureContent && !CoreUtils.isNullOrEmpty(options.getInstructions())) {
+            if (traceContent && !CoreUtils.isNullOrEmpty(options.getInstructions())) {
                 Map<String, Object> eventAttributes = new HashMap<>();
                 eventAttributes.put(GEN_AI_THREAD_ID_KEY, options.getThreadId());
                 eventAttributes.put(GEN_AI_AGENT_ID_KEY, options.getAssistantId());
@@ -122,7 +122,7 @@ public class RunsClientTracer extends ClientTracer {
                 String eventContent = toJsonString(contentMap);
                 if (eventContent != null) {
                     eventAttributes.put(GEN_AI_EVENT_CONTENT, eventContent);
-                    tracer.addEvent(EVENT_NAME_SYSTEM_MESSAGE, eventAttributes, null, span);
+                    tracer.addEvent(EVENT_GENT_AI_SYSTEM_MESSAGE, eventAttributes, null, span);
                 }
             }
         }
@@ -200,7 +200,7 @@ public class RunsClientTracer extends ClientTracer {
         this.setAttributeIfNotNull(GEN_AI_RUN_ID_KEY, runId, span);
 
         // Record tool outputs as events if content capture is enabled
-        if (captureContent && toolOutputs != null && !toolOutputs.isEmpty()) {
+        if (traceContent && toolOutputs != null && !toolOutputs.isEmpty()) {
             for (ToolOutput toolOutput : toolOutputs) {
                 if (toolOutput == null) {
                     continue;
@@ -221,7 +221,7 @@ public class RunsClientTracer extends ClientTracer {
                 String eventContent = toJsonString(contentMap);
                 if (eventContent != null) {
                     eventAttributes.put(GEN_AI_EVENT_CONTENT, eventContent);
-                    tracer.addEvent(EVENT_NAME_TOOL_MESSAGE, eventAttributes, null, span);
+                    tracer.addEvent(EVENT_GEN_AI_TOOL_MESSAGE, eventAttributes, null, span);
                 }
             }
         }

@@ -104,7 +104,7 @@ public class PersistentAgentsAdministrationClientTracer extends ClientTracer {
         }
 
         // Record system message event if content capture is enabled
-        if (captureContent
+        if (traceContent
             && createAgentOptions != null
             && !CoreUtils.isNullOrEmpty(createAgentOptions.getInstructions())) {
             Map<String, Object> eventAttributes = new HashMap<>();

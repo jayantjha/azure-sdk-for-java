@@ -8,6 +8,7 @@ import com.azure.core.util.ConfigurationProperty;
 import com.azure.core.util.ConfigurationPropertyBuilder;
 import com.azure.core.util.Context;
 import com.azure.core.util.CoreUtils;
+import com.azure.core.util.TelemetryAttributes;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.metrics.DoubleHistogram;
 import com.azure.core.util.metrics.LongCounter;
@@ -26,6 +27,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -48,13 +51,13 @@ public abstract class ClientTracer {
 
     @FunctionalInterface
     public interface TraceAfterInvocation<T> {
-        void invoke(Context span, T result);
+        void invoke(Context span, Map<String, Object> traceAttributes, T result);
     }
 
     private static final ClientLogger LOGGER = new ClientLogger(ClientTracer.class);
 
     protected static final StartSpanOptions START_SPAN_OPTIONS = new StartSpanOptions(SpanKind.CLIENT);
-    protected static final ConfigurationProperty<Boolean> CAPTURE_MESSAGE_CONTENT
+    protected static final ConfigurationProperty<Boolean> TRACE_CONTENT
         = ConfigurationPropertyBuilder.ofBoolean("azure.tracing.gen_ai.content_recording_enabled")
             .environmentVariableName("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
             .systemPropertyName("azure.tracing.gen_ai.content_recording_enabled")
@@ -82,7 +85,7 @@ public abstract class ClientTracer {
 
     protected final String host;
     protected final int port;
-    protected final boolean captureContent;
+    protected final boolean traceContent;
     protected final Tracer tracer;
     protected final Meter meter;
     protected final DoubleHistogram durationHistogram;
@@ -98,7 +101,7 @@ public abstract class ClientTracer {
     protected BiFunction<Context, Throwable, Mono<Void>> getAsyncError() {
         return (span, throwable) -> {
             if (tracer.isRecording(span)) {
-                traceErrorAttributes(throwable, span);
+                traceErrorAttributes(span, throwable);
             }
             tracer.end(null, throwable, span);
             return Mono.empty();
@@ -129,9 +132,9 @@ public abstract class ClientTracer {
             this.host = null;
             this.port = -1;
         }
-        this.captureContent = configuration == null
-            ? GLOBAL_CONFIG.get(CAPTURE_MESSAGE_CONTENT)
-            : configuration.get(CAPTURE_MESSAGE_CONTENT);
+        this.traceContent = configuration == null
+            ? GLOBAL_CONFIG.get(TRACE_CONTENT)
+            : configuration.get(TRACE_CONTENT);
         this.tracer = tracer;
         this.meter = meter;
         this.durationHistogram = meter.createDoubleHistogram(GEN_AI_CLIENT_OPERATION_DURATION_METRIC_NAME,
@@ -140,18 +143,23 @@ public abstract class ClientTracer {
             "Measures the number of input and output token used.", "{token}");
     }
 
-    private void traceCommonAttributes(Context span, String operationName) {
-        tracer.setAttribute(GEN_AI_SYSTEM_KEY, GEN_AI_SYSTEM_VALUE, span);
-        tracer.setAttribute(GEN_AI_OPERATION_NAME_KEY, operationName, span);
-        tracer.setAttribute(AZ_NAMESPACE_KEY, AZURE_RP_NAMESPACE_VALUE, span);
+    private Map<String, Object> traceCommonAttributes(Context span, String operationName) {
+        Map<String, Object> commonAttributes = new HashMap<>();
+        commonAttributes.put(GEN_AI_SYSTEM_KEY, GEN_AI_SYSTEM_VALUE);
+        commonAttributes.put(GEN_AI_OPERATION_NAME_KEY, operationName);
+        commonAttributes.put(AZ_NAMESPACE_KEY, AZURE_RP_NAMESPACE_VALUE);
 
         // set server attributes
         if (host != null) {
-            tracer.setAttribute(SERVER_ADDRESS_KEY, host, span);
+            commonAttributes.put(SERVER_ADDRESS_KEY, host);
             if (port != -1 && port != 443) {
-                tracer.setAttribute(SERVER_PORT_KEY, port, span);
+                commonAttributes.put(SERVER_PORT_KEY, port);
             }
         }
+        for (Map.Entry<String, Object> entry : commonAttributes.entrySet()) {
+            tracer.setAttribute(entry.getKey(), entry.getValue(), span);
+        }
+        return commonAttributes;
     }
 
     @SuppressWarnings("try")
@@ -161,22 +169,29 @@ public abstract class ClientTracer {
             return operation.invoke(requestOptions);
         }
         final Context span = tracer.start(operationName, START_SPAN_OPTIONS, parentSpan(requestOptions));
-        this.traceCommonAttributes(span, operationName);
+        Instant start = Instant.now();
+        Map<String, Object> traceAttributes = this.traceCommonAttributes(span, operationName);
         if (tracer.isRecording(span)) {
             traceBeforeInvocation.invoke(span);
         }
 
         try (AutoCloseable ignored = tracer.makeSpanCurrent(span)) {
             final T result = operation.invoke(requestOptions.setContext(span));
+
             if (tracer.isRecording(span) && result != null) {
-                traceAfterInvocation.invoke(span, result);
+                traceAfterInvocation.invoke(span, traceAttributes, result);
             }
+            durationHistogram.record(Instant.now().getEpochSecond() - start.getEpochSecond(),
+                meter.createAttributes(traceAttributes), span);
             tracer.end(null, null, span);
             return result;
         } catch (Exception e) {
             if (tracer.isRecording(span)) {
-                traceErrorAttributes(e, span);
+                traceErrorAttributes(span, e);
             }
+            traceAttributes.put(ERROR_TYPE_KEY, e.getClass().getName());
+            durationHistogram.record(Instant.now().getEpochSecond() - start.getEpochSecond(),
+                meter.createAttributes(traceAttributes), span);
             tracer.end(null, e, span);
             sneakyThrows(e);
         }
@@ -260,10 +275,10 @@ public abstract class ClientTracer {
     /**
      * Records error attributes on the span.
      *
-     * @param e The exception that occurred.
      * @param span The current span context.
+     * @param e The exception that occurred.
      */
-    protected void traceErrorAttributes(Throwable e, Context span) {
+    protected void traceErrorAttributes(Context span, Throwable e) {
         if (e != null) {
             tracer.setAttribute(ERROR_TYPE_KEY, e.getClass().getName(), span);
             this.setAttributeIfNotNull(ERROR_MESSAGE_KEY, e.getMessage(), span);
