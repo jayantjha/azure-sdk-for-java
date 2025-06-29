@@ -45,7 +45,7 @@ public class RunsClientTracer extends ClientTracer {
     static final String OPERATION_SUBMIT_TOOL_OUTPUTS = "submit_tool_outputs";
     static final String OPERATION_LIST_RUN_STEPS = "list_run_steps";
     static final String EVENT_GEN_AI_TOOL_MESSAGE = "gen_ai.tool.message";
-    static final String EVENT_GENT_AI_SYSTEM_MESSAGE = "gen_ai.system.message";
+    static final String EVENT_GEN_AI_SYSTEM_MESSAGE = "gen_ai.system.message";
 
     /**
      * Creates RunsClientTracer.
@@ -113,16 +113,13 @@ public class RunsClientTracer extends ClientTracer {
                 eventAttributes.put(GEN_AI_AGENT_ID_KEY, options.getAssistantId());
 
                 Map<String, Object> contentMap = new HashMap<>();
-                contentMap.put("instructions", options.getInstructions());
-
-                if (!CoreUtils.isNullOrEmpty(options.getAdditionalInstructions())) {
-                    contentMap.put("additional_instructions", options.getAdditionalInstructions());
-                }
+                putIfNotNullOrEmpty(contentMap, "instructions", options.getInstructions());
+                putIfNotNullOrEmpty(contentMap, "additional_instructions", options.getAdditionalInstructions());
 
                 String eventContent = toJsonString(contentMap);
                 if (eventContent != null) {
                     eventAttributes.put(GEN_AI_EVENT_CONTENT, eventContent);
-                    tracer.addEvent(EVENT_GENT_AI_SYSTEM_MESSAGE, eventAttributes, null, span);
+                    tracer.addEvent(EVENT_GEN_AI_SYSTEM_MESSAGE, eventAttributes, null, span);
                 }
             }
         }
@@ -139,10 +136,7 @@ public class RunsClientTracer extends ClientTracer {
             this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, run.getId(), span);
             this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, run.getThreadId(), span);
             this.setAttributeIfNotNullOrEmpty(GEN_AI_AGENT_ID_KEY, run.getAssistantId(), span);
-
-            if (run.getStatus() != null) {
-                this.setAttributeIfNotNull(GEN_AI_RUN_STATUS_KEY, run.getStatus().toString(), span);
-            }
+            this.setAttributeIfNotNull(GEN_AI_RUN_STATUS_KEY, run.getStatus(), span);
         }
     }
     //</editor-fold>
@@ -200,7 +194,7 @@ public class RunsClientTracer extends ClientTracer {
         this.setAttributeIfNotNull(GEN_AI_RUN_ID_KEY, runId, span);
 
         // Record tool outputs as events if content capture is enabled
-        if (traceContent && toolOutputs != null && !toolOutputs.isEmpty()) {
+        if (toolOutputs != null && !toolOutputs.isEmpty()) {
             for (ToolOutput toolOutput : toolOutputs) {
                 if (toolOutput == null) {
                     continue;
@@ -211,12 +205,8 @@ public class RunsClientTracer extends ClientTracer {
                 eventAttributes.put(GEN_AI_RUN_ID_KEY, runId);
 
                 Map<String, Object> contentMap = new HashMap<>();
-                if (!CoreUtils.isNullOrEmpty(toolOutput.getToolCallId())) {
-                    contentMap.put("tool_call_id", toolOutput.getToolCallId());
-                }
-                if (!CoreUtils.isNullOrEmpty(toolOutput.getOutput())) {
-                    contentMap.put("output", toolOutput.getOutput());
-                }
+                putIfNotNullOrEmpty(contentMap, "id", traceContent ? toolOutput.getToolCallId() : "");
+                putIfNotNullOrEmpty(contentMap, "content", toolOutput.getOutput());
 
                 String eventContent = toJsonString(contentMap);
                 if (eventContent != null) {

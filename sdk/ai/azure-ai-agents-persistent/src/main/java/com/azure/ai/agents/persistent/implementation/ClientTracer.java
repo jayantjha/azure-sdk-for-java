@@ -8,7 +8,6 @@ import com.azure.core.util.ConfigurationProperty;
 import com.azure.core.util.ConfigurationPropertyBuilder;
 import com.azure.core.util.Context;
 import com.azure.core.util.CoreUtils;
-import com.azure.core.util.TelemetryAttributes;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.metrics.DoubleHistogram;
 import com.azure.core.util.metrics.LongCounter;
@@ -29,8 +28,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -407,6 +406,24 @@ public abstract class ClientTracer {
     @SuppressWarnings("unchecked")
     protected static <E extends Throwable> void sneakyThrows(Throwable e) throws E {
         throw (E) e;
+    }
+
+    protected static void putIfNotNullOrEmpty(Map<String, Object> map, String key, String value) {
+        if (!CoreUtils.isNullOrEmpty(value)) {
+            map.put(key, value);
+        }
+    }
+
+    protected static void putIfNotNull(Map<String, Object> map, String key, Object value) {
+        if (value != null) {
+            map.put(key, value);
+        }
+    }
+
+    protected static <T> void putIfNotNullOrEmpty(Map<String, Object> map, String key, List<T> value) {
+        if (value != null && !value.isEmpty()) {
+            map.put(key, value);
+        }
     }
 
     /**

@@ -111,7 +111,7 @@ public class PersistentAgentsAdministrationClientTracer extends ClientTracer {
             eventAttributes.put(GEN_AI_SYSTEM_KEY, GEN_AI_SYSTEM_VALUE);
 
             Map<String, Object> contentMap = new HashMap<>();
-            contentMap.put("content", createAgentOptions.getInstructions());
+            putIfNotNullOrEmpty(contentMap, "content", createAgentOptions.getInstructions());
 
             String eventContent = toJsonString(contentMap);
             if (eventContent != null) {

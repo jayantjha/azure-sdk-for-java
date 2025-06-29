@@ -22,6 +22,7 @@ import reactor.core.publisher.Mono;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Tracer for the convenience methods in {@link MessagesClient} and
@@ -124,25 +125,15 @@ public class MessagesClientTracer extends ClientTracer {
             eventAttributes.put(GEN_AI_THREAD_ID_KEY, threadId);
 
             Map<String, Object> contentMap = new HashMap<>();
-
-            // Add message content
-            if (content != null) {
-                contentMap.put("content", content.toString());
-            }
-
-            // Add message role
-            if (role != null) {
-                contentMap.put("role", role.toString());
-            }
+            putIfNotNullOrEmpty(contentMap, "content", content.toString());
+            putIfNotNullOrEmpty(contentMap, "role", role.toString());
 
             // Add attachments if present
             if (attachments != null && !attachments.isEmpty()) {
                 List<Map<String, Object>> attachmentsArray
-                    = attachments.stream().map(this::attachmentToMap).collect(java.util.stream.Collectors.toList());
+                    = attachments.stream().map(this::attachmentToMap).collect(Collectors.toList());
 
-                if (!attachmentsArray.isEmpty()) {
-                    contentMap.put("attachments", attachmentsArray);
-                }
+                putIfNotNullOrEmpty(contentMap, "attachments", attachmentsArray);
             }
 
             String eventContent = toJsonString(contentMap);
@@ -161,26 +152,16 @@ public class MessagesClientTracer extends ClientTracer {
      */
     private Map<String, Object> attachmentToMap(MessageAttachment attachment) {
         Map<String, Object> attachmentMap = new HashMap<>();
-
-        if (attachment.getFileId() != null) {
-            attachmentMap.put("file_id", attachment.getFileId());
-        }
+        putIfNotNull(attachmentMap, "file_id", attachment.getFileId());
 
         if (attachment.getDataSource() != null) {
             Map<String, Object> dataSourceMap = new HashMap<>();
-            if (attachment.getDataSource().getAssetIdentifier() != null) {
-                dataSourceMap.put("asset_identifier", attachment.getDataSource().getAssetIdentifier());
-            }
-            if (attachment.getDataSource().getAssetType() != null) {
-                dataSourceMap.put("asset_type", attachment.getDataSource().toString());
-            }
+            putIfNotNull(dataSourceMap,"asset_identifier", attachment.getDataSource().getAssetIdentifier());
+            putIfNotNull(dataSourceMap, "asset_type", attachment.getDataSource().getAssetType());
             attachmentMap.put("data_source", dataSourceMap);
         }
 
-        if (attachment.getTools() != null && !attachment.getTools().isEmpty()) {
-            attachmentMap.put("tools", attachment.getTools());
-        }
-
+        putIfNotNullOrEmpty(attachmentMap, "tools", attachment.getTools());
         return attachmentMap;
     }
 

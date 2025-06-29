@@ -88,14 +88,9 @@ public class ThreadsClientTracer extends ClientTracer {
 
                 Map<String, Object> eventAttributes = new HashMap<>();
 
-                // Create the content body
                 Map<String, Object> contentMap = new HashMap<>();
-                if (message.getContent() != null) {
-                    contentMap.put("content", message.getContent().toString());
-                }
-                if (message.getRole() != null) {
-                    contentMap.put("role", message.getRole().toString());
-                }
+                putIfNotNull(contentMap, "content", message.getContent());
+                putIfNotNull(contentMap, "role", message.getRole().toString());
 
                 String eventContent = toJsonString(contentMap);
                 if (eventContent != null) {
