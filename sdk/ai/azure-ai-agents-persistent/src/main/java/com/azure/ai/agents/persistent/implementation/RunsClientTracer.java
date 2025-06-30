@@ -14,10 +14,18 @@ import com.azure.core.util.Context;
 import com.azure.core.util.CoreUtils;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.metrics.Meter;
+import com.azure.core.util.serializer.JsonSerializerProviders;
+import com.azure.core.util.serializer.TypeReference;
 import com.azure.core.util.tracing.Tracer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.ByteArrayInputStream;
+import java.lang.reflect.Type;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +51,10 @@ public class RunsClientTracer extends ClientTracer {
     static final String GEN_AI_USAGE_INPUT_TOKENS_KEY = "gen_ai.usage.input_tokens";
     static final String GEN_AI_USAGE_OUTPUT_TOKENS_KEY = "gen_ai.usage.output_tokens";
     static final String GEN_AI_RESPONSE_MODEL_KEY = "gen_ai.response.model";
+
+    static final String GEN_AI_RUN_STEP_START_TIMESTAMP_KEY = "gen_ai.run_step.start.timestamp";
+    static final String GEN_AI_RUN_STEP_END_TIMESTAMP_KEY = "gen_ai.run_step.end.timestamp";
+
     static final String OPERATION_CREATE_THREAD_RUN = "create_thread_run";
     static final String OPERATION_CREATE_THREAD_RUN_STREAMING = "create_thread_run_streaming";
     static final String OPERATION_SUBMIT_TOOL_OUTPUTS = "submit_tool_outputs";
@@ -50,6 +62,8 @@ public class RunsClientTracer extends ClientTracer {
     static final String OPERATION_LIST_RUN_STEPS = "list_run_steps";
     static final String EVENT_GEN_AI_TOOL_MESSAGE = "gen_ai.tool.message";
     static final String EVENT_GEN_AI_SYSTEM_MESSAGE = "gen_ai.system.message";
+    static final String EVENT_GEN_AI_RUN_STEP_MESSAGE_CREATION = "gen_ai.run_step.message_creation";
+    static final String EVENT_GEN_AI_RUN_STEP_TOOL_CALLS = "gen_ai.run_step.tool_calls";
 
     /**
      * Creates RunsClientTracer.
@@ -158,7 +172,7 @@ public class RunsClientTracer extends ClientTracer {
 
         return this.traceSyncOperation(OPERATION_CREATE_THREAD_RUN_STREAMING, operation, requestOptions, (span) -> {
             traceCreateRunInvocationAttributes(options, span);
-        }, this::traceCreateRunStreamingResponseAttributes);
+        }, this::traceStreamUpdatesResponseAttributes);
     }
 
     /**
@@ -176,7 +190,7 @@ public class RunsClientTracer extends ClientTracer {
             (span) -> {
                 traceCreateRunInvocationAttributes(options, span);
             }, (span, traceAttributes, result) -> result.flatMap(streamUpdate -> {
-                traceCreateRunStreamUpdateResponseAttributes(span, traceAttributes, streamUpdate);
+                traceStreamUpdate(span, traceAttributes, streamUpdate, true);
                 return Flux.just(streamUpdate);
             }).then(Mono.empty()));
     }
@@ -187,65 +201,12 @@ public class RunsClientTracer extends ClientTracer {
      * @param span The current span context.
      * @param streamUpdates The stream updates received from the run.
      */
-    void traceCreateRunStreamingResponseAttributes(Context span, Map<String, Object> traceAttributes,
-        Stream<StreamUpdate> streamUpdates) {
-        //        if (run != null) {
-        //            this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, run.getId(), span);
-        //            this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, run.getThreadId(), span);
-        //            this.setAttributeIfNotNullOrEmpty(GEN_AI_AGENT_ID_KEY, run.getAssistantId(), span);
-        //            this.setAttributeIfNotNull(GEN_AI_RUN_STATUS_KEY, run.getStatus(), span);
-        //        }
-    }
-
-    /**
-     * Record the response attributes from a create run operation.
-     *
-     * @param span The current span context.
-     * @param streamUpdate The stream updates received from the run.
-     */
-    void traceCreateRunStreamingResponseAttributes(
-        Context span, Map<String, Object> traceAttributes, StreamUpdate streamUpdate) {
-        if (streamUpdate == null) {
-            return;
+    void traceStreamUpdatesResponseAttributes(
+        Context span, Map<String, Object> traceAttributes, Stream<StreamUpdate> streamUpdates) {
+        if (streamUpdates != null) {
+            streamUpdates.forEach(streamUpdate
+                -> traceStreamUpdate(span, traceAttributes, streamUpdate, true));
         }
-        else if (streamUpdate instanceof StreamThreadRunCreation) {
-            StreamThreadRunCreation threadRunUpdate = (StreamThreadRunCreation) streamUpdate;
-            ThreadRun run = threadRunUpdate.getMessage();
-            traceThreadRun(span, traceAttributes, run);
-        }
-        else if (streamUpdate instanceof StreamMessageCreation) {
-            StreamMessageCreation messageUpdate = (StreamMessageCreation) streamUpdate;
-            ThreadMessage message = messageUpdate.getMessage();
-        }
-        else if (streamUpdate instanceof StreamRunCreation) {
-            StreamRunCreation runStepUpdate = (StreamRunCreation) streamUpdate;
-            RunStep runStep = runStepUpdate.getMessage();
-            if (runStep.getStatus() == RunStepStatus.COMPLETED
-                && runStep.getType() == RunStepType.TOOL_CALLS
-                && runStep.getStepDetails() instanceof RunStepToolCallDetails) {
-
-            }
-            else if (runStep.getStatus() == RunStepStatus.COMPLETED
-                && runStep.getType() == RunStepType.MESSAGE_CREATION) {
-
-            }
-        }
-    }
-
-    /**
-     * Record the response attributes from a create run operation.
-     *
-     * @param span The current span context.
-     * @param streamUpdate The stream updates received from the run.
-     */
-    void traceCreateRunStreamUpdateResponseAttributes(Context span, Map<String, Object> traceAttributes,
-        StreamUpdate streamUpdate) {
-        //        if (run != null) {
-        //            this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, run.getId(), span);
-        //            this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, run.getThreadId(), span);
-        //            this.setAttributeIfNotNullOrEmpty(GEN_AI_AGENT_ID_KEY, run.getAssistantId(), span);
-        //            this.setAttributeIfNotNull(GEN_AI_RUN_STATUS_KEY, run.getStatus(), span);
-        //        }
     }
 
     //</editor-fold>
@@ -418,12 +379,154 @@ public class RunsClientTracer extends ClientTracer {
             this.setAttributeIfNotNullOrEmpty(GEN_AI_AGENT_ID_KEY, run.getAssistantId(), span);
             this.setAttributeIfNotNull(GEN_AI_RUN_STATUS_KEY, run.getStatus(), span);
             if (run.getUsage() != null) {
-                traceAttributes.put(GEN_AI_USAGE_OUTPUT_TOKENS_KEY, run.getUsage().getCompletionTokens());
-                this.setAttributeIfNotNull(GEN_AI_USAGE_OUTPUT_TOKENS_KEY, run.getUsage().getCompletionTokens(), span);
                 traceAttributes.put(GEN_AI_USAGE_INPUT_TOKENS_KEY, run.getUsage().getPromptTokens());
                 this.setAttributeIfNotNull(GEN_AI_USAGE_INPUT_TOKENS_KEY, run.getUsage().getPromptTokens(), span);
+                tokensCounter.add(run.getUsage().getPromptTokens(), meter.createAttributes(traceAttributes), span);
+
+                traceAttributes.put(GEN_AI_USAGE_OUTPUT_TOKENS_KEY, run.getUsage().getCompletionTokens());
+                this.setAttributeIfNotNull(GEN_AI_USAGE_OUTPUT_TOKENS_KEY, run.getUsage().getCompletionTokens(), span);
+                tokensCounter.add(run.getUsage().getCompletionTokens(), meter.createAttributes(traceAttributes), span);
             }
             this.setAttributeIfNotNullOrEmpty(GEN_AI_RESPONSE_MODEL_KEY, run.getModel(), span);
+        }
+    }
+
+    void traceRunStep(Context span, Map<String, Object> traceAttributes, RunStep runStep, boolean stream) {
+        if (runStep == null) {
+            return;
+        }
+
+        String runStepType = runStep.getType().toString().toLowerCase();
+        String eventName;
+
+        if (stream && RunStepType.TOOL_CALLS == runStep.getType()) {
+            eventName = EVENT_GEN_AI_TOOL_MESSAGE;
+        } else {
+            eventName = switch (runStepType) {
+                case "message_creation" -> EVENT_GEN_AI_RUN_STEP_MESSAGE_CREATION;
+                case "tool_calls" -> EVENT_GEN_AI_RUN_STEP_TOOL_CALLS;
+                default -> "gen_ai.run_step." + runStepType;
+            };
+        }
+
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put(GEN_AI_SYSTEM_KEY, GEN_AI_SYSTEM_VALUE);
+        attributes.put(GEN_AI_THREAD_ID_KEY, runStep.getThreadId());
+        attributes.put(GEN_AI_AGENT_ID_KEY, runStep.getAssistantId());
+        attributes.put(GEN_AI_RUN_ID_KEY, runStep.getRunId());
+        attributes.put(GEN_AI_RUN_STATUS_KEY, runStep.getStatus().toString());
+        attributes.put(GEN_AI_RUN_STEP_START_TIMESTAMP_KEY, runStep.getCreatedAt().toEpochSecond());
+
+        if (runStep.getCompletedAt() != null) {
+            attributes.put(GEN_AI_RUN_STEP_START_TIMESTAMP_KEY, runStep.getCompletedAt().toEpochSecond());
+        }
+
+        if (runStep.getCancelledAt() != null) {
+            attributes.put(GEN_AI_RUN_STEP_START_TIMESTAMP_KEY, runStep.getCancelledAt().toEpochSecond());
+        }
+
+        if (runStep.getFailedAt() != null) {
+            attributes.put(GEN_AI_RUN_STEP_START_TIMESTAMP_KEY, runStep.getFailedAt().toEpochSecond());
+        }
+
+        if (runStep.getLastError() != null) {
+            attributes.put(ERROR_TYPE_KEY, runStep.getLastError().getCode());
+            attributes.put(ERROR_MESSAGE_KEY, runStep.getLastError().getMessage());
+        }
+
+        if (runStep.getUsage() != null) {
+            attributes.put(GEN_AI_USAGE_INPUT_TOKENS_KEY, runStep.getUsage().getPromptTokens());
+            attributes.put(GEN_AI_USAGE_OUTPUT_TOKENS_KEY, runStep.getUsage().getCompletionTokens());
+        }
+
+        if ("message_creation".equals(runStepType) && runStep.getStepDetails() instanceof RunStepMessageCreationDetails messageDetails) {
+            attributes.put(GEN_AI_MESSAGE_ID_KEY, messageDetails.getMessageCreation().getMessageId());
+        } else if ("tool_calls".equals(runStepType) && runStep.getStepDetails() instanceof RunStepToolCallDetails toolCallDetails) {
+            List<Map<String, Object>> toolCalls = processToolCalls(toolCallDetails);
+            if (toolCalls != null) {
+                attributes.put(GEN_AI_EVENT_CONTENT, toJsonString(Collections.singletonMap("tool_calls", toolCalls)));
+            }
+        }
+
+        tracer.addEvent(eventName, attributes, OffsetDateTime.now(), span);
+    }
+
+    private List<Map<String, Object>> processToolCalls(RunStepToolCallDetails toolCallDetails) {
+        if (toolCallDetails == null || toolCallDetails.getToolCalls() == null) {
+            return null;
+        }
+
+        List<Map<String, Object>> toolCalls = new ArrayList<>();
+        for (RunStepToolCall toolCall : toolCallDetails.getToolCalls()) {
+            Map<String, Object> toolCallAttributes = new HashMap<>();
+            toolCallAttributes.put("id", toolCall.getId());
+            toolCallAttributes.put("type", toolCall.getType());
+
+            if (traceContent) {
+                switch (toolCall) {
+                    case RunStepFunctionToolCall functionToolCall -> {
+                        Map<String, Object> functionDetails = new HashMap<>();
+                        functionDetails.put("name", functionToolCall.getFunction().getName());
+                        functionDetails.put("arguments", parseJsonString(functionToolCall.getFunction().getArguments()));
+                        toolCallAttributes.put("function", functionDetails);
+                    }
+                    case RunStepCodeInterpreterToolCall codeInterpreterToolCall -> {
+                        Map<String, Object> interpreterDetails = new HashMap<>();
+                        interpreterDetails.put("input", codeInterpreterToolCall.getCodeInterpreter().getInput());
+                        interpreterDetails.put("outputs", codeInterpreterToolCall.getCodeInterpreter().getOutputs());
+                        toolCallAttributes.put("code_interpreter", interpreterDetails);
+                    }
+                    case RunStepBingGroundingToolCall bingGroundingToolCall ->
+                        toolCallAttributes.put(toolCall.getType(), bingGroundingToolCall.getBingGrounding());
+                    default -> {
+                        Map<String, Object> otherDetails = convertObjectToMap(toolCall);
+                        if (otherDetails != null) {
+                            toolCallAttributes.put(toolCall.getType(), otherDetails);
+                        }
+                    }
+                }
+            }
+
+            toolCalls.add(toolCallAttributes);
+        }
+
+        return toolCalls;
+    }
+
+    void traceStreamUpdate(Context span, Map<String, Object> traceAttributes, StreamUpdate streamUpdate, boolean stream) {
+        switch (streamUpdate) {
+            case null -> {
+                return;
+            }
+            case StreamThreadRunCreation threadRunUpdate -> {
+                ThreadRun run = threadRunUpdate.getMessage();
+                traceThreadRun(span, traceAttributes, run);
+            }
+            case StreamMessageCreation messageUpdate -> {
+                ThreadMessage message = messageUpdate.getMessage();
+                if (message != null
+                    && (message.getStatus() == MessageStatus.COMPLETED
+                    || message.getStatus() == MessageStatus.fromString("failed"))) {
+                    this.setAttributeIfNotNullOrEmpty(GEN_AI_MESSAGE_ID_KEY, message.getId(), span);
+                }
+                traceThreadMessage(span, traceAttributes, message);
+            }
+            case StreamRunCreation runStepUpdate -> {
+                RunStep runStep = runStepUpdate.getMessage();
+                if (runStep != null) {
+                    if (runStep.getStatus() == RunStepStatus.COMPLETED
+                        && runStep.getType() == RunStepType.TOOL_CALLS
+                        && runStep.getStepDetails() instanceof RunStepToolCallDetails) {
+                        traceRunStep(span, traceAttributes, runStep, stream);
+                    }
+                    else if (runStep.getStatus() == RunStepStatus.COMPLETED
+                        && runStep.getType() == RunStepType.MESSAGE_CREATION) {
+                        traceRunStep(span, traceAttributes, runStep, stream);
+                    }
+                }
+            }
+            default -> {
+            }
         }
     }
 }

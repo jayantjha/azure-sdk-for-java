@@ -175,13 +175,7 @@ public class MessagesClientTracer extends ClientTracer {
      */
     void traceCreateMessageResponseAttributes(Context span, Map<String, Object> traceAttributes,
         ThreadMessage message) {
-        if (message != null) {
-            this.setAttributeIfNotNullOrEmpty(GEN_AI_MESSAGE_ID_KEY, message.getId(), span);
-            this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, message.getThreadId(), span);
-            this.setAttributeIfNotNull(GEN_AI_MESSAGE_STATUS_KEY, message.getStatus(), span);
-            this.setAttributeIfNotNull(GEN_AI_MESSAGE_ROLE_KEY, message.getRole(), span);
-            this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, message.getRunId(), span);
-        }
+        traceThreadMessage(span, traceAttributes, message);
     }
     //</editor-fold>
 

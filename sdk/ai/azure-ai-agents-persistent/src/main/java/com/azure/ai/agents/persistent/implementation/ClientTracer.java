@@ -2,6 +2,10 @@
 // Licensed under the MIT License.
 package com.azure.ai.agents.persistent.implementation;
 
+import com.azure.ai.agents.persistent.models.MessageTextAnnotation;
+import com.azure.ai.agents.persistent.models.MessageTextContent;
+import com.azure.ai.agents.persistent.models.RunStepToolCall;
+import com.azure.ai.agents.persistent.models.ThreadMessage;
 import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.util.Configuration;
@@ -13,6 +17,8 @@ import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.metrics.DoubleHistogram;
 import com.azure.core.util.metrics.LongCounter;
 import com.azure.core.util.metrics.Meter;
+import com.azure.core.util.serializer.JsonSerializerProviders;
+import com.azure.core.util.serializer.TypeReference;
 import com.azure.core.util.tracing.SpanKind;
 import com.azure.core.util.tracing.StartSpanOptions;
 import com.azure.core.util.tracing.Tracer;
@@ -20,6 +26,7 @@ import com.azure.json.JsonProviders;
 import com.azure.json.JsonWriter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -28,6 +35,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +91,8 @@ public abstract class ClientTracer {
     protected static final String GEN_AI_SYSTEM_KEY = "gen_ai.system";
     protected static final String GEN_AI_EVENT_CONTENT = "gen_ai.event.content";
     protected static final String EVENT_NAME_SYSTEM_MESSAGE = "gen_ai.system.message";
+    protected static final String EVENT_NAME_USER_MESSAGE = "gen_ai.user.message";
+    protected static final String EVENT_NAME_ASSISTANT_MESSAGE = "gen_ai.assistant.message";
     protected static final String GEN_AI_CLIENT_OPERATION_DURATION_METRIC_NAME = "gen_ai.client.operation.duration";
     protected static final String GEN_AI_CLIENT_TOKEN_USAGE_METRIC_NAME = "gen_ai.client.token.usage";
 
@@ -414,6 +424,90 @@ public abstract class ClientTracer {
         return null;
     }
 
+    static final String GEN_AI_THREAD_ID_KEY = "gen_ai.thread.id";
+    static final String GEN_AI_MESSAGE_ID_KEY = "gen_ai.message.id";
+    static final String GEN_AI_RUN_ID_KEY = "gen_ai.thread.run.id";
+    static final String GEN_AI_MESSAGE_STATUS_KEY = "gen_ai.message.status";
+    static final String GEN_AI_MESSAGE_ROLE_KEY = "gen_ai.message.role";
+
+    protected void traceThreadMessage(
+        Context span, Map<String, Object> traceAttributes, ThreadMessage message) {
+        if (message == null) {
+            return;
+        }
+        this.setAttributeIfNotNullOrEmpty(GEN_AI_MESSAGE_ID_KEY, message.getId(), span);
+        this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, message.getThreadId(), span);
+        this.setAttributeIfNotNull(GEN_AI_MESSAGE_STATUS_KEY, message.getStatus(), span);
+        this.setAttributeIfNotNull(GEN_AI_MESSAGE_ROLE_KEY, message.getRole(), span);
+        this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, message.getRunId(), span);
+
+        String eventName = switch (message.getRole().toString().toLowerCase()) {
+            case "user" -> EVENT_NAME_USER_MESSAGE;
+            case "assistant" -> EVENT_NAME_ASSISTANT_MESSAGE;
+            default -> "gen_ai." + message.getRole().toString().toLowerCase() + ".message";
+        };
+
+        Map<String, Object> eventBody = new HashMap<>();
+
+        if (this.traceContent) {
+            Map<String, Object> contentBody = new HashMap<>();
+            if (message.getContent() != null) {
+                message.getContent().forEach(contentItem -> {
+                    if (contentItem instanceof MessageTextContent textContent) {
+                        Map<String, Object> contentDetails = new HashMap<>();
+                        contentDetails.put("value", textContent.getText());
+
+                        if (textContent.getText() != null
+                            && textContent.getText().getAnnotations() != null
+                            && !textContent.getText().getAnnotations().isEmpty()) {
+                            contentDetails.put("annotations", textContent.getText().getAnnotations().stream()
+                                .map(MessageTextAnnotation::getText)
+                                .collect(java.util.stream.Collectors.joining(", ")));
+                        }
+
+                        contentBody.put("text", contentDetails);
+                    }
+                });
+            }
+            eventBody.put("content", contentBody);
+        }
+
+        if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
+            List<Map<String, Object>> attachmentList = message.getAttachments().stream().map(attachment -> {
+                Map<String, Object> attachmentBody = new HashMap<>();
+                attachmentBody.put("id", attachment.getFileId());
+
+                if (attachment.getTools() != null && !attachment.getTools().isEmpty()) {
+                    attachmentBody.put("tools", attachment.getTools().stream()
+                        .map(Object::toString)
+                        .collect(java.util.stream.Collectors.toList()));
+                }
+                return attachmentBody;
+            }).collect(java.util.stream.Collectors.toList());
+
+            eventBody.put("attachments", attachmentList);
+        }
+
+        if (message.getIncompleteDetails() != null) {
+            eventBody.put("incomplete_details", message.getIncompleteDetails());
+        }
+
+        eventBody.put("role", message.getRole().toString());
+
+        String serializedEventBody = toJsonString(eventBody);
+
+        Map<String, Object> attributes = new HashMap<>(traceAttributes);
+        attributes.put(GEN_AI_SYSTEM_KEY, GEN_AI_SYSTEM_VALUE);
+        putIfNotNullOrEmpty(attributes, GEN_AI_THREAD_ID_KEY, message.getThreadId());
+        putIfNotNullOrEmpty(attributes, GEN_AI_MESSAGE_ID_KEY, message.getId());
+        putIfNotNullOrEmpty(attributes, GEN_AI_RUN_ID_KEY, message.getRunId());
+        putIfNotNull(attributes, GEN_AI_MESSAGE_STATUS_KEY, message.getStatus());
+
+        attributes.put(GEN_AI_EVENT_CONTENT, serializedEventBody);
+
+        tracer.addEvent(eventName, attributes, null, span);
+    }
+
     /**
      * Utility method for "sneaky throws" pattern.
      *
@@ -474,6 +568,29 @@ public abstract class ClientTracer {
      */
     protected static Context parentSpan(RequestOptions requestOptions) {
         return requestOptions.getContext() == null ? Context.NONE : requestOptions.getContext();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected static Map<String, Object> parseJsonString(String jsonString) {
+        try {
+            return CoreUtils.isNullOrEmpty(jsonString)
+                ? Collections.emptyMap()
+                : JsonSerializerProviders.createInstance()
+                .deserialize(new ByteArrayInputStream(jsonString.getBytes()), TypeReference.createInstance(HashMap.class));
+        } catch (Exception e) {
+            LOGGER.warning("Failed to parse JSON arguments: {}", e.getMessage());
+            return Collections.emptyMap();
+        }
+    }
+
+    protected static <T> Map<String, Object> convertObjectToMap(T object) {
+        try {
+            String json = toJsonString(object);
+            return parseJsonString(json);
+        } catch (Exception e) {
+            LOGGER.warning("Failed to convert tool call attributes: {}", e.getMessage());
+            return Collections.emptyMap();
+        }
     }
     //</editor-fold>
 }
