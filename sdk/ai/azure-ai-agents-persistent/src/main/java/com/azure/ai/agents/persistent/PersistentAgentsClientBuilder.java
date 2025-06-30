@@ -41,7 +41,6 @@ import com.azure.core.util.metrics.MeterProvider;
 import com.azure.core.util.serializer.JacksonAdapter;
 import com.azure.core.util.tracing.Tracer;
 import com.azure.core.util.tracing.TracerProvider;
-import reactor.util.Metrics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -354,14 +353,14 @@ public final class PersistentAgentsClientBuilder
      * @return an instance of PersistentAgentsClient.
      */
     public PersistentAgentsClient buildClient() {
-        return new PersistentAgentsClient(buildInnerClient(), this.configuration, createTracer());
+        return new PersistentAgentsClient(buildInnerClient(), this.configuration, createTracer(), createMeter());
     }
 
     private Tracer createTracer() {
         final String clientName = PROPERTIES.getOrDefault(SDK_NAME, "UnknownName");
         final String clientVersion = PROPERTIES.getOrDefault(SDK_VERSION, "UnknownVersion");
-        final com.azure.core.util.LibraryTelemetryOptions telemetryOptions
-            = new com.azure.core.util.LibraryTelemetryOptions(clientName).setLibraryVersion(clientVersion)
+        final LibraryTelemetryOptions telemetryOptions
+            = new LibraryTelemetryOptions(clientName).setLibraryVersion(clientVersion)
                 .setResourceProviderNamespace(RP_NAMESPACE)
                 .setSchemaUrl(OTEL_SCHEMA_URL);
         final TracingOptions tracingOptions
@@ -372,10 +371,10 @@ public final class PersistentAgentsClientBuilder
     private Meter createMeter() {
         final String clientName = PROPERTIES.getOrDefault(SDK_NAME, "UnknownName");
         final String clientVersion = PROPERTIES.getOrDefault(SDK_VERSION, "UnknownVersion");
-        final com.azure.core.util.LibraryTelemetryOptions telemetryOptions
-            = new com.azure.core.util.LibraryTelemetryOptions(clientName).setLibraryVersion(clientVersion)
-            .setResourceProviderNamespace(RP_NAMESPACE)
-            .setSchemaUrl(OTEL_SCHEMA_URL);
+        final LibraryTelemetryOptions telemetryOptions
+            = new LibraryTelemetryOptions(clientName).setLibraryVersion(clientVersion)
+                .setResourceProviderNamespace(RP_NAMESPACE)
+                .setSchemaUrl(OTEL_SCHEMA_URL);
         final MetricsOptions metricsOptions
             = this.clientOptions == null ? null : this.clientOptions.getMetricsOptions();
         return MeterProvider.getDefaultProvider().createMeter(telemetryOptions, metricsOptions);

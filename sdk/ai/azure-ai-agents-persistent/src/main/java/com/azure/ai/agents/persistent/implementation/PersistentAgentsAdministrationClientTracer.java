@@ -44,8 +44,8 @@ public class PersistentAgentsAdministrationClientTracer extends ClientTracer {
      *     if {@code null} is passed then {@link Configuration#getGlobalConfiguration()} will be used.
      * @param tracer the Tracer instance.
      */
-    public PersistentAgentsAdministrationClientTracer(
-        String endpoint, Configuration configuration, Tracer tracer, Meter meter) {
+    public PersistentAgentsAdministrationClientTracer(String endpoint, Configuration configuration, Tracer tracer,
+        Meter meter) {
         super(endpoint, configuration, tracer, meter);
     }
 
@@ -84,12 +84,10 @@ public class PersistentAgentsAdministrationClientTracer extends ClientTracer {
         return this.traceAsyncMonoOperation(getCreateAgentSpanName(createAgentOptions), operation, requestOptions,
             (span) -> {
                 traceCreateAgentInvocationAttributes(createAgentOptions, span);
-            }, (span, traceAttributes, result)
-                -> result.flatMap(agent -> {
+            }, (span, traceAttributes, result) -> result.flatMap(agent -> {
                 traceCreateAgentResponseAttributes(span, traceAttributes, agent);
                 return Mono.empty();
-            })
-        );
+            }));
     }
 
     String getCreateAgentSpanName(CreateAgentOptions options) {

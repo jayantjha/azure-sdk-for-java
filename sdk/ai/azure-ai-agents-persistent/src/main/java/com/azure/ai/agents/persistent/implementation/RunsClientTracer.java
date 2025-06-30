@@ -60,8 +60,7 @@ public class RunsClientTracer extends ClientTracer {
      *     if {@code null} is passed then {@link Configuration#getGlobalConfiguration()} will be used.
      * @param tracer the Tracer instance.
      */
-    public RunsClientTracer(
-        String endpoint, Configuration configuration, Tracer tracer, Meter meter) {
+    public RunsClientTracer(String endpoint, Configuration configuration, Tracer tracer, Meter meter) {
         super(endpoint, configuration, tracer, meter);
     }
 
@@ -96,12 +95,10 @@ public class RunsClientTracer extends ClientTracer {
 
         return this.traceAsyncMonoOperation(OPERATION_CREATE_THREAD_RUN, operation, requestOptions,
             (span) -> traceCreateRunInvocationAttributes(options, span),
-            (span, traceAttributes, result)
-                -> result.flatMap(run -> {
-                    traceCreateRunResponseAttributes(span, traceAttributes, run);
-                    return Mono.empty();
-                })
-        );
+            (span, traceAttributes, result) -> result.flatMap(run -> {
+                traceCreateRunResponseAttributes(span, traceAttributes, run);
+                return Mono.empty();
+            }));
     }
 
     /**
@@ -161,8 +158,8 @@ public class RunsClientTracer extends ClientTracer {
      * @param requestOptions The requestOptions parameter for the {@code operation}.
      * @return thread run created from the request.
      */
-    public Stream<StreamUpdate> traceCreateRunStreamingSync(CreateRunOptions options, Operation<Stream<StreamUpdate>> operation,
-                                                            RequestOptions requestOptions) {
+    public Stream<StreamUpdate> traceCreateRunStreamingSync(CreateRunOptions options,
+        Operation<Stream<StreamUpdate>> operation, RequestOptions requestOptions) {
 
         return this.traceSyncOperation(OPERATION_CREATE_THREAD_RUN_STREAMING, operation, requestOptions, (span) -> {
             traceCreateRunInvocationAttributes(options, span);
@@ -177,18 +174,16 @@ public class RunsClientTracer extends ClientTracer {
      * @param requestOptions The requestOptions parameter for the {@code operation}.
      * @return thread run created from the request.
      */
-    public Flux<StreamUpdate> traceCreateRunStreamingAsync(CreateRunOptions options, Operation<Flux<StreamUpdate>> operation,
-                                               RequestOptions requestOptions) {
+    public Flux<StreamUpdate> traceCreateRunStreamingAsync(CreateRunOptions options,
+        Operation<Flux<StreamUpdate>> operation, RequestOptions requestOptions) {
 
-        return this.traceAsyncFluxOperation(OPERATION_CREATE_THREAD_RUN_STREAMING, operation, requestOptions, (span) -> {
-            traceCreateRunInvocationAttributes(options, span);
-        }, (span, traceAttributes, result)
-            -> result.flatMap(streamUpdate -> {
+        return this.traceAsyncFluxOperation(OPERATION_CREATE_THREAD_RUN_STREAMING, operation, requestOptions,
+            (span) -> {
+                traceCreateRunInvocationAttributes(options, span);
+            }, (span, traceAttributes, result) -> result.flatMap(streamUpdate -> {
                 traceCreateRunStreamUpdateResponseAttributes(span, traceAttributes, streamUpdate);
                 return Flux.just(streamUpdate);
-            })
-            .then(Mono.empty())
-        );
+            }).then(Mono.empty()));
     }
 
     /**
@@ -197,13 +192,14 @@ public class RunsClientTracer extends ClientTracer {
      * @param span The current span context.
      * @param streamUpdates The stream updates received from the run.
      */
-    void traceCreateRunStreamingResponseAttributes(Context span, Map<String, Object> traceAttributes, Stream<StreamUpdate> streamUpdates) {
-//        if (run != null) {
-//            this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, run.getId(), span);
-//            this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, run.getThreadId(), span);
-//            this.setAttributeIfNotNullOrEmpty(GEN_AI_AGENT_ID_KEY, run.getAssistantId(), span);
-//            this.setAttributeIfNotNull(GEN_AI_RUN_STATUS_KEY, run.getStatus(), span);
-//        }
+    void traceCreateRunStreamingResponseAttributes(Context span, Map<String, Object> traceAttributes,
+        Stream<StreamUpdate> streamUpdates) {
+        //        if (run != null) {
+        //            this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, run.getId(), span);
+        //            this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, run.getThreadId(), span);
+        //            this.setAttributeIfNotNullOrEmpty(GEN_AI_AGENT_ID_KEY, run.getAssistantId(), span);
+        //            this.setAttributeIfNotNull(GEN_AI_RUN_STATUS_KEY, run.getStatus(), span);
+        //        }
     }
 
     /**
@@ -212,13 +208,14 @@ public class RunsClientTracer extends ClientTracer {
      * @param span The current span context.
      * @param streamUpdate The stream updates received from the run.
      */
-    void traceCreateRunStreamUpdateResponseAttributes(Context span, Map<String, Object> traceAttributes, StreamUpdate streamUpdate) {
-//        if (run != null) {
-//            this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, run.getId(), span);
-//            this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, run.getThreadId(), span);
-//            this.setAttributeIfNotNullOrEmpty(GEN_AI_AGENT_ID_KEY, run.getAssistantId(), span);
-//            this.setAttributeIfNotNull(GEN_AI_RUN_STATUS_KEY, run.getStatus(), span);
-//        }
+    void traceCreateRunStreamUpdateResponseAttributes(Context span, Map<String, Object> traceAttributes,
+        StreamUpdate streamUpdate) {
+        //        if (run != null) {
+        //            this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, run.getId(), span);
+        //            this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, run.getThreadId(), span);
+        //            this.setAttributeIfNotNullOrEmpty(GEN_AI_AGENT_ID_KEY, run.getAssistantId(), span);
+        //            this.setAttributeIfNotNull(GEN_AI_RUN_STATUS_KEY, run.getStatus(), span);
+        //        }
     }
 
     //</editor-fold>
@@ -258,12 +255,10 @@ public class RunsClientTracer extends ClientTracer {
 
         return this.traceAsyncMonoOperation(OPERATION_SUBMIT_TOOL_OUTPUTS, operation, requestOptions, (span) -> {
             traceSubmitToolOutputsInvocationAttributes(threadId, runId, toolOutputs, span);
-        }, (span, traceAttributes, result)
-            -> result.flatMap(run -> {
-                traceSubmitToolOutputsResponseAttributes(span, traceAttributes, run);
-                return Mono.empty();
-            })
-        );
+        }, (span, traceAttributes, result) -> result.flatMap(run -> {
+            traceSubmitToolOutputsResponseAttributes(span, traceAttributes, run);
+            return Mono.empty();
+        }));
     }
 
     /**
@@ -351,12 +346,10 @@ public class RunsClientTracer extends ClientTracer {
 
         return this.traceAsyncFluxOperation(OPERATION_LIST_RUN_STEPS, operation, requestOptions, (span) -> {
             traceListRunStepsInvocationAttributes(threadId, runId, span);
-        }, (span, traceAttributes, result)
-            -> result.flatMap(runStep -> {
-                traceListRunStepsResponseAttributes(span, threadId, runId);
-                return Flux.just(runStep);
-            }).then(Mono.empty())
-        );
+        }, (span, traceAttributes, result) -> result.flatMap(runStep -> {
+            traceListRunStepsResponseAttributes(span, threadId, runId);
+            return Flux.just(runStep);
+        }).then(Mono.empty()));
     }
 
     /**

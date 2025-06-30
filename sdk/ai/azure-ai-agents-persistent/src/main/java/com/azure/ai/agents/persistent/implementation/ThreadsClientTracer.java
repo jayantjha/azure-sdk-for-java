@@ -69,10 +69,10 @@ public class ThreadsClientTracer extends ClientTracer {
 
         return this.traceAsyncMonoOperation(OPERATION_CREATE_THREAD, operation, requestOptions, (span) -> {
             traceCreateThreadInvocationAttributes(span, messages, toolResources);
-        },
-
-
-            this::traceCreateThreadResponseAttributes);
+        }, (span, traceAttributes, result) -> result.flatMap(thread -> {
+            traceCreateThreadResponseAttributes(span, traceAttributes, thread);
+            return Mono.empty();
+        }));
     }
 
     /**
@@ -110,7 +110,8 @@ public class ThreadsClientTracer extends ClientTracer {
      * @param span The current span context.
      * @param thread The persistent thread created.
      */
-    void traceCreateThreadResponseAttributes(Context span, Map<String, Object> traceAttributes, PersistentAgentThread thread) {
+    void traceCreateThreadResponseAttributes(Context span, Map<String, Object> traceAttributes,
+        PersistentAgentThread thread) {
         if (thread != null && !CoreUtils.isNullOrEmpty(thread.getId())) {
             tracer.setAttribute(GEN_AI_THREAD_ID_KEY, thread.getId(), span);
         }

@@ -47,7 +47,8 @@ public final class PersistentAgentsClient {
      * @param configuration the configuration for the client.
      * @param tracer the tracer for the client.
      */
-    PersistentAgentsClient(PersistentAgentsClientImpl serviceClient, Configuration configuration, Tracer tracer, Meter meter) {
+    PersistentAgentsClient(PersistentAgentsClientImpl serviceClient, Configuration configuration, Tracer tracer,
+        Meter meter) {
         this.serviceClient = serviceClient;
         this.configuration = configuration;
         this.tracer = tracer;
@@ -102,7 +103,8 @@ public final class PersistentAgentsClient {
      * @return an instance of ThreadsClient class.
      */
     public ThreadsClient getThreadsClient() {
-        ThreadsClientTracer clientTracer = new ThreadsClientTracer(serviceClient.getEndpoint(), configuration, tracer, meter);
+        ThreadsClientTracer clientTracer
+            = new ThreadsClientTracer(serviceClient.getEndpoint(), configuration, tracer, meter);
         return new ThreadsClient(serviceClient.getThreads(), clientTracer);
     }
 

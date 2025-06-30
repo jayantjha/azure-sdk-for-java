@@ -17,7 +17,6 @@ import com.azure.core.util.tracing.StartSpanOptions;
 import com.azure.core.util.tracing.Tracer;
 import com.azure.json.JsonProviders;
 import com.azure.json.JsonWriter;
-import reactor.core.CorePublisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.io.ByteArrayOutputStream;
@@ -32,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -140,9 +138,7 @@ public abstract class ClientTracer {
             this.host = null;
             this.port = -1;
         }
-        this.traceContent = configuration == null
-            ? GLOBAL_CONFIG.get(TRACE_CONTENT)
-            : configuration.get(TRACE_CONTENT);
+        this.traceContent = configuration == null ? GLOBAL_CONFIG.get(TRACE_CONTENT) : configuration.get(TRACE_CONTENT);
         this.tracer = tracer;
         this.meter = meter;
         this.durationHistogram = meter.createDoubleHistogram(GEN_AI_CLIENT_OPERATION_DURATION_METRIC_NAME,
@@ -212,8 +208,8 @@ public abstract class ClientTracer {
             return operation.invoke(requestOptions);
         }
 
-        final Mono<Context> resourceSupplier = Mono.fromSupplier(()
-            -> tracer.start(spanName, START_SPAN_OPTIONS, parentSpan(requestOptions)));
+        final Mono<Context> resourceSupplier
+            = Mono.fromSupplier(() -> tracer.start(spanName, START_SPAN_OPTIONS, parentSpan(requestOptions)));
 
         final Function<Context, Mono<R>> resourceClosure = span -> {
             final Map<String, Object> traceAttributes = this.traceCommonAttributes(span, spanName);
@@ -225,15 +221,12 @@ public abstract class ClientTracer {
             T response = operation.invoke(requestOptions.setContext(span));
             return (T) response.doOnSuccess((result) -> {
                 if (tracer.isRecording(span)) {
-                    traceAfterInvocation.invoke(span, traceAttributes, response)
-                        .doFinally(signalType -> {
-                            recordDuration(span, startTime, traceAttributes);
-                        })
-                        .onErrorResume(error -> {
-                            LOGGER.verbose("Error in traceAfterInvocation", error);
-                            return Mono.empty();
-                        })
-                        .subscribe();
+                    traceAfterInvocation.invoke(span, traceAttributes, response).doFinally(signalType -> {
+                        recordDuration(span, startTime, traceAttributes);
+                    }).onErrorResume(error -> {
+                        LOGGER.verbose("Error in traceAfterInvocation", error);
+                        return Mono.empty();
+                    }).subscribe();
                 } else {
                     recordDuration(span, startTime, traceAttributes);
                 }
@@ -258,8 +251,8 @@ public abstract class ClientTracer {
             return operation.invoke(requestOptions);
         }
 
-        final Mono<Context> resourceSupplier = Mono.fromSupplier(()
-            -> tracer.start(spanName, START_SPAN_OPTIONS, parentSpan(requestOptions)));
+        final Mono<Context> resourceSupplier
+            = Mono.fromSupplier(() -> tracer.start(spanName, START_SPAN_OPTIONS, parentSpan(requestOptions)));
 
         final Function<Context, T> resourceClosure = span -> {
             final Map<String, Object> traceAttributes = this.traceCommonAttributes(span, spanName);
@@ -272,15 +265,12 @@ public abstract class ClientTracer {
             T response = operation.invoke(requestOptions.setContext(span));
             return (T) response.doOnComplete(() -> {
                 if (tracer.isRecording(span)) {
-                    traceAfterInvocation.invoke(span, traceAttributes, response)
-                        .doFinally(signalType -> {
-                            recordDuration(span, startTime, traceAttributes);
-                        })
-                        .onErrorResume(error -> {
-                            LOGGER.verbose("Error in traceAfterInvocation", error);
-                            return Mono.empty();
-                        })
-                        .subscribe();
+                    traceAfterInvocation.invoke(span, traceAttributes, response).doFinally(signalType -> {
+                        recordDuration(span, startTime, traceAttributes);
+                    }).onErrorResume(error -> {
+                        LOGGER.verbose("Error in traceAfterInvocation", error);
+                        return Mono.empty();
+                    }).subscribe();
                 } else {
                     recordDuration(span, startTime, traceAttributes);
                 }

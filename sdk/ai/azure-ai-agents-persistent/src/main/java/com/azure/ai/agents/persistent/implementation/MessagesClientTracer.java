@@ -54,8 +54,7 @@ public class MessagesClientTracer extends ClientTracer {
      *     if {@code null} is passed then {@link Configuration#getGlobalConfiguration()} will be used.
      * @param tracer the Tracer instance.
      */
-    public MessagesClientTracer(
-        String endpoint, Configuration configuration, Tracer tracer, Meter meter) {
+    public MessagesClientTracer(String endpoint, Configuration configuration, Tracer tracer, Meter meter) {
         super(endpoint, configuration, tracer, meter);
     }
 
@@ -96,12 +95,10 @@ public class MessagesClientTracer extends ClientTracer {
 
         return this.traceAsyncMonoOperation(OPERATION_CREATE_MESSAGE, operation, requestOptions, (span) -> {
             traceCreateMessageInvocationAttributes(threadId, role, content, attachments, span);
-        }, (span, traceAttributes, result)
-                -> result.flatMap(message -> {
-                traceCreateMessageResponseAttributes(span, traceAttributes, message);
-                return Mono.empty();
-            })
-        );
+        }, (span, traceAttributes, result) -> result.flatMap(message -> {
+            traceCreateMessageResponseAttributes(span, traceAttributes, message);
+            return Mono.empty();
+        }));
     }
 
     /**
@@ -161,7 +158,7 @@ public class MessagesClientTracer extends ClientTracer {
 
         if (attachment.getDataSource() != null) {
             Map<String, Object> dataSourceMap = new HashMap<>();
-            putIfNotNull(dataSourceMap,"asset_identifier", attachment.getDataSource().getAssetIdentifier());
+            putIfNotNull(dataSourceMap, "asset_identifier", attachment.getDataSource().getAssetIdentifier());
             putIfNotNull(dataSourceMap, "asset_type", attachment.getDataSource().getAssetType());
             attachmentMap.put("data_source", dataSourceMap);
         }
@@ -176,7 +173,8 @@ public class MessagesClientTracer extends ClientTracer {
      * @param span The current span context.
      * @param message The persistent message created.
      */
-    void traceCreateMessageResponseAttributes(Context span, Map<String, Object> traceAttributes, ThreadMessage message) {
+    void traceCreateMessageResponseAttributes(Context span, Map<String, Object> traceAttributes,
+        ThreadMessage message) {
         if (message != null) {
             this.setAttributeIfNotNullOrEmpty(GEN_AI_MESSAGE_ID_KEY, message.getId(), span);
             this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, message.getThreadId(), span);
