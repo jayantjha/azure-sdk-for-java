@@ -14,15 +14,10 @@ import com.azure.core.util.Context;
 import com.azure.core.util.CoreUtils;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.metrics.Meter;
-import com.azure.core.util.serializer.JsonSerializerProviders;
-import com.azure.core.util.serializer.TypeReference;
 import com.azure.core.util.tracing.Tracer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.io.ByteArrayInputStream;
-import java.lang.reflect.Type;
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -160,22 +155,6 @@ public class RunsClientTracer extends ClientTracer {
     //<editor-fold desc="Tracing CreateRunStreaming">
 
     /**
-     * Traces the synchronous convenience API - create run operation.
-     *
-     * @param options input options containing run creation parameters.
-     * @param operation the operation performing the actual create run call.
-     * @param requestOptions The requestOptions parameter for the {@code operation}.
-     * @return thread run created from the request.
-     */
-    public Stream<StreamUpdate> traceCreateRunStreamingSync(CreateRunOptions options,
-        Operation<Stream<StreamUpdate>> operation, RequestOptions requestOptions) {
-
-        return this.traceSyncOperation(OPERATION_CREATE_THREAD_RUN_STREAMING, operation, requestOptions, (span) -> {
-            traceCreateRunInvocationAttributes(options, span);
-        }, this::traceStreamUpdatesResponseAttributes);
-    }
-
-    /**
      * Traces the asynchronous convenience API - create run operation.
      *
      * @param options input options containing run creation parameters.
@@ -183,8 +162,8 @@ public class RunsClientTracer extends ClientTracer {
      * @param requestOptions The requestOptions parameter for the {@code operation}.
      * @return thread run created from the request.
      */
-    public Flux<StreamUpdate> traceCreateRunStreamingAsync(CreateRunOptions options,
-        Operation<Flux<StreamUpdate>> operation, RequestOptions requestOptions) {
+    public Flux<StreamUpdate> traceCreateRunStreaming(
+        CreateRunOptions options, Operation<Flux<StreamUpdate>> operation, RequestOptions requestOptions) {
 
         return this.traceAsyncFluxOperation(OPERATION_CREATE_THREAD_RUN_STREAMING, operation, requestOptions,
             (span) -> {
@@ -193,20 +172,6 @@ public class RunsClientTracer extends ClientTracer {
                 traceStreamUpdate(span, traceAttributes, streamUpdate, true);
                 return Flux.just(streamUpdate);
             }).then(Mono.empty()));
-    }
-
-    /**
-     * Record the response attributes from a create run operation.
-     *
-     * @param span The current span context.
-     * @param streamUpdates The stream updates received from the run.
-     */
-    void traceStreamUpdatesResponseAttributes(
-        Context span, Map<String, Object> traceAttributes, Stream<StreamUpdate> streamUpdates) {
-        if (streamUpdates != null) {
-            streamUpdates.forEach(streamUpdate
-                -> traceStreamUpdate(span, traceAttributes, streamUpdate, true));
-        }
     }
 
     //</editor-fold>
@@ -300,6 +265,28 @@ public class RunsClientTracer extends ClientTracer {
         traceCreateRunResponseAttributes(span, traceAttributes, run);
     }
     //</editor-fold>
+
+    //<editor-fold desc="Tracing SubmitToolOutputsStreaming">
+
+    /**
+     * Traces the asynchronous convenience API - create run operation.
+     *
+     * @param operation the operation performing the actual create run call.
+     * @param requestOptions The requestOptions parameter for the {@code operation}.
+     * @return thread run created from the request.
+     */
+    public Flux<StreamUpdate> traceSubmitToolOutputsStreaming(
+        String threadId, String runId, List<ToolOutput> toolOutputs,
+        Operation<Flux<StreamUpdate>> operation, RequestOptions requestOptions) {
+
+        return this.traceAsyncFluxOperation(OPERATION_CREATE_THREAD_RUN_STREAMING, operation, requestOptions,
+            (span) -> {
+                traceSubmitToolOutputsInvocationAttributes(threadId, runId, toolOutputs, span);
+            }, (span, traceAttributes, result) -> result.flatMap(streamUpdate -> {
+                traceStreamUpdate(span, traceAttributes, streamUpdate, true);
+                return Flux.just(streamUpdate);
+            }).then(Mono.empty()));
+    }
 
     //<editor-fold desc="Tracing ListRunSteps">
 

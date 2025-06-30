@@ -32,6 +32,7 @@ import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.FluxUtil;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -73,7 +74,7 @@ public final class RunsAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -125,9 +126,9 @@ public final class RunsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -259,7 +260,7 @@ public final class RunsAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -371,7 +372,7 @@ public final class RunsAsyncClient {
     /**
      * Gets an existing run from an existing thread.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -485,7 +486,7 @@ public final class RunsAsyncClient {
     /**
      * Modifies an existing thread run.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -495,9 +496,9 @@ public final class RunsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -613,7 +614,7 @@ public final class RunsAsyncClient {
     /**
      * Submits outputs from tools as requested by tool calls in a run.
      * <p><strong>Request Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -627,9 +628,9 @@ public final class RunsAsyncClient {
      * }
      * }
      * </pre>
-     * 
+     *
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -746,7 +747,7 @@ public final class RunsAsyncClient {
     /**
      * Cancels a run of an in‐progress thread.
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -871,7 +872,7 @@ public final class RunsAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -948,7 +949,7 @@ public final class RunsAsyncClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -1486,11 +1487,15 @@ public final class RunsAsyncClient {
                     .collect(Collectors.joining(",")),
                 false);
         }
-        return createRunWithResponse(threadId, createRunRequest, requestOptions).flatMapMany(response -> {
+
+        ClientTracer.Operation<Flux<StreamUpdate>> operation = (arg)
+            -> createRunWithResponse(threadId, createRunRequest, requestOptions).flatMapMany(response -> {
             PersistentAgentServerSentEvents eventStream
                 = new PersistentAgentServerSentEvents(response.getValue().toFluxByteBuffer());
             return eventStream.getEvents();
         });
+
+        return clientTracer.traceCreateRunStreaming(options, operation, requestOptions);
     }
 
     /**
@@ -1516,11 +1521,15 @@ public final class RunsAsyncClient {
         SubmitToolOutputsToRunRequest submitToolOutputsToRunRequestObj
             = new SubmitToolOutputsToRunRequest(toolOutputs).setStream(true);
         BinaryData submitToolOutputsToRunRequest = BinaryData.fromObject(submitToolOutputsToRunRequestObj);
-        return submitToolOutputsToRunWithResponse(threadId, runId, submitToolOutputsToRunRequest, requestOptions)
-            .flatMapMany(response -> {
-                PersistentAgentServerSentEvents eventStream
-                    = new PersistentAgentServerSentEvents(response.getValue().toFluxByteBuffer());
-                return eventStream.getEvents();
-            });
+
+        ClientTracer.Operation<Flux<StreamUpdate>> operation
+            = (arg) -> submitToolOutputsToRunWithResponse(threadId, runId, submitToolOutputsToRunRequest, arg)
+                .flatMapMany(response -> {
+                    PersistentAgentServerSentEvents eventStream
+                        = new PersistentAgentServerSentEvents(response.getValue().toFluxByteBuffer());
+                    return eventStream.getEvents();
+                });
+
+        return clientTracer.traceSubmitToolOutputsStreaming(threadId, runId, toolOutputs, operation, requestOptions);
     }
 }

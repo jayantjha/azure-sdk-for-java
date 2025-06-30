@@ -1429,10 +1429,15 @@ public final class RunsClient {
                     .collect(Collectors.joining(",")),
                 false);
         }
-        Flux<ByteBuffer> response
-            = createRunWithResponse(threadId, createRunRequest, requestOptions).getValue().toFluxByteBuffer();
-        PersistentAgentServerSentEvents eventStream = new PersistentAgentServerSentEvents(response);
-        Iterable<StreamUpdate> iterable = eventStream.getEvents().toIterable();
+
+        ClientTracer.Operation<Flux<StreamUpdate>> operation = (arg) -> {
+            Flux<ByteBuffer> response = createRunWithResponse(threadId, createRunRequest, requestOptions).getValue().toFluxByteBuffer();
+            PersistentAgentServerSentEvents eventStream = new PersistentAgentServerSentEvents(response);
+            return eventStream.getEvents();
+        };
+
+        Flux<StreamUpdate> events = clientTracer.traceCreateRunStreaming(options, operation, requestOptions);
+        Iterable<StreamUpdate> iterable = events.toIterable();
         Stream<StreamUpdate> stream = StreamSupport.stream(iterable.spliterator(), false);
         return stream.onClose(() -> {
             if (iterable instanceof AutoCloseable) {
@@ -1469,12 +1474,16 @@ public final class RunsClient {
         SubmitToolOutputsToRunRequest submitToolOutputsToRunRequestObj
             = new SubmitToolOutputsToRunRequest(toolOutputs).setStream(true);
         BinaryData submitToolOutputsToRunRequest = BinaryData.fromObject(submitToolOutputsToRunRequestObj);
-        Flux<ByteBuffer> response
-            = submitToolOutputsToRunWithResponse(threadId, runId, submitToolOutputsToRunRequest, requestOptions)
-                .getValue()
-                .toFluxByteBuffer();
-        PersistentAgentServerSentEvents eventStream = new PersistentAgentServerSentEvents(response);
-        Iterable<StreamUpdate> iterable = eventStream.getEvents().toIterable();
+
+        ClientTracer.Operation<Flux<StreamUpdate>> operation = (arg) -> {
+            Flux<ByteBuffer> response = submitToolOutputsToRunWithResponse(threadId, runId, submitToolOutputsToRunRequest, requestOptions)
+                .getValue().toFluxByteBuffer();
+            PersistentAgentServerSentEvents eventStream = new PersistentAgentServerSentEvents(response);
+            return eventStream.getEvents();
+        };
+
+        Flux<StreamUpdate> events = clientTracer.traceSubmitToolOutputsStreaming(threadId, runId, toolOutputs, operation, requestOptions);
+        Iterable<StreamUpdate> iterable = events.toIterable();
         Stream<StreamUpdate> stream = StreamSupport.stream(iterable.spliterator(), false);
         return stream.onClose(() -> {
             if (iterable instanceof AutoCloseable) {
