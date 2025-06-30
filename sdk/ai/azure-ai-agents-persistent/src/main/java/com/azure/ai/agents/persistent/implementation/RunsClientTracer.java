@@ -5,7 +5,23 @@ package com.azure.ai.agents.persistent.implementation;
 
 import com.azure.ai.agents.persistent.RunsAsyncClient;
 import com.azure.ai.agents.persistent.RunsClient;
-import com.azure.ai.agents.persistent.models.*;
+import com.azure.ai.agents.persistent.models.CreateRunOptions;
+import com.azure.ai.agents.persistent.models.MessageStatus;
+import com.azure.ai.agents.persistent.models.RunStep;
+import com.azure.ai.agents.persistent.models.RunStepBingGroundingToolCall;
+import com.azure.ai.agents.persistent.models.RunStepCodeInterpreterToolCall;
+import com.azure.ai.agents.persistent.models.RunStepFunctionToolCall;
+import com.azure.ai.agents.persistent.models.RunStepMessageCreationDetails;
+import com.azure.ai.agents.persistent.models.RunStepStatus;
+import com.azure.ai.agents.persistent.models.RunStepToolCall;
+import com.azure.ai.agents.persistent.models.RunStepToolCallDetails;
+import com.azure.ai.agents.persistent.models.RunStepType;
+import com.azure.ai.agents.persistent.models.StreamMessageCreation;
+import com.azure.ai.agents.persistent.models.StreamRunCreation;
+import com.azure.ai.agents.persistent.models.StreamThreadRunCreation;
+import com.azure.ai.agents.persistent.models.StreamUpdate;
+import com.azure.ai.agents.persistent.models.ThreadRun;
+import com.azure.ai.agents.persistent.models.ToolOutput;
 import com.azure.core.http.rest.PagedFlux;
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.RequestOptions;
@@ -158,8 +174,8 @@ public class RunsClientTracer extends MessagesClientTracer {
      * @param requestOptions The requestOptions parameter for the {@code operation}.
      * @return thread run created from the request.
      */
-    public Flux<StreamUpdate> traceCreateRunStreaming(
-        CreateRunOptions options, Operation<Flux<StreamUpdate>> operation, RequestOptions requestOptions) {
+    public Flux<StreamUpdate> traceCreateRunStreaming(CreateRunOptions options, Operation<Flux<StreamUpdate>> operation,
+        RequestOptions requestOptions) {
 
         return this.traceAsyncFluxOperation(OPERATION_CREATE_THREAD_RUN_STREAMING, operation, requestOptions,
             (span) -> {
@@ -271,9 +287,8 @@ public class RunsClientTracer extends MessagesClientTracer {
      * @param requestOptions The requestOptions parameter for the {@code operation}.
      * @return thread run created from the request.
      */
-    public Flux<StreamUpdate> traceSubmitToolOutputsStreaming(
-        String threadId, String runId, List<ToolOutput> toolOutputs,
-        Operation<Flux<StreamUpdate>> operation, RequestOptions requestOptions) {
+    public Flux<StreamUpdate> traceSubmitToolOutputsStreaming(String threadId, String runId,
+        List<ToolOutput> toolOutputs, Operation<Flux<StreamUpdate>> operation, RequestOptions requestOptions) {
 
         return this.traceAsyncFluxOperation(OPERATION_CREATE_THREAD_RUN_STREAMING, operation, requestOptions,
             (span) -> {
@@ -354,7 +369,6 @@ public class RunsClientTracer extends MessagesClientTracer {
     }
     //</editor-fold>
 
-
     void traceThreadRun(Context span, Map<String, Object> traceAttributes, ThreadRun run) {
         if (run != null) {
             this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, run.getId(), span);
@@ -385,11 +399,9 @@ public class RunsClientTracer extends MessagesClientTracer {
         if (stream && RunStepType.TOOL_CALLS == runStep.getType()) {
             eventName = EVENT_GEN_AI_TOOL_MESSAGE;
         } else {
-            eventName = switch (runStepType) {
-                case "message_creation" -> EVENT_GEN_AI_RUN_STEP_MESSAGE_CREATION;
-                case "tool_calls" -> EVENT_GEN_AI_RUN_STEP_TOOL_CALLS;
-                default -> "gen_ai.run_step." + runStepType;
-            };
+            eventName = runStepType == "message_creation"
+                ? EVENT_GEN_AI_RUN_STEP_MESSAGE_CREATION
+                : runStepType == "tool_calls" ? EVENT_GEN_AI_RUN_STEP_TOOL_CALLS : "gen_ai.run_step." + runStepType;
         }
 
         Map<String, Object> attributes = new HashMap<>();
@@ -422,9 +434,12 @@ public class RunsClientTracer extends MessagesClientTracer {
             attributes.put(GEN_AI_USAGE_OUTPUT_TOKENS_KEY, runStep.getUsage().getCompletionTokens());
         }
 
-        if ("message_creation".equals(runStepType) && runStep.getStepDetails() instanceof RunStepMessageCreationDetails messageDetails) {
+        if ("message_creation".equals(runStepType)
+            && runStep.getStepDetails() instanceof RunStepMessageCreationDetails) {
+            RunStepMessageCreationDetails messageDetails = (RunStepMessageCreationDetails) runStep.getStepDetails();
             attributes.put(GEN_AI_MESSAGE_ID_KEY, messageDetails.getMessageCreation().getMessageId());
-        } else if ("tool_calls".equals(runStepType) && runStep.getStepDetails() instanceof RunStepToolCallDetails toolCallDetails) {
+        } else if ("tool_calls".equals(runStepType) && runStep.getStepDetails() instanceof RunStepToolCallDetails) {
+            RunStepToolCallDetails toolCallDetails = (RunStepToolCallDetails) runStep.getStepDetails();
             List<Map<String, Object>> toolCalls = processToolCalls(toolCallDetails);
             if (toolCalls != null) {
                 attributes.put(GEN_AI_EVENT_CONTENT, toJsonString(Collections.singletonMap("tool_calls", toolCalls)));
@@ -446,26 +461,25 @@ public class RunsClientTracer extends MessagesClientTracer {
             toolCallAttributes.put("type", toolCall.getType());
 
             if (traceContent) {
-                switch (toolCall) {
-                    case RunStepFunctionToolCall functionToolCall -> {
-                        Map<String, Object> functionDetails = new HashMap<>();
-                        functionDetails.put("name", functionToolCall.getFunction().getName());
-                        functionDetails.put("arguments", parseJsonString(functionToolCall.getFunction().getArguments()));
-                        toolCallAttributes.put("function", functionDetails);
-                    }
-                    case RunStepCodeInterpreterToolCall codeInterpreterToolCall -> {
-                        Map<String, Object> interpreterDetails = new HashMap<>();
-                        interpreterDetails.put("input", codeInterpreterToolCall.getCodeInterpreter().getInput());
-                        interpreterDetails.put("outputs", codeInterpreterToolCall.getCodeInterpreter().getOutputs());
-                        toolCallAttributes.put("code_interpreter", interpreterDetails);
-                    }
-                    case RunStepBingGroundingToolCall bingGroundingToolCall ->
-                        toolCallAttributes.put(toolCall.getType(), bingGroundingToolCall.getBingGrounding());
-                    default -> {
-                        Map<String, Object> otherDetails = convertObjectToMap(toolCall);
-                        if (otherDetails != null) {
-                            toolCallAttributes.put(toolCall.getType(), otherDetails);
-                        }
+                if (toolCall instanceof RunStepFunctionToolCall) {
+                    RunStepFunctionToolCall functionToolCall = (RunStepFunctionToolCall) toolCall;
+                    Map<String, Object> functionDetails = new HashMap<>();
+                    functionDetails.put("name", functionToolCall.getFunction().getName());
+                    functionDetails.put("arguments", parseJsonString(functionToolCall.getFunction().getArguments()));
+                    toolCallAttributes.put("function", functionDetails);
+                } else if (toolCall instanceof RunStepCodeInterpreterToolCall) {
+                    RunStepCodeInterpreterToolCall codeInterpreterToolCall = (RunStepCodeInterpreterToolCall) toolCall;
+                    Map<String, Object> interpreterDetails = new HashMap<>();
+                    interpreterDetails.put("input", codeInterpreterToolCall.getCodeInterpreter().getInput());
+                    interpreterDetails.put("outputs", codeInterpreterToolCall.getCodeInterpreter().getOutputs());
+                    toolCallAttributes.put("code_interpreter", interpreterDetails);
+                } else if (toolCall instanceof RunStepBingGroundingToolCall) {
+                    RunStepBingGroundingToolCall bingGroundingToolCall = (RunStepBingGroundingToolCall) toolCall;
+                    toolCallAttributes.put(toolCall.getType(), bingGroundingToolCall.getBingGrounding());
+                } else {
+                    Map<String, Object> otherDetails = convertObjectToMap(toolCall);
+                    if (otherDetails != null) {
+                        toolCallAttributes.put(toolCall.getType(), otherDetails);
                     }
                 }
             }
@@ -476,39 +490,34 @@ public class RunsClientTracer extends MessagesClientTracer {
         return toolCalls;
     }
 
-    void traceStreamUpdate(Context span, Map<String, Object> traceAttributes, StreamUpdate streamUpdate, boolean stream) {
-        switch (streamUpdate) {
-            case null -> {
-                return;
+    void traceStreamUpdate(Context span, Map<String, Object> traceAttributes, StreamUpdate streamUpdate,
+        boolean stream) {
+        if (streamUpdate == null) {
+            return;
+        }
+        if (streamUpdate instanceof StreamThreadRunCreation) {
+            StreamThreadRunCreation threadRunUpdate = (StreamThreadRunCreation) streamUpdate;
+            ThreadRun run = threadRunUpdate.getMessage();
+            traceThreadRun(span, traceAttributes, run);
+        } else if (streamUpdate instanceof StreamMessageCreation) {
+            StreamMessageCreation messageUpdate = (StreamMessageCreation) streamUpdate;
+            if (messageUpdate.getMessage() != null
+                && (messageUpdate.getMessage().getStatus() == MessageStatus.COMPLETED
+                    || messageUpdate.getMessage().getStatus() == MessageStatus.fromString("failed"))) {
+                traceThreadMessage(span, traceAttributes, messageUpdate.getMessage());
             }
-            case StreamThreadRunCreation threadRunUpdate -> {
-                ThreadRun run = threadRunUpdate.getMessage();
-                traceThreadRun(span, traceAttributes, run);
-            }
-            case StreamMessageCreation messageUpdate -> {
-                ThreadMessage message = messageUpdate.getMessage();
-                if (message != null
-                    && (message.getStatus() == MessageStatus.COMPLETED
-                    || message.getStatus() == MessageStatus.fromString("failed"))) {
-                    this.setAttributeIfNotNullOrEmpty(GEN_AI_MESSAGE_ID_KEY, message.getId(), span);
+        } else if (streamUpdate instanceof StreamRunCreation) {
+            StreamRunCreation runStepUpdate = (StreamRunCreation) streamUpdate;
+            RunStep runStep = runStepUpdate.getMessage();
+            if (runStep != null) {
+                if (runStep.getStatus() == RunStepStatus.COMPLETED
+                    && runStep.getType() == RunStepType.TOOL_CALLS
+                    && runStep.getStepDetails() instanceof RunStepToolCallDetails) {
+                    traceRunStep(span, traceAttributes, runStep, stream);
+                } else if (runStep.getStatus() == RunStepStatus.COMPLETED
+                    && runStep.getType() == RunStepType.MESSAGE_CREATION) {
+                    traceRunStep(span, traceAttributes, runStep, stream);
                 }
-                traceThreadMessage(span, traceAttributes, message);
-            }
-            case StreamRunCreation runStepUpdate -> {
-                RunStep runStep = runStepUpdate.getMessage();
-                if (runStep != null) {
-                    if (runStep.getStatus() == RunStepStatus.COMPLETED
-                        && runStep.getType() == RunStepType.TOOL_CALLS
-                        && runStep.getStepDetails() instanceof RunStepToolCallDetails) {
-                        traceRunStep(span, traceAttributes, runStep, stream);
-                    }
-                    else if (runStep.getStatus() == RunStepStatus.COMPLETED
-                        && runStep.getType() == RunStepType.MESSAGE_CREATION) {
-                        traceRunStep(span, traceAttributes, runStep, stream);
-                    }
-                }
-            }
-            default -> {
             }
         }
     }

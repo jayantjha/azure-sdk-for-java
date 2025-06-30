@@ -46,6 +46,7 @@ public class MessagesClientTracer extends ClientTracer {
     static final String OPERATION_CREATE_MESSAGE = "create_message";
     static final String OPERATION_LIST_MESSAGE = "list_messages";
     static final String EVENT_NAME_USER_MESSAGE = "gen_ai.user.message";
+    static final String EVENT_NAME_ASSISTANT_MESSAGE = "gen_ai.assistant.message";
 
     /**
      * Creates MessagesClientTracer.
@@ -250,8 +251,7 @@ public class MessagesClientTracer extends ClientTracer {
     }
     //</editor-fold>
 
-    protected void traceThreadMessage(
-        Context span, Map<String, Object> traceAttributes, ThreadMessage message) {
+    protected void traceThreadMessage(Context span, Map<String, Object> traceAttributes, ThreadMessage message) {
         if (message == null) {
             return;
         }
@@ -261,11 +261,20 @@ public class MessagesClientTracer extends ClientTracer {
         this.setAttributeIfNotNull(GEN_AI_MESSAGE_ROLE_KEY, message.getRole(), span);
         this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, message.getRunId(), span);
 
-        String eventName = switch (message.getRole().toString().toLowerCase()) {
-            case "user" -> EVENT_NAME_USER_MESSAGE;
-            case "assistant" -> EVENT_NAME_ASSISTANT_MESSAGE;
-            default -> "gen_ai." + message.getRole().toString().toLowerCase() + ".message";
-        };
+        String eventName;
+        switch (message.getRole().toString().toLowerCase()) {
+            case "user":
+                eventName = EVENT_NAME_USER_MESSAGE;
+                break;
+
+            case "assistant":
+                eventName = EVENT_NAME_ASSISTANT_MESSAGE;
+                break;
+
+            default:
+                eventName = "gen_ai." + message.getRole().toString().toLowerCase() + ".message";
+                break;
+        }
 
         Map<String, Object> eventBody = new HashMap<>();
 
@@ -273,16 +282,20 @@ public class MessagesClientTracer extends ClientTracer {
             Map<String, Object> contentBody = new HashMap<>();
             if (message.getContent() != null) {
                 message.getContent().forEach(contentItem -> {
-                    if (contentItem instanceof MessageTextContent textContent) {
+                    if (contentItem instanceof MessageTextContent) {
+                        MessageTextContent textContent = (MessageTextContent) contentItem;
                         Map<String, Object> contentDetails = new HashMap<>();
                         contentDetails.put("value", textContent.getText());
 
                         if (textContent.getText() != null
                             && textContent.getText().getAnnotations() != null
                             && !textContent.getText().getAnnotations().isEmpty()) {
-                            contentDetails.put("annotations", textContent.getText().getAnnotations().stream()
-                                .map(MessageTextAnnotation::getText)
-                                .collect(java.util.stream.Collectors.joining(", ")));
+                            contentDetails.put("annotations",
+                                textContent.getText()
+                                    .getAnnotations()
+                                    .stream()
+                                    .map(MessageTextAnnotation::getText)
+                                    .collect(java.util.stream.Collectors.joining(", ")));
                         }
 
                         contentBody.put("text", contentDetails);
@@ -298,9 +311,11 @@ public class MessagesClientTracer extends ClientTracer {
                 attachmentBody.put("id", attachment.getFileId());
 
                 if (attachment.getTools() != null && !attachment.getTools().isEmpty()) {
-                    attachmentBody.put("tools", attachment.getTools().stream()
-                        .map(Object::toString)
-                        .collect(java.util.stream.Collectors.toList()));
+                    attachmentBody.put("tools",
+                        attachment.getTools()
+                            .stream()
+                            .map(Object::toString)
+                            .collect(java.util.stream.Collectors.toList()));
                 }
                 return attachmentBody;
             }).collect(java.util.stream.Collectors.toList());

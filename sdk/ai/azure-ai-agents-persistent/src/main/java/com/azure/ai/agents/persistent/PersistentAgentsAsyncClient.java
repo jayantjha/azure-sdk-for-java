@@ -40,6 +40,7 @@ public final class PersistentAgentsAsyncClient {
     private final Configuration configuration;
 
     private final Tracer tracer;
+
     private final Meter meter;
 
     /**
@@ -122,7 +123,7 @@ public final class PersistentAgentsAsyncClient {
     /**
      * Creates a new agent thread and immediately starts a run using that new thread.
      * <p><strong>Request Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -216,9 +217,9 @@ public final class PersistentAgentsAsyncClient {
      * }
      * }
      * </pre>
-     *
+     * 
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {

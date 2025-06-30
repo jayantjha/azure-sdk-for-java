@@ -75,7 +75,7 @@ public final class RunsClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Request Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -127,9 +127,9 @@ public final class RunsClient {
      * }
      * }
      * </pre>
-     *
+     * 
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -260,7 +260,7 @@ public final class RunsClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -372,7 +372,7 @@ public final class RunsClient {
     /**
      * Gets an existing run from an existing thread.
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -485,7 +485,7 @@ public final class RunsClient {
     /**
      * Modifies an existing thread run.
      * <p><strong>Request Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -495,9 +495,9 @@ public final class RunsClient {
      * }
      * }
      * </pre>
-     *
+     * 
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -612,7 +612,7 @@ public final class RunsClient {
     /**
      * Submits outputs from tools as requested by tool calls in a run.
      * <p><strong>Request Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -626,9 +626,9 @@ public final class RunsClient {
      * }
      * }
      * </pre>
-     *
+     * 
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -744,7 +744,7 @@ public final class RunsClient {
     /**
      * Cancels a run of an in‐progress thread.
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -867,7 +867,7 @@ public final class RunsClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -943,7 +943,7 @@ public final class RunsClient {
      * </table>
      * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
-     *
+     * 
      * <pre>
      * {@code
      * {
@@ -1429,13 +1429,12 @@ public final class RunsClient {
                     .collect(Collectors.joining(",")),
                 false);
         }
-
         ClientTracer.Operation<Flux<StreamUpdate>> operation = (arg) -> {
-            Flux<ByteBuffer> response = createRunWithResponse(threadId, createRunRequest, requestOptions).getValue().toFluxByteBuffer();
+            Flux<ByteBuffer> response
+                = createRunWithResponse(threadId, createRunRequest, requestOptions).getValue().toFluxByteBuffer();
             PersistentAgentServerSentEvents eventStream = new PersistentAgentServerSentEvents(response);
             return eventStream.getEvents();
         };
-
         Flux<StreamUpdate> events = clientTracer.traceCreateRunStreaming(options, operation, requestOptions);
         Iterable<StreamUpdate> iterable = events.toIterable();
         Stream<StreamUpdate> stream = StreamSupport.stream(iterable.spliterator(), false);
@@ -1474,15 +1473,16 @@ public final class RunsClient {
         SubmitToolOutputsToRunRequest submitToolOutputsToRunRequestObj
             = new SubmitToolOutputsToRunRequest(toolOutputs).setStream(true);
         BinaryData submitToolOutputsToRunRequest = BinaryData.fromObject(submitToolOutputsToRunRequestObj);
-
         ClientTracer.Operation<Flux<StreamUpdate>> operation = (arg) -> {
-            Flux<ByteBuffer> response = submitToolOutputsToRunWithResponse(threadId, runId, submitToolOutputsToRunRequest, requestOptions)
-                .getValue().toFluxByteBuffer();
+            Flux<ByteBuffer> response
+                = submitToolOutputsToRunWithResponse(threadId, runId, submitToolOutputsToRunRequest, requestOptions)
+                    .getValue()
+                    .toFluxByteBuffer();
             PersistentAgentServerSentEvents eventStream = new PersistentAgentServerSentEvents(response);
             return eventStream.getEvents();
         };
-
-        Flux<StreamUpdate> events = clientTracer.traceSubmitToolOutputsStreaming(threadId, runId, toolOutputs, operation, requestOptions);
+        Flux<StreamUpdate> events
+            = clientTracer.traceSubmitToolOutputsStreaming(threadId, runId, toolOutputs, operation, requestOptions);
         Iterable<StreamUpdate> iterable = events.toIterable();
         Stream<StreamUpdate> stream = StreamSupport.stream(iterable.spliterator(), false);
         return stream.onClose(() -> {

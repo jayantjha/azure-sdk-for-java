@@ -86,8 +86,6 @@ public abstract class ClientTracer {
     protected static final String GEN_AI_SYSTEM_KEY = "gen_ai.system";
     protected static final String GEN_AI_EVENT_CONTENT = "gen_ai.event.content";
     protected static final String EVENT_NAME_SYSTEM_MESSAGE = "gen_ai.system.message";
-    protected static final String EVENT_NAME_USER_MESSAGE = "gen_ai.user.message";
-    protected static final String EVENT_NAME_ASSISTANT_MESSAGE = "gen_ai.assistant.message";
     protected static final String GEN_AI_CLIENT_OPERATION_DURATION_METRIC_NAME = "gen_ai.client.operation.duration";
     protected static final String GEN_AI_CLIENT_TOKEN_USAGE_METRIC_NAME = "gen_ai.client.token.usage";
 
@@ -313,7 +311,6 @@ public abstract class ClientTracer {
         }
     }
 
-
     /**
      * Records error attributes on the span.
      *
@@ -419,8 +416,6 @@ public abstract class ClientTracer {
         return null;
     }
 
-
-
     /**
      * Utility method for "sneaky throws" pattern.
      *
@@ -489,7 +484,8 @@ public abstract class ClientTracer {
             return CoreUtils.isNullOrEmpty(jsonString)
                 ? Collections.emptyMap()
                 : JsonSerializerProviders.createInstance()
-                .deserialize(new ByteArrayInputStream(jsonString.getBytes()), TypeReference.createInstance(HashMap.class));
+                    .deserialize(new ByteArrayInputStream(jsonString.getBytes()),
+                        TypeReference.createInstance(HashMap.class));
         } catch (Exception e) {
             LOGGER.warning("Failed to parse JSON arguments: {}", e.getMessage());
             return Collections.emptyMap();
