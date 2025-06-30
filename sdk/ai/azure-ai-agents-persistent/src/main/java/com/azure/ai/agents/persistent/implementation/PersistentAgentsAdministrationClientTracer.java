@@ -84,7 +84,12 @@ public class PersistentAgentsAdministrationClientTracer extends ClientTracer {
         return this.traceAsyncMonoOperation(getCreateAgentSpanName(createAgentOptions), operation, requestOptions,
             (span) -> {
                 traceCreateAgentInvocationAttributes(createAgentOptions, span);
-            }, this::traceCreateAgentResponseAttributes);
+            }, (span, traceAttributes, result)
+                -> result.flatMap(agent -> {
+                traceCreateAgentResponseAttributes(span, traceAttributes, agent);
+                return Mono.empty();
+            })
+        );
     }
 
     String getCreateAgentSpanName(CreateAgentOptions options) {

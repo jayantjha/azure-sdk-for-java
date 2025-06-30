@@ -17,6 +17,7 @@ import com.azure.core.util.tracing.StartSpanOptions;
 import com.azure.core.util.tracing.Tracer;
 import com.azure.json.JsonProviders;
 import com.azure.json.JsonWriter;
+import reactor.core.CorePublisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.io.ByteArrayOutputStream;
@@ -31,7 +32,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public abstract class ClientTracer {
     public static final String OTEL_SCHEMA_URL = "https://opentelemetry.io/schemas/1.27.0";
@@ -52,6 +55,11 @@ public abstract class ClientTracer {
     @FunctionalInterface
     public interface TraceAfterInvocation<T> {
         void invoke(Context span, Map<String, Object> traceAttributes, T result);
+    }
+
+    @FunctionalInterface
+    public interface TraceAfterInvocationAsync<T> {
+        Mono<Void> invoke(Context span, Map<String, Object> traceAttributes, T result);
     }
 
     private static final ClientLogger LOGGER = new ClientLogger(ClientTracer.class);
@@ -172,14 +180,14 @@ public abstract class ClientTracer {
         Instant startTime = Instant.now();
         Map<String, Object> traceAttributes = this.traceCommonAttributes(span, operationName);
         if (tracer.isRecording(span)) {
-            traceBeforeInvocation.invoke(span);
+            safeInvoke(() -> traceBeforeInvocation.invoke(span));
         }
 
         try (AutoCloseable ignored = tracer.makeSpanCurrent(span)) {
             final T result = operation.invoke(requestOptions.setContext(span));
 
             if (tracer.isRecording(span) && result != null) {
-                traceAfterInvocation.invoke(span, traceAttributes, result);
+                safeInvoke(() -> traceAfterInvocation.invoke(span, traceAttributes, result));
             }
             recordDuration(span, startTime, traceAttributes);
             tracer.end(null, null, span);
@@ -199,7 +207,7 @@ public abstract class ClientTracer {
     @SuppressWarnings("unchecked")
     protected <T extends Mono<R>, R> T traceAsyncMonoOperation(String spanName, Operation<T> operation,
         RequestOptions requestOptions, TraceBeforeInvocation traceBeforeInvocation,
-        TraceAfterInvocation<R> traceAfterInvocation) {
+        TraceAfterInvocationAsync<T> traceAfterInvocation) {
         if (!tracer.isEnabled()) {
             return operation.invoke(requestOptions);
         }
@@ -212,21 +220,29 @@ public abstract class ClientTracer {
             final Instant startTime = Instant.now();
 
             if (tracer.isRecording(span)) {
-                traceBeforeInvocation.invoke(span);
+                safeInvoke(() -> traceBeforeInvocation.invoke(span));
             }
-            return operation.invoke(requestOptions.setContext(span)).map(response -> {
+            T response = operation.invoke(requestOptions.setContext(span));
+            return (T) response.doOnSuccess((result) -> {
                 if (tracer.isRecording(span)) {
-                    traceAfterInvocation.invoke(span, traceAttributes, response);
+                    traceAfterInvocation.invoke(span, traceAttributes, response)
+                        .doFinally(signalType -> {
+                            recordDuration(span, startTime, traceAttributes);
+                        })
+                        .onErrorResume(error -> {
+                            LOGGER.verbose("Error in traceAfterInvocation", error);
+                            return Mono.empty();
+                        })
+                        .subscribe();
+                } else {
+                    recordDuration(span, startTime, traceAttributes);
                 }
-                recordDuration(span, startTime, traceAttributes);
-                return response;
-            }).onErrorResume(error -> {
+            }).doOnError(error -> {
                 if (tracer.isRecording(span)) {
                     traceErrorAttributes(span, error);
                 }
                 traceAttributes.put(ERROR_TYPE_KEY, error.getClass().getName());
                 recordDuration(span, startTime, traceAttributes);
-                return Mono.error(error);
             });
         };
 
@@ -237,7 +253,7 @@ public abstract class ClientTracer {
     @SuppressWarnings("unchecked")
     protected <T extends Flux<R>, R> T traceAsyncFluxOperation(String spanName, Operation<T> operation,
         RequestOptions requestOptions, TraceBeforeInvocation traceBeforeInvocation,
-        TraceAfterInvocation<R> traceAfterInvocation) {
+        TraceAfterInvocationAsync<T> traceAfterInvocation) {
         if (!tracer.isEnabled()) {
             return operation.invoke(requestOptions);
         }
@@ -245,27 +261,35 @@ public abstract class ClientTracer {
         final Mono<Context> resourceSupplier = Mono.fromSupplier(()
             -> tracer.start(spanName, START_SPAN_OPTIONS, parentSpan(requestOptions)));
 
-        final Function<Context, Flux<R>> resourceClosure = span -> {
+        final Function<Context, T> resourceClosure = span -> {
             final Map<String, Object> traceAttributes = this.traceCommonAttributes(span, spanName);
             final Instant startTime = Instant.now();
 
             if (tracer.isRecording(span)) {
-                traceBeforeInvocation.invoke(span);
+                safeInvoke(() -> traceBeforeInvocation.invoke(span));
             }
-            return operation.invoke(requestOptions.setContext(span)).map(response -> {
+
+            T response = operation.invoke(requestOptions.setContext(span));
+            return (T) response.doOnComplete(() -> {
                 if (tracer.isRecording(span)) {
-                    traceAfterInvocation.invoke(span, traceAttributes, response);
+                    traceAfterInvocation.invoke(span, traceAttributes, response)
+                        .doFinally(signalType -> {
+                            recordDuration(span, startTime, traceAttributes);
+                        })
+                        .onErrorResume(error -> {
+                            LOGGER.verbose("Error in traceAfterInvocation", error);
+                            return Mono.empty();
+                        })
+                        .subscribe();
+                } else {
+                    recordDuration(span, startTime, traceAttributes);
                 }
-                recordDuration(span, startTime, traceAttributes);
-                return response;
-            })
-            .onErrorResume(error -> {
+            }).doOnError(error -> {
                 if (tracer.isRecording(span)) {
                     traceErrorAttributes(span, error);
                 }
                 traceAttributes.put(ERROR_TYPE_KEY, error.getClass().getName());
                 recordDuration(span, startTime, traceAttributes);
-                return Flux.error(error);
             });
         };
 
@@ -275,8 +299,10 @@ public abstract class ClientTracer {
 
     // Helper method to record duration metrics
     private void recordDuration(Context span, Instant startTime, Map<String, Object> traceAttributes) {
-        durationHistogram.record(Instant.now().getEpochSecond() - startTime.getEpochSecond(),
-            meter.createAttributes(traceAttributes), span);
+        if (startTime != null) {
+            durationHistogram.record(Instant.now().getEpochSecond() - startTime.getEpochSecond(),
+                meter.createAttributes(traceAttributes), span);
+        }
     }
 
     protected void setAttributeIfNotNull(String key, Object value, Context span) {
@@ -423,6 +449,28 @@ public abstract class ClientTracer {
     protected static <T> void putIfNotNullOrEmpty(Map<String, Object> map, String key, List<T> value) {
         if (value != null && !value.isEmpty()) {
             map.put(key, value);
+        }
+    }
+
+    protected static void safeInvoke(Runnable action) {
+        try {
+            if (action != null) {
+                action.run();
+            }
+        } catch (Exception e) {
+            LOGGER.verbose("Error during invocation.", e);
+        }
+    }
+
+    protected static <T> T safeInvoke(Supplier<T> supplier) {
+        try {
+            if (supplier != null) {
+                return supplier.get();
+            }
+            return null;
+        } catch (Exception e) {
+            LOGGER.verbose("Error during invocation.", e);
+            return null;
         }
     }
 

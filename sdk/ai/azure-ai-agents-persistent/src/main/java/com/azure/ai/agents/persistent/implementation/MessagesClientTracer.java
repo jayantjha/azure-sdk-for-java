@@ -96,7 +96,12 @@ public class MessagesClientTracer extends ClientTracer {
 
         return this.traceAsyncMonoOperation(OPERATION_CREATE_MESSAGE, operation, requestOptions, (span) -> {
             traceCreateMessageInvocationAttributes(threadId, role, content, attachments, span);
-        }, this::traceCreateMessageResponseAttributes);
+        }, (span, traceAttributes, result)
+                -> result.flatMap(message -> {
+                traceCreateMessageResponseAttributes(span, traceAttributes, message);
+                return Mono.empty();
+            })
+        );
     }
 
     /**
@@ -220,6 +225,7 @@ public class MessagesClientTracer extends ClientTracer {
             traceListMessagesInvocationAttributes(span, threadId, runId);
         }, (span, attributes, result) -> {
             traceListMessagesResponseAttributes(span, threadId, runId);
+            return Mono.empty();
         });
     }
 

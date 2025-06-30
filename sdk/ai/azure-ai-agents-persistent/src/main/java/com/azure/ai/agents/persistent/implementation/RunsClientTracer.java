@@ -7,6 +7,7 @@ import com.azure.ai.agents.persistent.RunsAsyncClient;
 import com.azure.ai.agents.persistent.RunsClient;
 import com.azure.ai.agents.persistent.models.CreateRunOptions;
 import com.azure.ai.agents.persistent.models.RunStep;
+import com.azure.ai.agents.persistent.models.StreamUpdate;
 import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.ai.agents.persistent.models.ToolOutput;
 import com.azure.core.http.rest.PagedFlux;
@@ -18,11 +19,13 @@ import com.azure.core.util.CoreUtils;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.metrics.Meter;
 import com.azure.core.util.tracing.Tracer;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Tracer for the convenience methods in {@link RunsClient} and
@@ -42,7 +45,9 @@ public class RunsClientTracer extends ClientTracer {
     static final String GEN_AI_RUN_ID_KEY = "gen_ai.thread.run.id";
     static final String GEN_AI_RUN_STATUS_KEY = "gen_ai.thread.run.status";
     static final String OPERATION_CREATE_THREAD_RUN = "create_thread_run";
+    static final String OPERATION_CREATE_THREAD_RUN_STREAMING = "create_thread_run_streaming";
     static final String OPERATION_SUBMIT_TOOL_OUTPUTS = "submit_tool_outputs";
+    static final String OPERATION_SUBMIT_TOOL_OUTPUTS_STREAMING = "submit_tool_outputs_streaming";
     static final String OPERATION_LIST_RUN_STEPS = "list_run_steps";
     static final String EVENT_GEN_AI_TOOL_MESSAGE = "gen_ai.tool.message";
     static final String EVENT_GEN_AI_SYSTEM_MESSAGE = "gen_ai.system.message";
@@ -89,9 +94,14 @@ public class RunsClientTracer extends ClientTracer {
     public Mono<ThreadRun> traceCreateRunAsync(CreateRunOptions options, Operation<Mono<ThreadRun>> operation,
         RequestOptions requestOptions) {
 
-        return this.traceAsyncMonoOperation(OPERATION_CREATE_THREAD_RUN, operation, requestOptions, (span) -> {
-            traceCreateRunInvocationAttributes(options, span);
-        }, this::traceCreateRunResponseAttributes);
+        return this.traceAsyncMonoOperation(OPERATION_CREATE_THREAD_RUN, operation, requestOptions,
+            (span) -> traceCreateRunInvocationAttributes(options, span),
+            (span, traceAttributes, result)
+                -> result.flatMap(run -> {
+                    traceCreateRunResponseAttributes(span, traceAttributes, run);
+                    return Mono.empty();
+                })
+        );
     }
 
     /**
@@ -141,6 +151,78 @@ public class RunsClientTracer extends ClientTracer {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Tracing CreateRunStreaming">
+
+    /**
+     * Traces the synchronous convenience API - create run operation.
+     *
+     * @param options input options containing run creation parameters.
+     * @param operation the operation performing the actual create run call.
+     * @param requestOptions The requestOptions parameter for the {@code operation}.
+     * @return thread run created from the request.
+     */
+    public Stream<StreamUpdate> traceCreateRunStreamingSync(CreateRunOptions options, Operation<Stream<StreamUpdate>> operation,
+                                                            RequestOptions requestOptions) {
+
+        return this.traceSyncOperation(OPERATION_CREATE_THREAD_RUN_STREAMING, operation, requestOptions, (span) -> {
+            traceCreateRunInvocationAttributes(options, span);
+        }, this::traceCreateRunStreamingResponseAttributes);
+    }
+
+    /**
+     * Traces the asynchronous convenience API - create run operation.
+     *
+     * @param options input options containing run creation parameters.
+     * @param operation the operation performing the actual create run call.
+     * @param requestOptions The requestOptions parameter for the {@code operation}.
+     * @return thread run created from the request.
+     */
+    public Flux<StreamUpdate> traceCreateRunStreamingAsync(CreateRunOptions options, Operation<Flux<StreamUpdate>> operation,
+                                               RequestOptions requestOptions) {
+
+        return this.traceAsyncFluxOperation(OPERATION_CREATE_THREAD_RUN_STREAMING, operation, requestOptions, (span) -> {
+            traceCreateRunInvocationAttributes(options, span);
+        }, (span, traceAttributes, result)
+            -> result.flatMap(streamUpdate -> {
+                traceCreateRunStreamUpdateResponseAttributes(span, traceAttributes, streamUpdate);
+                return Flux.just(streamUpdate);
+            })
+            .then(Mono.empty())
+        );
+    }
+
+    /**
+     * Record the response attributes from a create run operation.
+     *
+     * @param span The current span context.
+     * @param streamUpdates The stream updates received from the run.
+     */
+    void traceCreateRunStreamingResponseAttributes(Context span, Map<String, Object> traceAttributes, Stream<StreamUpdate> streamUpdates) {
+//        if (run != null) {
+//            this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, run.getId(), span);
+//            this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, run.getThreadId(), span);
+//            this.setAttributeIfNotNullOrEmpty(GEN_AI_AGENT_ID_KEY, run.getAssistantId(), span);
+//            this.setAttributeIfNotNull(GEN_AI_RUN_STATUS_KEY, run.getStatus(), span);
+//        }
+    }
+
+    /**
+     * Record the response attributes from a create run operation.
+     *
+     * @param span The current span context.
+     * @param streamUpdate The stream updates received from the run.
+     */
+    void traceCreateRunStreamUpdateResponseAttributes(Context span, Map<String, Object> traceAttributes, StreamUpdate streamUpdate) {
+//        if (run != null) {
+//            this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, run.getId(), span);
+//            this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, run.getThreadId(), span);
+//            this.setAttributeIfNotNullOrEmpty(GEN_AI_AGENT_ID_KEY, run.getAssistantId(), span);
+//            this.setAttributeIfNotNull(GEN_AI_RUN_STATUS_KEY, run.getStatus(), span);
+//        }
+    }
+
+    //</editor-fold>
+
     //<editor-fold desc="Tracing SubmitToolOutputs">
 
     /**
@@ -176,7 +258,12 @@ public class RunsClientTracer extends ClientTracer {
 
         return this.traceAsyncMonoOperation(OPERATION_SUBMIT_TOOL_OUTPUTS, operation, requestOptions, (span) -> {
             traceSubmitToolOutputsInvocationAttributes(threadId, runId, toolOutputs, span);
-        }, this::traceSubmitToolOutputsResponseAttributes);
+        }, (span, traceAttributes, result)
+            -> result.flatMap(run -> {
+                traceSubmitToolOutputsResponseAttributes(span, traceAttributes, run);
+                return Mono.empty();
+            })
+        );
     }
 
     /**
@@ -264,10 +351,12 @@ public class RunsClientTracer extends ClientTracer {
 
         return this.traceAsyncFluxOperation(OPERATION_LIST_RUN_STEPS, operation, requestOptions, (span) -> {
             traceListRunStepsInvocationAttributes(threadId, runId, span);
-        }, (span, attributes, result) -> {
-            // For paged collections, we trace thread and run IDs since we can't access actual items yet
-            traceListRunStepsResponseAttributes(span, threadId, runId);
-        });
+        }, (span, traceAttributes, result)
+            -> result.flatMap(runStep -> {
+                traceListRunStepsResponseAttributes(span, threadId, runId);
+                return Flux.just(runStep);
+            }).then(Mono.empty())
+        );
     }
 
     /**

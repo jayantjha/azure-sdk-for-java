@@ -69,7 +69,10 @@ public class ThreadsClientTracer extends ClientTracer {
 
         return this.traceAsyncMonoOperation(OPERATION_CREATE_THREAD, operation, requestOptions, (span) -> {
             traceCreateThreadInvocationAttributes(span, messages, toolResources);
-        }, this::traceCreateThreadResponseAttributes);
+        },
+
+
+            this::traceCreateThreadResponseAttributes);
     }
 
     /**
