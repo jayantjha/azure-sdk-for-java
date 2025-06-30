@@ -5,11 +5,7 @@ package com.azure.ai.agents.persistent.implementation;
 
 import com.azure.ai.agents.persistent.RunsAsyncClient;
 import com.azure.ai.agents.persistent.RunsClient;
-import com.azure.ai.agents.persistent.models.CreateRunOptions;
-import com.azure.ai.agents.persistent.models.RunStep;
-import com.azure.ai.agents.persistent.models.StreamUpdate;
-import com.azure.ai.agents.persistent.models.ThreadRun;
-import com.azure.ai.agents.persistent.models.ToolOutput;
+import com.azure.ai.agents.persistent.models.*;
 import com.azure.core.http.rest.PagedFlux;
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.RequestOptions;
@@ -44,6 +40,9 @@ public class RunsClientTracer extends ClientTracer {
     static final String GEN_AI_AGENT_ID_KEY = "gen_ai.agent.id";
     static final String GEN_AI_RUN_ID_KEY = "gen_ai.thread.run.id";
     static final String GEN_AI_RUN_STATUS_KEY = "gen_ai.thread.run.status";
+    static final String GEN_AI_USAGE_INPUT_TOKENS_KEY = "gen_ai.usage.input_tokens";
+    static final String GEN_AI_USAGE_OUTPUT_TOKENS_KEY = "gen_ai.usage.output_tokens";
+    static final String GEN_AI_RESPONSE_MODEL_KEY = "gen_ai.response.model";
     static final String OPERATION_CREATE_THREAD_RUN = "create_thread_run";
     static final String OPERATION_CREATE_THREAD_RUN_STREAMING = "create_thread_run_streaming";
     static final String OPERATION_SUBMIT_TOOL_OUTPUTS = "submit_tool_outputs";
@@ -139,13 +138,9 @@ public class RunsClientTracer extends ClientTracer {
      * @param run The thread run created.
      */
     void traceCreateRunResponseAttributes(Context span, Map<String, Object> traceAttributes, ThreadRun run) {
-        if (run != null) {
-            this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, run.getId(), span);
-            this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, run.getThreadId(), span);
-            this.setAttributeIfNotNullOrEmpty(GEN_AI_AGENT_ID_KEY, run.getAssistantId(), span);
-            this.setAttributeIfNotNull(GEN_AI_RUN_STATUS_KEY, run.getStatus(), span);
-        }
+        traceThreadRun(span, traceAttributes, run);
     }
+
     //</editor-fold>
 
     //<editor-fold desc="Tracing CreateRunStreaming">
@@ -200,6 +195,41 @@ public class RunsClientTracer extends ClientTracer {
         //            this.setAttributeIfNotNullOrEmpty(GEN_AI_AGENT_ID_KEY, run.getAssistantId(), span);
         //            this.setAttributeIfNotNull(GEN_AI_RUN_STATUS_KEY, run.getStatus(), span);
         //        }
+    }
+
+    /**
+     * Record the response attributes from a create run operation.
+     *
+     * @param span The current span context.
+     * @param streamUpdate The stream updates received from the run.
+     */
+    void traceCreateRunStreamingResponseAttributes(
+        Context span, Map<String, Object> traceAttributes, StreamUpdate streamUpdate) {
+        if (streamUpdate == null) {
+            return;
+        }
+        else if (streamUpdate instanceof StreamThreadRunCreation) {
+            StreamThreadRunCreation threadRunUpdate = (StreamThreadRunCreation) streamUpdate;
+            ThreadRun run = threadRunUpdate.getMessage();
+            traceThreadRun(span, traceAttributes, run);
+        }
+        else if (streamUpdate instanceof StreamMessageCreation) {
+            StreamMessageCreation messageUpdate = (StreamMessageCreation) streamUpdate;
+            ThreadMessage message = messageUpdate.getMessage();
+        }
+        else if (streamUpdate instanceof StreamRunCreation) {
+            StreamRunCreation runStepUpdate = (StreamRunCreation) streamUpdate;
+            RunStep runStep = runStepUpdate.getMessage();
+            if (runStep.getStatus() == RunStepStatus.COMPLETED
+                && runStep.getType() == RunStepType.TOOL_CALLS
+                && runStep.getStepDetails() instanceof RunStepToolCallDetails) {
+
+            }
+            else if (runStep.getStatus() == RunStepStatus.COMPLETED
+                && runStep.getType() == RunStepType.MESSAGE_CREATION) {
+
+            }
+        }
     }
 
     /**
@@ -379,4 +409,21 @@ public class RunsClientTracer extends ClientTracer {
         this.setAttributeIfNotNull(GEN_AI_RUN_ID_KEY, runId, span);
     }
     //</editor-fold>
+
+
+    void traceThreadRun(Context span, Map<String, Object> traceAttributes, ThreadRun run) {
+        if (run != null) {
+            this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, run.getId(), span);
+            this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, run.getThreadId(), span);
+            this.setAttributeIfNotNullOrEmpty(GEN_AI_AGENT_ID_KEY, run.getAssistantId(), span);
+            this.setAttributeIfNotNull(GEN_AI_RUN_STATUS_KEY, run.getStatus(), span);
+            if (run.getUsage() != null) {
+                traceAttributes.put(GEN_AI_USAGE_OUTPUT_TOKENS_KEY, run.getUsage().getCompletionTokens());
+                this.setAttributeIfNotNull(GEN_AI_USAGE_OUTPUT_TOKENS_KEY, run.getUsage().getCompletionTokens(), span);
+                traceAttributes.put(GEN_AI_USAGE_INPUT_TOKENS_KEY, run.getUsage().getPromptTokens());
+                this.setAttributeIfNotNull(GEN_AI_USAGE_INPUT_TOKENS_KEY, run.getUsage().getPromptTokens(), span);
+            }
+            this.setAttributeIfNotNullOrEmpty(GEN_AI_RESPONSE_MODEL_KEY, run.getModel(), span);
+        }
+    }
 }

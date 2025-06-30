@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 package com.azure.ai.agents.persistent.implementation;
 
+import com.azure.ai.agents.persistent.models.ThreadRun;
 import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.util.Configuration;
 import com.azure.core.util.ConfigurationProperty;
@@ -306,6 +307,7 @@ public abstract class ClientTracer {
             tracer.setAttribute(key, value, span);
         }
     }
+
 
     /**
      * Records error attributes on the span.
