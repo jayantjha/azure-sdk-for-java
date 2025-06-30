@@ -17,14 +17,12 @@ import com.azure.core.util.metrics.Meter;
 import com.azure.core.util.tracing.Tracer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * Tracer for the convenience methods in {@link RunsClient} and
@@ -34,7 +32,7 @@ import java.util.stream.Stream;
  * <a href="https://github.com/open-telemetry/semantic-conventions/blob/v1.27.0/docs/gen-ai">Gen AI semantic conventions</a>.
  * </p>
  */
-public class RunsClientTracer extends ClientTracer {
+public class RunsClientTracer extends MessagesClientTracer {
 
     private static final ClientLogger LOGGER = new ClientLogger(RunsClientTracer.class);
 
@@ -48,12 +46,10 @@ public class RunsClientTracer extends ClientTracer {
     static final String GEN_AI_RESPONSE_MODEL_KEY = "gen_ai.response.model";
 
     static final String GEN_AI_RUN_STEP_START_TIMESTAMP_KEY = "gen_ai.run_step.start.timestamp";
-    static final String GEN_AI_RUN_STEP_END_TIMESTAMP_KEY = "gen_ai.run_step.end.timestamp";
 
     static final String OPERATION_CREATE_THREAD_RUN = "create_thread_run";
     static final String OPERATION_CREATE_THREAD_RUN_STREAMING = "create_thread_run_streaming";
     static final String OPERATION_SUBMIT_TOOL_OUTPUTS = "submit_tool_outputs";
-    static final String OPERATION_SUBMIT_TOOL_OUTPUTS_STREAMING = "submit_tool_outputs_streaming";
     static final String OPERATION_LIST_RUN_STEPS = "list_run_steps";
     static final String EVENT_GEN_AI_TOOL_MESSAGE = "gen_ai.tool.message";
     static final String EVENT_GEN_AI_SYSTEM_MESSAGE = "gen_ai.system.message";

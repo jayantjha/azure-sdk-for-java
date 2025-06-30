@@ -7,6 +7,8 @@ import com.azure.ai.agents.persistent.MessagesAsyncClient;
 import com.azure.ai.agents.persistent.MessagesClient;
 import com.azure.ai.agents.persistent.models.MessageAttachment;
 import com.azure.ai.agents.persistent.models.MessageRole;
+import com.azure.ai.agents.persistent.models.MessageTextAnnotation;
+import com.azure.ai.agents.persistent.models.MessageTextContent;
 import com.azure.ai.agents.persistent.models.ThreadMessage;
 import com.azure.core.http.rest.PagedFlux;
 import com.azure.core.http.rest.PagedIterable;
@@ -18,7 +20,6 @@ import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.metrics.Meter;
 import com.azure.core.util.tracing.Tracer;
 import reactor.core.publisher.Mono;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -248,4 +249,82 @@ public class MessagesClientTracer extends ClientTracer {
         this.setAttributeIfNotNull(GEN_AI_RUN_ID_KEY, runId, span);
     }
     //</editor-fold>
+
+    protected void traceThreadMessage(
+        Context span, Map<String, Object> traceAttributes, ThreadMessage message) {
+        if (message == null) {
+            return;
+        }
+        this.setAttributeIfNotNullOrEmpty(GEN_AI_MESSAGE_ID_KEY, message.getId(), span);
+        this.setAttributeIfNotNullOrEmpty(GEN_AI_THREAD_ID_KEY, message.getThreadId(), span);
+        this.setAttributeIfNotNull(GEN_AI_MESSAGE_STATUS_KEY, message.getStatus(), span);
+        this.setAttributeIfNotNull(GEN_AI_MESSAGE_ROLE_KEY, message.getRole(), span);
+        this.setAttributeIfNotNullOrEmpty(GEN_AI_RUN_ID_KEY, message.getRunId(), span);
+
+        String eventName = switch (message.getRole().toString().toLowerCase()) {
+            case "user" -> EVENT_NAME_USER_MESSAGE;
+            case "assistant" -> EVENT_NAME_ASSISTANT_MESSAGE;
+            default -> "gen_ai." + message.getRole().toString().toLowerCase() + ".message";
+        };
+
+        Map<String, Object> eventBody = new HashMap<>();
+
+        if (this.traceContent) {
+            Map<String, Object> contentBody = new HashMap<>();
+            if (message.getContent() != null) {
+                message.getContent().forEach(contentItem -> {
+                    if (contentItem instanceof MessageTextContent textContent) {
+                        Map<String, Object> contentDetails = new HashMap<>();
+                        contentDetails.put("value", textContent.getText());
+
+                        if (textContent.getText() != null
+                            && textContent.getText().getAnnotations() != null
+                            && !textContent.getText().getAnnotations().isEmpty()) {
+                            contentDetails.put("annotations", textContent.getText().getAnnotations().stream()
+                                .map(MessageTextAnnotation::getText)
+                                .collect(java.util.stream.Collectors.joining(", ")));
+                        }
+
+                        contentBody.put("text", contentDetails);
+                    }
+                });
+            }
+            eventBody.put("content", contentBody);
+        }
+
+        if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
+            List<Map<String, Object>> attachmentList = message.getAttachments().stream().map(attachment -> {
+                Map<String, Object> attachmentBody = new HashMap<>();
+                attachmentBody.put("id", attachment.getFileId());
+
+                if (attachment.getTools() != null && !attachment.getTools().isEmpty()) {
+                    attachmentBody.put("tools", attachment.getTools().stream()
+                        .map(Object::toString)
+                        .collect(java.util.stream.Collectors.toList()));
+                }
+                return attachmentBody;
+            }).collect(java.util.stream.Collectors.toList());
+
+            eventBody.put("attachments", attachmentList);
+        }
+
+        if (message.getIncompleteDetails() != null) {
+            eventBody.put("incomplete_details", message.getIncompleteDetails());
+        }
+
+        eventBody.put("role", message.getRole().toString());
+
+        String serializedEventBody = toJsonString(eventBody);
+
+        Map<String, Object> attributes = new HashMap<>(traceAttributes);
+        attributes.put(GEN_AI_SYSTEM_KEY, GEN_AI_SYSTEM_VALUE);
+        putIfNotNullOrEmpty(attributes, GEN_AI_THREAD_ID_KEY, message.getThreadId());
+        putIfNotNullOrEmpty(attributes, GEN_AI_MESSAGE_ID_KEY, message.getId());
+        putIfNotNullOrEmpty(attributes, GEN_AI_RUN_ID_KEY, message.getRunId());
+        putIfNotNull(attributes, GEN_AI_MESSAGE_STATUS_KEY, message.getStatus());
+
+        attributes.put(GEN_AI_EVENT_CONTENT, serializedEventBody);
+
+        tracer.addEvent(eventName, attributes, null, span);
+    }
 }
