@@ -48,8 +48,8 @@ public final class AgentFunctionsStreamingSample {
         PersistentAgentsClient agentsClient = clientBuilder.buildClient();
         PersistentAgentsAdministrationClient administrationClient = agentsClient.getPersistentAgentsAdministrationClient();
         ThreadsClient threadsClient = agentsClient.getThreadsClient();
-        MessagesClient messagesClient = agentsClient.getMessagesClient();
-        RunsClient runsClient = agentsClient.getRunsClient();
+        ThreadMessagesClient messagesClient = agentsClient.getMessagesClient();
+        ThreadRunsClient runsClient = agentsClient.getRunsClient();
 
         // function tool definitions
         FunctionToolDefinition getUserFavoriteCityTool = new FunctionToolDefinition(

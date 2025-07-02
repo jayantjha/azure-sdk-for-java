@@ -44,13 +44,13 @@ import java.util.stream.Collectors;
 import reactor.core.publisher.Mono;
 
 /**
- * Initializes a new instance of the Runs type.
+ * Initializes a new instance of the ThreadRuns type.
  */
-public final class RunsImpl {
+public final class ThreadRunsImpl {
     /**
      * The proxy service used to perform REST calls.
      */
-    private final RunsService service;
+    private final ThreadRunsService service;
 
     /**
      * Project endpoint in the form of:
@@ -111,31 +111,31 @@ public final class RunsImpl {
     }
 
     /**
-     * Initializes an instance of Runs client.
+     * Initializes an instance of ThreadRuns client.
      * 
      * @param endpoint Project endpoint in the form of:
      * https://&lt;aiservices-id&gt;.services.ai.azure.com/api/projects/&lt;project-name&gt;.
      * @param serviceVersion Service version.
      */
-    public RunsImpl(String endpoint, PersistentAgentsServiceVersion serviceVersion) {
+    public ThreadRunsImpl(String endpoint, PersistentAgentsServiceVersion serviceVersion) {
         this(new HttpPipelineBuilder().policies(new UserAgentPolicy(), new RetryPolicy()).build(),
             JacksonAdapter.createDefaultSerializerAdapter(), endpoint, serviceVersion);
     }
 
     /**
-     * Initializes an instance of Runs client.
+     * Initializes an instance of ThreadRuns client.
      * 
      * @param httpPipeline The HTTP pipeline to send requests through.
      * @param endpoint Project endpoint in the form of:
      * https://&lt;aiservices-id&gt;.services.ai.azure.com/api/projects/&lt;project-name&gt;.
      * @param serviceVersion Service version.
      */
-    public RunsImpl(HttpPipeline httpPipeline, String endpoint, PersistentAgentsServiceVersion serviceVersion) {
+    public ThreadRunsImpl(HttpPipeline httpPipeline, String endpoint, PersistentAgentsServiceVersion serviceVersion) {
         this(httpPipeline, JacksonAdapter.createDefaultSerializerAdapter(), endpoint, serviceVersion);
     }
 
     /**
-     * Initializes an instance of Runs client.
+     * Initializes an instance of ThreadRuns client.
      * 
      * @param httpPipeline The HTTP pipeline to send requests through.
      * @param serializerAdapter The serializer to serialize an object into a string.
@@ -143,21 +143,21 @@ public final class RunsImpl {
      * https://&lt;aiservices-id&gt;.services.ai.azure.com/api/projects/&lt;project-name&gt;.
      * @param serviceVersion Service version.
      */
-    public RunsImpl(HttpPipeline httpPipeline, SerializerAdapter serializerAdapter, String endpoint,
+    public ThreadRunsImpl(HttpPipeline httpPipeline, SerializerAdapter serializerAdapter, String endpoint,
         PersistentAgentsServiceVersion serviceVersion) {
         this.httpPipeline = httpPipeline;
         this.serializerAdapter = serializerAdapter;
         this.endpoint = endpoint;
         this.serviceVersion = serviceVersion;
-        this.service = RestProxy.create(RunsService.class, this.httpPipeline, this.getSerializerAdapter());
+        this.service = RestProxy.create(ThreadRunsService.class, this.httpPipeline, this.getSerializerAdapter());
     }
 
     /**
-     * The interface defining all the services for Runs to be used by the proxy service to perform REST calls.
+     * The interface defining all the services for ThreadRuns to be used by the proxy service to perform REST calls.
      */
     @Host("{endpoint}")
-    @ServiceInterface(name = "Runs")
-    public interface RunsService {
+    @ServiceInterface(name = "ThreadRuns")
+    public interface ThreadRunsService {
         @Post("/threads/{threadId}/runs")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = { 401 })

@@ -36,8 +36,8 @@ public final class AgentImageInputUrlSample {
         PersistentAgentsClient agentsClient = clientBuilder.buildClient();
         PersistentAgentsAdministrationClient administrationClient = agentsClient.getPersistentAgentsAdministrationClient();
         ThreadsClient threadsClient = agentsClient.getThreadsClient();
-        MessagesClient messagesClient = agentsClient.getMessagesClient();
-        RunsClient runsClient = agentsClient.getRunsClient();
+        ThreadMessagesClient messagesClient = agentsClient.getMessagesClient();
+        ThreadRunsClient runsClient = agentsClient.getRunsClient();
 
         String imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg";
 

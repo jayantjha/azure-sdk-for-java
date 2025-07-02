@@ -37,8 +37,8 @@ public final class AgentImageInputBase64AsyncSample {
         PersistentAgentsAsyncClient agentsAsyncClient = clientBuilder.buildAsyncClient();
         PersistentAgentsAdministrationAsyncClient administrationAsyncClient = agentsAsyncClient.getPersistentAgentsAdministrationAsyncClient();
         ThreadsAsyncClient threadsAsyncClient = agentsAsyncClient.getThreadsAsyncClient();
-        MessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
-        RunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
+        ThreadMessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
+        ThreadRunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
 
         // Track resources for cleanup
         AtomicReference<String> agentId = new AtomicReference<>();
@@ -65,13 +65,13 @@ public final class AgentImageInputBase64AsyncSample {
             .flatMap(agent -> {
                 System.out.println("Created agent: " + agent.getId());
                 agentId.set(agent.getId());
-                
+
                 return threadsAsyncClient.createThread();
             })
             .flatMap(thread -> {
                 System.out.println("Created thread: " + thread.getId());
                 threadId.set(thread.getId());
-                
+
                 return messagesAsyncClient.createMessage(
                     thread.getId(),
                     MessageRole.USER,
@@ -79,10 +79,10 @@ public final class AgentImageInputBase64AsyncSample {
             })
             .flatMap(message -> {
                 System.out.println("Created message with image");
-                
+
                 CreateRunOptions createRunOptions = new CreateRunOptions(threadId.get(), agentId.get())
                     .setAdditionalInstructions("");
-                
+
                 return runsAsyncClient.createRun(createRunOptions);
             })
             .flatMap(threadRun -> {

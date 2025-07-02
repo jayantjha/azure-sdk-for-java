@@ -37,9 +37,9 @@ public class AgentCodeInterpreterFileAttachmentSample {
         PersistentAgentsClient agentsClient = clientBuilder.buildClient();
         PersistentAgentsAdministrationClient administrationClient = agentsClient.getPersistentAgentsAdministrationClient();
         ThreadsClient threadsClient = agentsClient.getThreadsClient();
-        MessagesClient messagesClient = agentsClient.getMessagesClient();
-        RunsClient runsClient = agentsClient.getRunsClient();
-        FilesClient filesClient = agentsClient.getFilesClient();
+        ThreadMessagesClient messagesClient = agentsClient.getMessagesClient();
+        ThreadRunsClient runsClient = agentsClient.getRunsClient();
+        PersistentAgentsFilesClient filesClient = agentsClient.getFilesClient();
 
         Path htmlFile = getFile("sample.html");
 

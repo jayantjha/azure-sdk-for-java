@@ -41,9 +41,9 @@ public class AgentCodeInterpreterFileAttachmentAsyncSample {
             PersistentAgentsAsyncClient agentsAsyncClient = clientBuilder.buildAsyncClient();
             PersistentAgentsAdministrationAsyncClient administrationAsyncClient = agentsAsyncClient.getPersistentAgentsAdministrationAsyncClient();
             ThreadsAsyncClient threadsAsyncClient = agentsAsyncClient.getThreadsAsyncClient();
-            MessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
-            RunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
-            FilesAsyncClient filesAsyncClient = agentsAsyncClient.getFilesAsyncClient();
+            ThreadMessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
+            ThreadRunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
+            PersistentAgentsFilesAsyncClient filesAsyncClient = agentsAsyncClient.getFilesAsyncClient();
 
             // Track resources for cleanup
             AtomicReference<String> agentId = new AtomicReference<>();
@@ -61,7 +61,7 @@ public class AgentCodeInterpreterFileAttachmentAsyncSample {
             // Create file upload request
             UploadFileRequest uploadFileRequest = new UploadFileRequest(
                 new FileDetails(BinaryData.fromFile(htmlFile))
-                    .setFilename("sample.html"), 
+                    .setFilename("sample.html"),
                 FilePurpose.AGENTS);
 
             // Build reactive chain
@@ -72,7 +72,7 @@ public class AgentCodeInterpreterFileAttachmentAsyncSample {
                 // Store resources for cleanup
                 agentId.set(tuple.getT1().getId());
                 fileId.set(tuple.getT2().getId());
-                
+
                 System.out.println("Created agent: " + tuple.getT1().getId());
                 System.out.println("Uploaded file: " + tuple.getT2().getId());
 
@@ -118,7 +118,7 @@ public class AgentCodeInterpreterFileAttachmentAsyncSample {
                 // Clean up resources
                 System.out.println("Cleaning up resources...");
                 cleanUpResources(threadId, threadsAsyncClient, agentId, administrationAsyncClient);
-                
+
                 // Delete the file if it was created
                 if (fileId.get() != null) {
                     filesAsyncClient.deleteFile(fileId.get()).block();

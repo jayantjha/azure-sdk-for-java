@@ -28,8 +28,8 @@ public class AgentBingGroundingSample {
         PersistentAgentsClient agentsClient = clientBuilder.buildClient();
         PersistentAgentsAdministrationClient administrationClient = agentsClient.getPersistentAgentsAdministrationClient();
         ThreadsClient threadsClient = agentsClient.getThreadsClient();
-        MessagesClient messagesClient = agentsClient.getMessagesClient();
-        RunsClient runsClient = agentsClient.getRunsClient();
+        ThreadMessagesClient messagesClient = agentsClient.getMessagesClient();
+        ThreadRunsClient runsClient = agentsClient.getRunsClient();
 
         String bingConnectionId = Configuration.getGlobalConfiguration().get("BING_CONNECTION_ID", "");
 

@@ -34,7 +34,7 @@ public class VectorStoresClientTest extends ClientTestBase {
     private PersistentAgentsClientBuilder clientBuilder;
     private VectorStoresClient vectorStoresClient;
     private List<VectorStore> vectorStores = new ArrayList<>();
-    private FilesClient filesClient;
+    private PersistentAgentsFilesClient filesClient;
     private List<FileInfo> uploadedFiles = new ArrayList<>();
     private List<VectorStoreFile> vectorStoreFiles = new ArrayList<>();
     private VectorStore vectorStore;

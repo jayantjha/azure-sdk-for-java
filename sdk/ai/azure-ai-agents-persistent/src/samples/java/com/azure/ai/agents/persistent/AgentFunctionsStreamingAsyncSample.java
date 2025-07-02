@@ -49,8 +49,8 @@ public final class AgentFunctionsStreamingAsyncSample {
         PersistentAgentsAsyncClient agentsAsyncClient = clientBuilder.buildAsyncClient();
         PersistentAgentsAdministrationAsyncClient administrationAsyncClient = agentsAsyncClient.getPersistentAgentsAdministrationAsyncClient();
         ThreadsAsyncClient threadsAsyncClient = agentsAsyncClient.getThreadsAsyncClient();
-        MessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
-        RunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
+        ThreadMessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
+        ThreadRunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
 
         // function tool definitions
         FunctionToolDefinition getUserFavoriteCityTool = new FunctionToolDefinition(
@@ -165,22 +165,22 @@ public final class AgentFunctionsStreamingAsyncSample {
             .flatMap(agent -> {
                 System.out.println("Created agent: " + agent.getId());
                 agentId.set(agent.getId());
-                
+
                 return threadsAsyncClient.createThread()
                     .flatMap(thread -> {
                         System.out.println("Created thread: " + thread.getId());
                         threadId.set(thread.getId());
-                        
+
                         return messagesAsyncClient.createMessage(
                             thread.getId(),
                             MessageRole.USER,
                             "What's the weather like in my favorite city?")
                             .flatMap(message -> {
                                 System.out.println("Created initial message");
-                                
+
                                 CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
                                     .setAdditionalInstructions("");
-                                
+
                                 System.out.println("----- Run started! -----");
                                 return handleStreamingRun(runsAsyncClient
                                     .createRunStreaming(createRunOptions), runsAsyncClient, getResolvedToolOutput);
@@ -194,21 +194,21 @@ public final class AgentFunctionsStreamingAsyncSample {
 
     private static Mono<Void> handleStreamingRun(
             Flux<StreamUpdate> streamingUpdates,
-            RunsAsyncClient runsAsyncClient,
+            ThreadRunsAsyncClient runsAsyncClient,
             Function<RequiredToolCall, ToolOutput> toolOutputResolver) {
-            
+
         AtomicReference<ThreadRun> currentRun = new AtomicReference<>();
-        
+
         return streamingUpdates
             .flatMap(streamUpdate -> {
                 if (streamUpdate instanceof StreamRequiredAction) {
                     StreamRequiredAction actionUpdate = (StreamRequiredAction) streamUpdate;
                     currentRun.set(actionUpdate.getMessage());
-                    
+
                     if (currentRun.get().getStatus() == RunStatus.REQUIRES_ACTION) {
                         return handleToolActions(
-                            currentRun.get(), 
-                            runsAsyncClient, 
+                            currentRun.get(),
+                            runsAsyncClient,
                             toolOutputResolver);
                     }
                 } else if (streamUpdate instanceof StreamMessageUpdate) {
@@ -223,19 +223,19 @@ public final class AgentFunctionsStreamingAsyncSample {
             })
             .then();
     }
-    
+
     private static Flux<StreamUpdate> handleToolActions(
-            ThreadRun run, 
-            RunsAsyncClient runsAsyncClient,
+            ThreadRun run,
+            ThreadRunsAsyncClient runsAsyncClient,
             Function<RequiredToolCall, ToolOutput> toolOutputResolver) {
-        
+
         List<ToolOutput> toolOutputs = new ArrayList<>();
         SubmitToolOutputsAction submitAction = (SubmitToolOutputsAction) run.getRequiredAction();
-        
+
         for (RequiredToolCall toolCall : submitAction.getSubmitToolOutputs().getToolCalls()) {
             toolOutputs.add(toolOutputResolver.apply(toolCall));
         }
-        
+
         return runsAsyncClient.submitToolOutputsToRunStreaming(
             run.getThreadId(),
             run.getId(),

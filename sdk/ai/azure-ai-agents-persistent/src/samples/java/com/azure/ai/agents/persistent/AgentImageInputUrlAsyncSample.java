@@ -30,8 +30,8 @@ public final class AgentImageInputUrlAsyncSample {
         PersistentAgentsAsyncClient agentsAsyncClient = clientBuilder.buildAsyncClient();
         PersistentAgentsAdministrationAsyncClient administrationAsyncClient = agentsAsyncClient.getPersistentAgentsAdministrationAsyncClient();
         ThreadsAsyncClient threadsAsyncClient = agentsAsyncClient.getThreadsAsyncClient();
-        MessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
-        RunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
+        ThreadMessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
+        ThreadRunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
 
         String imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg";
 
@@ -47,28 +47,28 @@ public final class AgentImageInputUrlAsyncSample {
         CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
             .setName(agentName)
             .setInstructions("You are a helpful agent");
-        
+
         // Create full reactive chain
         administrationAsyncClient.createAgent(createAgentOptions)
             .flatMap(agent -> {
                 System.out.println("Created agent: " + agent.getId());
                 agentId.set(agent.getId());
-                
+
                 return threadsAsyncClient.createThread()
                     .flatMap(thread -> {
                         System.out.println("Created thread: " + thread.getId());
                         threadId.set(thread.getId());
-                        
+
                         return messagesAsyncClient.createMessage(
                             thread.getId(),
                             MessageRole.USER,
                             BinaryData.fromObject(messageBlock))
                             .flatMap(message -> {
                                 System.out.println("Created message with image URL");
-                                
+
                                 CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
                                     .setAdditionalInstructions("");
-                                
+
                                 return runsAsyncClient.createRun(createRunOptions)
                                     .flatMap(threadRun -> {
                                         System.out.println("Created run, waiting for completion...");

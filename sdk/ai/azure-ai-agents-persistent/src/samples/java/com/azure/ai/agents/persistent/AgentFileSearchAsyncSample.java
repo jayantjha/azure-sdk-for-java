@@ -33,9 +33,9 @@ public class AgentFileSearchAsyncSample {
         PersistentAgentsAsyncClient agentsAsyncClient = clientBuilder.buildAsyncClient();
         PersistentAgentsAdministrationAsyncClient administrationAsyncClient = agentsAsyncClient.getPersistentAgentsAdministrationAsyncClient();
         ThreadsAsyncClient threadsAsyncClient = agentsAsyncClient.getThreadsAsyncClient();
-        MessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
-        RunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
-        FilesAsyncClient filesAsyncClient = agentsAsyncClient.getFilesAsyncClient();
+        ThreadMessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
+        ThreadRunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
+        PersistentAgentsFilesAsyncClient filesAsyncClient = agentsAsyncClient.getFilesAsyncClient();
         VectorStoresAsyncClient vectorStoresAsyncClient = agentsAsyncClient.getVectorStoresAsyncClient();
 
         // Track resources for cleanup
@@ -52,7 +52,7 @@ public class AgentFileSearchAsyncSample {
                 FilePurpose.AGENTS))
             .flatMap(uploadedAgentFile -> {
                 System.out.println("Uploaded file: " + uploadedAgentFile.getId());
-                
+
                 return vectorStoresAsyncClient.createVectorStore(
                     Arrays.asList(uploadedAgentFile.getId()),
                     "my_vector_store",
@@ -61,7 +61,7 @@ public class AgentFileSearchAsyncSample {
             .flatMap(vectorStore -> {
                 System.out.println("Created vector store: " + vectorStore.getId());
                 vectorStoreId.set(vectorStore.getId());
-                
+
                 // Poll until vector store is ready
                 return Mono.fromSupplier(() -> vectorStore)
                     .expand(vs -> {
@@ -77,7 +77,7 @@ public class AgentFileSearchAsyncSample {
             })
             .flatMap(readyVectorStore -> {
                 System.out.println("Vector store ready with status: " + readyVectorStore.getStatus());
-                
+
                 FileSearchToolResource fileSearchToolResource = new FileSearchToolResource()
                     .setVectorStoreIds(Arrays.asList(readyVectorStore.getId()));
 
@@ -87,19 +87,19 @@ public class AgentFileSearchAsyncSample {
                     .setInstructions("You are a helpful agent that can help fetch data from files you know about.")
                     .setTools(Arrays.asList(new FileSearchToolDefinition()))
                     .setToolResources(new ToolResources().setFileSearch(fileSearchToolResource));
-                
+
                 return administrationAsyncClient.createAgent(createAgentOptions);
             })
             .flatMap(agent -> {
                 System.out.println("Created agent: " + agent.getId());
                 agentId.set(agent.getId());
-                
+
                 return threadsAsyncClient.createThread();
             })
             .flatMap(thread -> {
                 System.out.println("Created thread: " + thread.getId());
                 threadId.set(thread.getId());
-                
+
                 return messagesAsyncClient.createMessage(
                     thread.getId(),
                     MessageRole.USER,
@@ -107,10 +107,10 @@ public class AgentFileSearchAsyncSample {
             })
             .flatMap(message -> {
                 System.out.println("Created message");
-                
+
                 CreateRunOptions createRunOptions = new CreateRunOptions(threadId.get(), agentId.get())
                     .setAdditionalInstructions("");
-                
+
                 return runsAsyncClient.createRun(createRunOptions);
             })
             .flatMap(threadRun -> {

@@ -39,13 +39,13 @@ public class AgentFunctionsAsyncSample {
         PersistentAgentsAsyncClient agentsAsyncClient = clientBuilder.buildAsyncClient();
         PersistentAgentsAdministrationAsyncClient administrationAsyncClient = agentsAsyncClient.getPersistentAgentsAdministrationAsyncClient();
         ThreadsAsyncClient threadsAsyncClient = agentsAsyncClient.getThreadsAsyncClient();
-        MessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
-        RunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
+        ThreadMessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
+        ThreadRunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
 
         // Track resources for cleanup
         AtomicReference<String> agentId = new AtomicReference<>();
         AtomicReference<String> threadId = new AtomicReference<>();
-        
+
         // Define the functions
         Supplier<String> getUserFavoriteCity = () -> "Seattle, WA";
         FunctionToolDefinition getUserFavoriteCityTool = new FunctionToolDefinition(
@@ -107,13 +107,13 @@ public class AgentFunctionsAsyncSample {
             .flatMap(agent -> {
                 System.out.println("Created agent: " + agent.getId());
                 agentId.set(agent.getId());
-                
+
                 return threadsAsyncClient.createThread();
             })
             .flatMap(thread -> {
                 System.out.println("Created thread: " + thread.getId());
                 threadId.set(thread.getId());
-                
+
                 return messagesAsyncClient.createMessage(
                     thread.getId(),
                     MessageRole.USER,
@@ -121,15 +121,15 @@ public class AgentFunctionsAsyncSample {
             })
             .flatMap(message -> {
                 System.out.println("Created message");
-                
+
                 CreateRunOptions createRunOptions = new CreateRunOptions(threadId.get(), agentId.get())
                     .setAdditionalInstructions("");
-                
+
                 return runsAsyncClient.createRun(createRunOptions);
             })
             .flatMap(threadRun -> {
                 System.out.println("Created run, monitoring for completion or required actions...");
-                
+
                 // Poll the run until it's completed
                 return Mono.fromSupplier(() -> threadRun)
                     .expand(run -> {
@@ -140,15 +140,15 @@ public class AgentFunctionsAsyncSample {
                         } else if (run.getStatus() == RunStatus.REQUIRES_ACTION) {
                             // Handle function calls
                             if (run.getRequiredAction() instanceof SubmitToolOutputsAction) {
-                                SubmitToolOutputsAction submitToolsOutputAction = 
+                                SubmitToolOutputsAction submitToolsOutputAction =
                                     (SubmitToolOutputsAction) run.getRequiredAction();
-                                
+
                                 ArrayList<ToolOutput> toolOutputs = new ArrayList<>();
                                 for (RequiredToolCall toolCall
                                     : submitToolsOutputAction.getSubmitToolOutputs().getToolCalls()) {
                                     toolOutputs.add(getResolvedToolOutput.apply(toolCall));
                                 }
-                                
+
                                 return runsAsyncClient.submitToolOutputsToRun(
                                         threadId.get(), run.getId(), toolOutputs)
                                     .flatMap(updatedRun -> Mono.delay(java.time.Duration.ofMillis(500))
@@ -163,11 +163,11 @@ public class AgentFunctionsAsyncSample {
             })
             .flatMap(completedRun -> {
                 System.out.println("Run completed with status: " + completedRun.getStatus());
-                
+
                 if (completedRun.getStatus() == RunStatus.FAILED && completedRun.getLastError() != null) {
                     System.out.println("Run failed: " + completedRun.getLastError().getMessage());
                 }
-                
+
                 return printRunMessagesAsync(messagesAsyncClient, threadId.get());
             })
             .doFinally(signalType -> {

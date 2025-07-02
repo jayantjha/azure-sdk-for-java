@@ -29,8 +29,8 @@ public class AgentCodeInterpreterEnterpriseFileSearchAsyncSample {
         PersistentAgentsAsyncClient agentsAsyncClient = clientBuilder.buildAsyncClient();
         PersistentAgentsAdministrationAsyncClient administrationAsyncClient = agentsAsyncClient.getPersistentAgentsAdministrationAsyncClient();
         ThreadsAsyncClient threadsAsyncClient = agentsAsyncClient.getThreadsAsyncClient();
-        MessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
-        RunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
+        ThreadMessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
+        ThreadRunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
 
         String agentName = "code_interpreter_enterprise_file_search_async";
         CodeInterpreterToolDefinition ciTool = new CodeInterpreterToolDefinition();
@@ -50,18 +50,18 @@ public class AgentCodeInterpreterEnterpriseFileSearchAsyncSample {
         // Track resources for cleanup
         AtomicReference<String> agentId = new AtomicReference<>();
         AtomicReference<String> threadId = new AtomicReference<>();
-        
+
         // Create full reactive chain
         administrationAsyncClient.createAgent(createAgentOptions)
             .flatMap(agent -> {
                 System.out.println("Created agent: " + agent.getId());
                 agentId.set(agent.getId());
-                
+
                 return threadsAsyncClient.createThread()
                     .flatMap(thread -> {
                         System.out.println("Created thread: " + thread.getId());
                         threadId.set(thread.getId());
-                        
+
                         // Create initial message with attachment
                         return messagesAsyncClient.createMessage(
                             thread.getId(),
@@ -71,11 +71,11 @@ public class AgentCodeInterpreterEnterpriseFileSearchAsyncSample {
                             null
                         ).flatMap(message -> {
                             System.out.println("Created initial message with attachment");
-                            
+
                             // Create and start the run
                             CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
                                 .setAdditionalInstructions("");
-                            
+
                             return runsAsyncClient.createRun(createRunOptions)
                                 .flatMap(threadRun -> {
                                     System.out.println("Created run, waiting for completion...");

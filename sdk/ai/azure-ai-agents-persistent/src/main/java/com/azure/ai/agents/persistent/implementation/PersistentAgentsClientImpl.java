@@ -609,30 +609,30 @@ public final class PersistentAgentsClientImpl {
     }
 
     /**
-     * Gets an instance of FilesImpl class.
+     * Gets an instance of PersistentAgentsFilesImpl class.
      * 
-     * @return an instance of FilesImpl class.
+     * @return an instance of PersistentAgentsFilesImpl class.
      */
-    public FilesImpl getFiles() {
-        return new FilesImpl(httpPipeline, serializerAdapter, endpoint, serviceVersion);
+    public PersistentAgentsFilesImpl getPersistentAgentsFiles() {
+        return new PersistentAgentsFilesImpl(httpPipeline, serializerAdapter, endpoint, serviceVersion);
     }
 
     /**
-     * Gets an instance of MessagesImpl class.
+     * Gets an instance of ThreadMessagesImpl class.
      * 
-     * @return an instance of MessagesImpl class.
+     * @return an instance of ThreadMessagesImpl class.
      */
-    public MessagesImpl getMessages() {
-        return new MessagesImpl(httpPipeline, serializerAdapter, endpoint, serviceVersion);
+    public ThreadMessagesImpl getThreadMessages() {
+        return new ThreadMessagesImpl(httpPipeline, serializerAdapter, endpoint, serviceVersion);
     }
 
     /**
-     * Gets an instance of RunsImpl class.
+     * Gets an instance of ThreadRunsImpl class.
      * 
-     * @return an instance of RunsImpl class.
+     * @return an instance of ThreadRunsImpl class.
      */
-    public RunsImpl getRuns() {
-        return new RunsImpl(httpPipeline, serializerAdapter, endpoint, serviceVersion);
+    public ThreadRunsImpl getThreadRuns() {
+        return new ThreadRunsImpl(httpPipeline, serializerAdapter, endpoint, serviceVersion);
     }
 
     /**

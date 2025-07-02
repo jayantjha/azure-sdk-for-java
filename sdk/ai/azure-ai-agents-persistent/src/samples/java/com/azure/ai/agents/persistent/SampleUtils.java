@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class SampleUtils {
 
-    public static void printRunMessages(MessagesClient messagesClient, String threadId) {
+    public static void printRunMessages(ThreadMessagesClient messagesClient, String threadId) {
 
         // BEGIN: com.azure.ai.agents.persistent.SampleUtils.printRunMessages
 
@@ -39,7 +39,7 @@ public class SampleUtils {
         // END: com.azure.ai.agents.persistent.SampleUtils.printRunMessages
     }
 
-    public static Mono<Void> printRunMessagesAsync(MessagesAsyncClient messagesAsyncClient, String threadId) {
+    public static Mono<Void> printRunMessagesAsync(ThreadMessagesAsyncClient messagesAsyncClient, String threadId) {
         // BEGIN: com.azure.ai.agents.persistent.SampleUtils.printRunMessagesAsync
 
         return messagesAsyncClient.listMessages(threadId)
@@ -96,7 +96,7 @@ public class SampleUtils {
         // END: com.azure.ai.agents.persistent.SampleUtils.printStreamUpdateAsync
     }
 
-    public static void waitForRunCompletion(String threadId, ThreadRun threadRun, RunsClient runsClient)
+    public static void waitForRunCompletion(String threadId, ThreadRun threadRun, ThreadRunsClient runsClient)
         throws InterruptedException {
 
         // BEGIN: com.azure.ai.agents.persistent.SampleUtils.waitForRunCompletion
@@ -117,7 +117,7 @@ public class SampleUtils {
         // END: com.azure.ai.agents.persistent.SampleUtils.waitForRunCompletion
     }
 
-    public static Mono<ThreadRun> waitForRunCompletionAsync(String threadId, ThreadRun threadRun, RunsAsyncClient runsAsyncClient) {
+    public static Mono<ThreadRun> waitForRunCompletionAsync(String threadId, ThreadRun threadRun, ThreadRunsAsyncClient runsAsyncClient) {
         // BEGIN: com.azure.ai.agents.persistent.SampleUtils.waitForRunCompletionAsync
 
         return Mono.defer(() -> runsAsyncClient.getRun(threadId, threadRun.getId()))

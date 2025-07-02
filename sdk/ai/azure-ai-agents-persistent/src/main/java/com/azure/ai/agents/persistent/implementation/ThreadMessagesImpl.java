@@ -44,13 +44,13 @@ import java.util.stream.Collectors;
 import reactor.core.publisher.Mono;
 
 /**
- * Initializes a new instance of the Messages type.
+ * Initializes a new instance of the ThreadMessages type.
  */
-public final class MessagesImpl {
+public final class ThreadMessagesImpl {
     /**
      * The proxy service used to perform REST calls.
      */
-    private final MessagesService service;
+    private final ThreadMessagesService service;
 
     /**
      * Project endpoint in the form of:
@@ -111,31 +111,32 @@ public final class MessagesImpl {
     }
 
     /**
-     * Initializes an instance of Messages client.
+     * Initializes an instance of ThreadMessages client.
      * 
      * @param endpoint Project endpoint in the form of:
      * https://&lt;aiservices-id&gt;.services.ai.azure.com/api/projects/&lt;project-name&gt;.
      * @param serviceVersion Service version.
      */
-    public MessagesImpl(String endpoint, PersistentAgentsServiceVersion serviceVersion) {
+    public ThreadMessagesImpl(String endpoint, PersistentAgentsServiceVersion serviceVersion) {
         this(new HttpPipelineBuilder().policies(new UserAgentPolicy(), new RetryPolicy()).build(),
             JacksonAdapter.createDefaultSerializerAdapter(), endpoint, serviceVersion);
     }
 
     /**
-     * Initializes an instance of Messages client.
+     * Initializes an instance of ThreadMessages client.
      * 
      * @param httpPipeline The HTTP pipeline to send requests through.
      * @param endpoint Project endpoint in the form of:
      * https://&lt;aiservices-id&gt;.services.ai.azure.com/api/projects/&lt;project-name&gt;.
      * @param serviceVersion Service version.
      */
-    public MessagesImpl(HttpPipeline httpPipeline, String endpoint, PersistentAgentsServiceVersion serviceVersion) {
+    public ThreadMessagesImpl(HttpPipeline httpPipeline, String endpoint,
+        PersistentAgentsServiceVersion serviceVersion) {
         this(httpPipeline, JacksonAdapter.createDefaultSerializerAdapter(), endpoint, serviceVersion);
     }
 
     /**
-     * Initializes an instance of Messages client.
+     * Initializes an instance of ThreadMessages client.
      * 
      * @param httpPipeline The HTTP pipeline to send requests through.
      * @param serializerAdapter The serializer to serialize an object into a string.
@@ -143,21 +144,21 @@ public final class MessagesImpl {
      * https://&lt;aiservices-id&gt;.services.ai.azure.com/api/projects/&lt;project-name&gt;.
      * @param serviceVersion Service version.
      */
-    public MessagesImpl(HttpPipeline httpPipeline, SerializerAdapter serializerAdapter, String endpoint,
+    public ThreadMessagesImpl(HttpPipeline httpPipeline, SerializerAdapter serializerAdapter, String endpoint,
         PersistentAgentsServiceVersion serviceVersion) {
         this.httpPipeline = httpPipeline;
         this.serializerAdapter = serializerAdapter;
         this.endpoint = endpoint;
         this.serviceVersion = serviceVersion;
-        this.service = RestProxy.create(MessagesService.class, this.httpPipeline, this.getSerializerAdapter());
+        this.service = RestProxy.create(ThreadMessagesService.class, this.httpPipeline, this.getSerializerAdapter());
     }
 
     /**
-     * The interface defining all the services for Messages to be used by the proxy service to perform REST calls.
+     * The interface defining all the services for ThreadMessages to be used by the proxy service to perform REST calls.
      */
     @Host("{endpoint}")
-    @ServiceInterface(name = "Messages")
-    public interface MessagesService {
+    @ServiceInterface(name = "ThreadMessages")
+    public interface ThreadMessagesService {
         @Post("/threads/{threadId}/messages")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = { 401 })

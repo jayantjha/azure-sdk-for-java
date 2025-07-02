@@ -52,8 +52,8 @@ public final class PersistentAgentsClient {
      *
      * @return an instance of FilesClient class.
      */
-    public FilesClient getFilesClient() {
-        return new FilesClient(serviceClient.getFiles());
+    public PersistentAgentsFilesClient getFilesClient() {
+        return new PersistentAgentsFilesClient(serviceClient.getFiles());
     }
 
     /**
@@ -61,8 +61,8 @@ public final class PersistentAgentsClient {
      *
      * @return an instance of MessagesClient class.
      */
-    public MessagesClient getMessagesClient() {
-        return new MessagesClient(serviceClient.getMessages());
+    public ThreadMessagesClient getMessagesClient() {
+        return new ThreadMessagesClient(serviceClient.getMessages());
     }
 
     /**
@@ -70,8 +70,8 @@ public final class PersistentAgentsClient {
      *
      * @return an instance of RunsClient class.
      */
-    public RunsClient getRunsClient() {
-        return new RunsClient(serviceClient.getRuns());
+    public ThreadRunsClient getRunsClient() {
+        return new ThreadRunsClient(serviceClient.getRuns());
     }
 
     /**
@@ -337,5 +337,32 @@ public final class PersistentAgentsClient {
         BinaryData createThreadAndRunRequest = BinaryData.fromObject(createThreadAndRunRequestObj);
         return createThreadAndRunWithResponse(createThreadAndRunRequest, requestOptions).getValue()
             .toObject(ThreadRun.class);
+    }
+
+    /**
+     * Gets an instance of PersistentAgentsFilesClient class.
+     *
+     * @return an instance of PersistentAgentsFilesClient class.
+     */
+    public PersistentAgentsFilesClient getPersistentAgentsFilesClient() {
+        return new PersistentAgentsFilesClient(serviceClient.getPersistentAgentsFiles());
+    }
+
+    /**
+     * Gets an instance of ThreadMessagesClient class.
+     *
+     * @return an instance of ThreadMessagesClient class.
+     */
+    public ThreadMessagesClient getThreadMessagesClient() {
+        return new ThreadMessagesClient(serviceClient.getThreadMessages());
+    }
+
+    /**
+     * Gets an instance of ThreadRunsClient class.
+     *
+     * @return an instance of ThreadRunsClient class.
+     */
+    public ThreadRunsClient getThreadRunsClient() {
+        return new ThreadRunsClient(serviceClient.getThreadRuns());
     }
 }

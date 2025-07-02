@@ -39,9 +39,9 @@ public class AgentVectorStoreBatchFileSearchSample {
         PersistentAgentsClient agentsClient = clientBuilder.buildClient();
         PersistentAgentsAdministrationClient administrationClient = agentsClient.getPersistentAgentsAdministrationClient();
         ThreadsClient threadsClient = agentsClient.getThreadsClient();
-        MessagesClient messagesClient = agentsClient.getMessagesClient();
-        RunsClient runsClient = agentsClient.getRunsClient();
-        FilesClient filesClient = agentsClient.getFilesClient();
+        ThreadMessagesClient messagesClient = agentsClient.getMessagesClient();
+        ThreadRunsClient runsClient = agentsClient.getRunsClient();
+        PersistentAgentsFilesClient filesClient = agentsClient.getFilesClient();
         VectorStoresClient vectorStoresClient = agentsClient.getVectorStoresClient();
 
         Path productFile = getFile("product_info.md");

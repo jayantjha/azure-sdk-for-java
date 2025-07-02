@@ -38,13 +38,13 @@ import com.azure.core.util.serializer.SerializerAdapter;
 import reactor.core.publisher.Mono;
 
 /**
- * Initializes a new instance of the Files type.
+ * Initializes a new instance of the PersistentAgentsFiles type.
  */
-public final class FilesImpl {
+public final class PersistentAgentsFilesImpl {
     /**
      * The proxy service used to perform REST calls.
      */
-    private final FilesService service;
+    private final PersistentAgentsFilesService service;
 
     /**
      * Project endpoint in the form of:
@@ -105,31 +105,32 @@ public final class FilesImpl {
     }
 
     /**
-     * Initializes an instance of Files client.
+     * Initializes an instance of PersistentAgentsFiles client.
      * 
      * @param endpoint Project endpoint in the form of:
      * https://&lt;aiservices-id&gt;.services.ai.azure.com/api/projects/&lt;project-name&gt;.
      * @param serviceVersion Service version.
      */
-    public FilesImpl(String endpoint, PersistentAgentsServiceVersion serviceVersion) {
+    public PersistentAgentsFilesImpl(String endpoint, PersistentAgentsServiceVersion serviceVersion) {
         this(new HttpPipelineBuilder().policies(new UserAgentPolicy(), new RetryPolicy()).build(),
             JacksonAdapter.createDefaultSerializerAdapter(), endpoint, serviceVersion);
     }
 
     /**
-     * Initializes an instance of Files client.
+     * Initializes an instance of PersistentAgentsFiles client.
      * 
      * @param httpPipeline The HTTP pipeline to send requests through.
      * @param endpoint Project endpoint in the form of:
      * https://&lt;aiservices-id&gt;.services.ai.azure.com/api/projects/&lt;project-name&gt;.
      * @param serviceVersion Service version.
      */
-    public FilesImpl(HttpPipeline httpPipeline, String endpoint, PersistentAgentsServiceVersion serviceVersion) {
+    public PersistentAgentsFilesImpl(HttpPipeline httpPipeline, String endpoint,
+        PersistentAgentsServiceVersion serviceVersion) {
         this(httpPipeline, JacksonAdapter.createDefaultSerializerAdapter(), endpoint, serviceVersion);
     }
 
     /**
-     * Initializes an instance of Files client.
+     * Initializes an instance of PersistentAgentsFiles client.
      * 
      * @param httpPipeline The HTTP pipeline to send requests through.
      * @param serializerAdapter The serializer to serialize an object into a string.
@@ -137,21 +138,23 @@ public final class FilesImpl {
      * https://&lt;aiservices-id&gt;.services.ai.azure.com/api/projects/&lt;project-name&gt;.
      * @param serviceVersion Service version.
      */
-    public FilesImpl(HttpPipeline httpPipeline, SerializerAdapter serializerAdapter, String endpoint,
+    public PersistentAgentsFilesImpl(HttpPipeline httpPipeline, SerializerAdapter serializerAdapter, String endpoint,
         PersistentAgentsServiceVersion serviceVersion) {
         this.httpPipeline = httpPipeline;
         this.serializerAdapter = serializerAdapter;
         this.endpoint = endpoint;
         this.serviceVersion = serviceVersion;
-        this.service = RestProxy.create(FilesService.class, this.httpPipeline, this.getSerializerAdapter());
+        this.service
+            = RestProxy.create(PersistentAgentsFilesService.class, this.httpPipeline, this.getSerializerAdapter());
     }
 
     /**
-     * The interface defining all the services for Files to be used by the proxy service to perform REST calls.
+     * The interface defining all the services for PersistentAgentsFiles to be used by the proxy service to perform REST
+     * calls.
      */
     @Host("{endpoint}")
-    @ServiceInterface(name = "Files")
-    public interface FilesService {
+    @ServiceInterface(name = "PersistentAgentsFiles")
+    public interface PersistentAgentsFilesService {
         @Get("/files")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = { 401 })

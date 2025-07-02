@@ -37,8 +37,8 @@ public final class AgentOpenApiAsyncSample {
         PersistentAgentsAsyncClient agentsAsyncClient = clientBuilder.buildAsyncClient();
         PersistentAgentsAdministrationAsyncClient administrationAsyncClient = agentsAsyncClient.getPersistentAgentsAdministrationAsyncClient();
         ThreadsAsyncClient threadsAsyncClient = agentsAsyncClient.getThreadsAsyncClient();
-        MessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
-        RunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
+        ThreadMessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
+        ThreadRunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
 
         Path filePath = getFile("weather_openapi.json");
         JsonReader reader = JsonProviders.createReader(Files.readAllBytes(filePath));
@@ -59,28 +59,28 @@ public final class AgentOpenApiAsyncSample {
             .setName(agentName)
             .setInstructions("You are a helpful agent")
             .setTools(Arrays.asList(openApiTool));
-        
+
         // Create full reactive chain
         administrationAsyncClient.createAgent(createAgentOptions)
             .flatMap(agent -> {
                 System.out.println("Created agent: " + agent.getId());
                 agentId.set(agent.getId());
-                
+
                 return threadsAsyncClient.createThread()
                     .flatMap(thread -> {
                         System.out.println("Created thread: " + thread.getId());
                         threadId.set(thread.getId());
-                        
+
                         return messagesAsyncClient.createMessage(
                             thread.getId(),
                             MessageRole.USER,
                             "What's the weather in seattle?")
                             .flatMap(message -> {
                                 System.out.println("Created message asking about weather");
-                                
+
                                 CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
                                     .setAdditionalInstructions("");
-                                
+
                                 return runsAsyncClient.createRun(createRunOptions)
                                     .flatMap(threadRun -> {
                                         System.out.println("Created run, waiting for completion...");

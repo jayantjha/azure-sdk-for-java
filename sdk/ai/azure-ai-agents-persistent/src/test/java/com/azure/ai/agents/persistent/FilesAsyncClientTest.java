@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FilesAsyncClientTest extends ClientTestBase {
 
     private PersistentAgentsClientBuilder clientBuilder;
-    private FilesAsyncClient filesAsyncClient;
+    private PersistentAgentsFilesAsyncClient filesAsyncClient;
     private List<FileInfo> uploadedFiles;
     private static final String SAMPLE_TEXT = "Sample text for testing upload";
 

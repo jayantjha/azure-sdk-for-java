@@ -26,7 +26,7 @@ public class RunsClientTest extends ClientTestBase {
     private PersistentAgentsClientBuilder clientBuilder;
     private PersistentAgentsAdministrationClient administrationClient;
     private ThreadsClient threadsClient;
-    private RunsClient runsClient;
+    private ThreadRunsClient runsClient;
     private PersistentAgent agent;
     private PersistentAgentThread thread;
 

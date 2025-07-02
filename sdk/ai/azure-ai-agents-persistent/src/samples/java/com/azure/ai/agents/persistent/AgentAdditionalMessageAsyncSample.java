@@ -25,8 +25,8 @@ public final class AgentAdditionalMessageAsyncSample {
         PersistentAgentsAsyncClient agentsAsyncClient = clientBuilder.buildAsyncClient();
         PersistentAgentsAdministrationAsyncClient administrationAsyncClient = agentsAsyncClient.getPersistentAgentsAdministrationAsyncClient();
         ThreadsAsyncClient threadsAsyncClient = agentsAsyncClient.getThreadsAsyncClient();
-        MessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
-        RunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
+        ThreadMessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
+        ThreadRunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
 
         String agentName = "additional_message_example_async";
         CreateAgentOptions createAgentOptions = new CreateAgentOptions("gpt-4o-mini")
@@ -37,18 +37,18 @@ public final class AgentAdditionalMessageAsyncSample {
         // Track resources for cleanup
         AtomicReference<String> agentId = new AtomicReference<>();
         AtomicReference<String> threadId = new AtomicReference<>();
-        
+
         // Create full reactive chain to showcase reactive programming
         administrationAsyncClient.createAgent(createAgentOptions)
             .flatMap(agent -> {
                 System.out.println("Created agent: " + agent.getId());
                 agentId.set(agent.getId());
-                
+
                 return threadsAsyncClient.createThread()
                     .flatMap(thread -> {
                         System.out.println("Created thread: " + thread.getId());
                         threadId.set(thread.getId());
-                        
+
                         // Create initial message
                         return messagesAsyncClient.createMessage(
                             thread.getId(),
@@ -56,7 +56,7 @@ public final class AgentAdditionalMessageAsyncSample {
                             "What is the impedance formula?"
                         ).flatMap(message -> {
                             System.out.println("Created initial message");
-                            
+
                             // Create run with additional messages
                             CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
                                 .setAdditionalMessages(Arrays.asList(
@@ -67,7 +67,7 @@ public final class AgentAdditionalMessageAsyncSample {
                                         MessageRole.USER, BinaryData.fromString("What is the impedance formula?")
                                     )
                                 ));
-                            
+
                             return runsAsyncClient.createRun(createRunOptions)
                                 .flatMap(threadRun -> {
                                     System.out.println("Created run, waiting for completion...");
@@ -83,7 +83,7 @@ public final class AgentAdditionalMessageAsyncSample {
             .doFinally(signalType -> {
                 // Always clean up resources regardless of success or failure
                 System.out.println("Cleaning up resources...");
-                
+
                 // Clean up thread if created
                 if (threadId.get() != null) {
                     threadsAsyncClient.deleteThread(threadId.get())
@@ -91,7 +91,7 @@ public final class AgentAdditionalMessageAsyncSample {
                         .doOnError(error -> System.err.println("Failed to delete thread: " + error.getMessage()))
                         .subscribe();
                 }
-                
+
                 // Clean up agent if created
                 if (agentId.get() != null) {
                     administrationAsyncClient.deleteAgent(agentId.get())

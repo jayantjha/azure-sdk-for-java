@@ -36,9 +36,9 @@ public class AgentVectorStoreBatchFileSearchAsyncSample {
         PersistentAgentsAsyncClient agentsAsyncClient = clientBuilder.buildAsyncClient();
         PersistentAgentsAdministrationAsyncClient administrationAsyncClient = agentsAsyncClient.getPersistentAgentsAdministrationAsyncClient();
         ThreadsAsyncClient threadsAsyncClient = agentsAsyncClient.getThreadsAsyncClient();
-        MessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
-        RunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
-        FilesAsyncClient filesAsyncClient = agentsAsyncClient.getFilesAsyncClient();
+        ThreadMessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
+        ThreadRunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
+        PersistentAgentsFilesAsyncClient filesAsyncClient = agentsAsyncClient.getFilesAsyncClient();
         VectorStoresAsyncClient vectorStoresAsyncClient = agentsAsyncClient.getVectorStoresAsyncClient();
 
         Path productFile = getFile("product_info.md");
@@ -46,7 +46,7 @@ public class AgentVectorStoreBatchFileSearchAsyncSample {
         // Track resources for cleanup
         AtomicReference<String> agentId = new AtomicReference<>();
         AtomicReference<String> threadId = new AtomicReference<>();
-        
+
         // Create vector store
         vectorStoresAsyncClient.createVectorStore(
                 null, "my_vector_store_async",
@@ -79,19 +79,19 @@ public class AgentVectorStoreBatchFileSearchAsyncSample {
                     .setInstructions("You are a helpful agent")
                     .setTools(Arrays.asList(new FileSearchToolDefinition()))
                     .setToolResources(new ToolResources().setFileSearch(fileSearchToolResource));
-                
+
                 return administrationAsyncClient.createAgent(createAgentOptions);
             })
             .flatMap(agent -> {
                 System.out.println("Created agent: " + agent.getId());
                 agentId.set(agent.getId());
-                
+
                 return threadsAsyncClient.createThread();
             })
             .flatMap(thread -> {
                 System.out.println("Created thread: " + thread.getId());
                 threadId.set(thread.getId());
-                
+
                 // Create initial message
                 return messagesAsyncClient.createMessage(
                     thread.getId(),
@@ -99,11 +99,11 @@ public class AgentVectorStoreBatchFileSearchAsyncSample {
                     "What feature does Smart Eyewear offer?"
                 ).flatMap(message -> {
                     System.out.println("Created initial message");
-                    
+
                     // Create and start the run
                     CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agentId.get())
                         .setAdditionalInstructions("");
-                    
+
                     return runsAsyncClient.createRun(createRunOptions)
                         .flatMap(threadRun -> {
                             System.out.println("Created run, waiting for completion...");

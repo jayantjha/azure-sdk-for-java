@@ -24,11 +24,11 @@ public final class AgentAzureAISearchAsyncSample {
             .endpoint(Configuration.getGlobalConfiguration().get("ENDPOINT", "endpoint"))
             .credential(new DefaultAzureCredentialBuilder().build());
         PersistentAgentsAsyncClient agentsAsyncClient = clientBuilder.buildAsyncClient();
-        
+
         PersistentAgentsAdministrationAsyncClient administrationAsyncClient = agentsAsyncClient.getPersistentAgentsAdministrationAsyncClient();
         ThreadsAsyncClient threadsAsyncClient = agentsAsyncClient.getThreadsAsyncClient();
-        MessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
-        RunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
+        ThreadMessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
+        ThreadRunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
 
         String aiSearchConnectionId = Configuration.getGlobalConfiguration().get("AI_SEARCH_CONNECTION_ID", "");
 
@@ -49,18 +49,18 @@ public final class AgentAzureAISearchAsyncSample {
         // Track resources for cleanup
         AtomicReference<String> agentId = new AtomicReference<>();
         AtomicReference<String> threadId = new AtomicReference<>();
-        
+
         // Create full reactive chain to showcase reactive programming
         administrationAsyncClient.createAgent(createAgentOptions)
             .flatMap(agent -> {
                 System.out.println("Created agent: " + agent.getId());
                 agentId.set(agent.getId());
-                
+
                 return threadsAsyncClient.createThread()
                     .flatMap(thread -> {
                         System.out.println("Created thread: " + thread.getId());
                         threadId.set(thread.getId());
-                        
+
                         // Create initial message
                         return messagesAsyncClient.createMessage(
                             thread.getId(),
@@ -68,11 +68,11 @@ public final class AgentAzureAISearchAsyncSample {
                             "Best horror movie?"
                         ).flatMap(message -> {
                             System.out.println("Created initial message");
-                            
+
                             // Create run
                             CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
                                 .setAdditionalInstructions("");
-                            
+
                             return runsAsyncClient.createRun(createRunOptions)
                                 .flatMap(threadRun -> {
                                     System.out.println("Created run, waiting for completion...");
@@ -88,7 +88,7 @@ public final class AgentAzureAISearchAsyncSample {
             .doFinally(signalType -> {
                 // Always clean up resources regardless of success or failure
                 System.out.println("Cleaning up resources...");
-                
+
                 // Clean up thread if created
                 if (threadId.get() != null) {
                     threadsAsyncClient.deleteThread(threadId.get())
@@ -96,7 +96,7 @@ public final class AgentAzureAISearchAsyncSample {
                         .doOnError(error -> System.err.println("Failed to delete thread: " + error.getMessage()))
                         .subscribe();
                 }
-                
+
                 // Clean up agent if created
                 if (agentId.get() != null) {
                     administrationAsyncClient.deleteAgent(agentId.get())

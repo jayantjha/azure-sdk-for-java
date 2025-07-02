@@ -31,8 +31,8 @@ public final class AgentConnectedAgentAsyncSample {
         PersistentAgentsAsyncClient agentsAsyncClient = clientBuilder.buildAsyncClient();
         PersistentAgentsAdministrationAsyncClient administrationAsyncClient = agentsAsyncClient.getPersistentAgentsAdministrationAsyncClient();
         ThreadsAsyncClient threadsAsyncClient = agentsAsyncClient.getThreadsAsyncClient();
-        MessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
-        RunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
+        ThreadMessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
+        ThreadRunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
 
         // Track resources for cleanup
         AtomicReference<String> connectedAgentId = new AtomicReference<>();
@@ -53,7 +53,7 @@ public final class AgentConnectedAgentAsyncSample {
 
                 // Create main agent with connected agent tool
                 ConnectedAgentToolDefinition connectedAgentToolDefinition = new ConnectedAgentToolDefinition(
-                    new ConnectedAgentDetails(connectedAgent.getId(), connectedAgent.getName(), 
+                    new ConnectedAgentDetails(connectedAgent.getId(), connectedAgent.getName(),
                     "Gets the stock price of a company"));
 
                 String mainAgentName = "my-assistant-async";
@@ -61,10 +61,10 @@ public final class AgentConnectedAgentAsyncSample {
                     .setName(mainAgentName)
                     .setInstructions("You are a helpful assistant, and use the connected agent to get stock prices.")
                     .setTools(Arrays.asList(connectedAgentToolDefinition));
-                
+
                 RequestOptions requestOptions = new RequestOptions()
                     .setHeader("x-ms-enable-preview", "true");
-                
+
                 return administrationAsyncClient.createAgentWithResponse(BinaryData.fromObject(createAgentRequest), requestOptions)
                     .flatMap(response -> {
                         return Mono.just(response.getValue().toObject(PersistentAgent.class));
@@ -73,14 +73,14 @@ public final class AgentConnectedAgentAsyncSample {
             .flatMap(mainAgent -> {
                 mainAgentId.set(mainAgent.getId());
                 System.out.println("Created main agent: " + mainAgent.getId());
-                
+
                 // Create a thread
                 return threadsAsyncClient.createThread();
             })
             .flatMap(thread -> {
                 threadId.set(thread.getId());
                 System.out.println("Created thread: " + thread.getId());
-                
+
                 // Create message
                 return messagesAsyncClient.createMessage(
                     thread.getId(),
@@ -89,11 +89,11 @@ public final class AgentConnectedAgentAsyncSample {
             })
             .flatMap(message -> {
                 System.out.println("Created message");
-                
+
                 // Create and start the run
                 CreateRunOptions createRunOptions = new CreateRunOptions(threadId.get(), mainAgentId.get())
                     .setAdditionalInstructions("");
-                
+
                 return runsAsyncClient.createRun(createRunOptions)
                     .flatMap(threadRun -> {
                         System.out.println("Created run, waiting for completion...");
@@ -111,13 +111,13 @@ public final class AgentConnectedAgentAsyncSample {
                     threadsAsyncClient.deleteThread(threadId.get()).block();
                     System.out.println("Deleted thread: " + threadId.get());
                 }
-                
+
                 // Clean up the main agent
                 if (mainAgentId.get() != null) {
                     administrationAsyncClient.deleteAgent(mainAgentId.get()).block();
                     System.out.println("Deleted main agent: " + mainAgentId.get());
                 }
-                
+
                 // Clean up the connected agent
                 if (connectedAgentId.get() != null) {
                     administrationAsyncClient.deleteAgent(connectedAgentId.get()).block();

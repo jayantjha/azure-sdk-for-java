@@ -28,8 +28,8 @@ public final class AgentStreamingAsyncSample {
         PersistentAgentsAsyncClient agentsAsyncClient = clientBuilder.buildAsyncClient();
         PersistentAgentsAdministrationAsyncClient administrationAsyncClient = agentsAsyncClient.getPersistentAgentsAdministrationAsyncClient();
         ThreadsAsyncClient threadsAsyncClient = agentsAsyncClient.getThreadsAsyncClient();
-        MessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
-        RunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
+        ThreadMessagesAsyncClient messagesAsyncClient = agentsAsyncClient.getMessagesAsyncClient();
+        ThreadRunsAsyncClient runsAsyncClient = agentsAsyncClient.getRunsAsyncClient();
 
         // Track resources for cleanup
         AtomicReference<String> agentId = new AtomicReference<>();
@@ -46,24 +46,24 @@ public final class AgentStreamingAsyncSample {
             .flatMap(agent -> {
                 System.out.println("Created agent: " + agent.getId());
                 agentId.set(agent.getId());
-                
+
                 return threadsAsyncClient.createThread()
                     .flatMap(thread -> {
                         System.out.println("Created thread: " + thread.getId());
                         threadId.set(thread.getId());
-                        
+
                         return messagesAsyncClient.createMessage(
                             thread.getId(),
                             MessageRole.USER,
                             "What's the weather like in my favorite city?")
                             .flatMap(message -> {
                                 System.out.println("Created initial message");
-                                
+
                                 CreateRunOptions createRunOptions = new CreateRunOptions(thread.getId(), agent.getId())
                                     .setAdditionalInstructions("");
-                                
+
                                 System.out.println("----- Run started! -----");
-                                
+
                                 return handleStreamingRun(runsAsyncClient.createRunStreaming(createRunOptions));
                             });
                     });

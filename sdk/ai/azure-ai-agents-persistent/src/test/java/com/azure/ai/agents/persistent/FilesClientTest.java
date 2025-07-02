@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FilesClientTest extends ClientTestBase {
 
     private PersistentAgentsClientBuilder clientBuilder;
-    private FilesClient filesClient;
+    private PersistentAgentsFilesClient filesClient;
     private List<FileInfo> uploadedFiles;
     private static final String SAMPLE_TEXT = "Sample text for testing upload";
 

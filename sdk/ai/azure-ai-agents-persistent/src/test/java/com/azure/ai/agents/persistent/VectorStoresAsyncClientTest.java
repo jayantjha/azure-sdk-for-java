@@ -31,7 +31,7 @@ public class VectorStoresAsyncClientTest extends ClientTestBase {
 
     private PersistentAgentsClientBuilder clientBuilder;
     private VectorStoresAsyncClient vectorStoresAsyncClient;
-    private FilesAsyncClient filesAsyncClient;
+    private PersistentAgentsFilesAsyncClient filesAsyncClient;
     private List<VectorStore> vectorStores = new ArrayList<>();
     private List<FileInfo> uploadedFiles = new ArrayList<>();
     private List<VectorStoreFile> vectorStoreFiles = new ArrayList<>();

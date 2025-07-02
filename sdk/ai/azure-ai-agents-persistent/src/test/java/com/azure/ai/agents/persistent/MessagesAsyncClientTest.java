@@ -28,7 +28,7 @@ public class MessagesAsyncClientTest extends ClientTestBase {
     private PersistentAgentsClientBuilder clientBuilder;
     private PersistentAgentsAdministrationAsyncClient administrationAsyncClient;
     private ThreadsAsyncClient threadsAsyncClient;
-    private MessagesAsyncClient messagesAsyncClient;
+    private ThreadMessagesAsyncClient messagesAsyncClient;
     private PersistentAgent agent;
     private PersistentAgentThread thread;
 

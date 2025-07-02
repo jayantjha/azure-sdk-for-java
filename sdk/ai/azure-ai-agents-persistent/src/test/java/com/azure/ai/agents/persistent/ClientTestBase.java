@@ -97,7 +97,7 @@ public class ClientTestBase extends TestProxyTestBase {
         assertNotNull(agent.getName(), "Agent name should not be null");
     }
 
-    protected void waitForRunCompletion(ThreadRun threadRun, RunsClient runsClient) {
+    protected void waitForRunCompletion(ThreadRun threadRun, ThreadRunsClient runsClient) {
         int retryLeft = 50;
         do {
             try {
@@ -116,7 +116,7 @@ public class ClientTestBase extends TestProxyTestBase {
         }
     }
 
-    public static Mono<ThreadRun> waitForRunCompletionAsync(ThreadRun threadRun, RunsAsyncClient runsAsyncClient) {
+    public static Mono<ThreadRun> waitForRunCompletionAsync(ThreadRun threadRun, ThreadRunsAsyncClient runsAsyncClient) {
         return Mono.defer(() -> runsAsyncClient.getRun(threadRun.getThreadId(), threadRun.getId())).flatMap(run -> {
             if (run.getStatus() == RunStatus.QUEUED
                 || run.getStatus() == RunStatus.IN_PROGRESS

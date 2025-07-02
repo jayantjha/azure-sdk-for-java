@@ -54,8 +54,8 @@ public final class PersistentAgentsAsyncClient {
      *
      * @return an instance of FilesAsyncClient class.
      */
-    public FilesAsyncClient getFilesAsyncClient() {
-        return new FilesAsyncClient(serviceClient.getFiles());
+    public PersistentAgentsFilesAsyncClient getFilesAsyncClient() {
+        return new PersistentAgentsFilesAsyncClient(serviceClient.getFiles());
     }
 
     /**
@@ -63,8 +63,8 @@ public final class PersistentAgentsAsyncClient {
      *
      * @return an instance of MessagesAsyncClient class.
      */
-    public MessagesAsyncClient getMessagesAsyncClient() {
-        return new MessagesAsyncClient(serviceClient.getMessages());
+    public ThreadMessagesAsyncClient getMessagesAsyncClient() {
+        return new ThreadMessagesAsyncClient(serviceClient.getMessages());
     }
 
     /**
@@ -72,8 +72,8 @@ public final class PersistentAgentsAsyncClient {
      *
      * @return an instance of RunsAsyncClient class.
      */
-    public RunsAsyncClient getRunsAsyncClient() {
-        return new RunsAsyncClient(serviceClient.getRuns());
+    public ThreadRunsAsyncClient getRunsAsyncClient() {
+        return new ThreadRunsAsyncClient(serviceClient.getRuns());
     }
 
     /**
@@ -340,5 +340,32 @@ public final class PersistentAgentsAsyncClient {
         BinaryData createThreadAndRunRequest = BinaryData.fromObject(createThreadAndRunRequestObj);
         return createThreadAndRunWithResponse(createThreadAndRunRequest, requestOptions).flatMap(FluxUtil::toMono)
             .map(protocolMethodData -> protocolMethodData.toObject(ThreadRun.class));
+    }
+
+    /**
+     * Gets an instance of PersistentAgentsFilesAsyncClient class.
+     *
+     * @return an instance of PersistentAgentsFilesAsyncClient class.
+     */
+    public PersistentAgentsFilesAsyncClient getPersistentAgentsFilesAsyncClient() {
+        return new PersistentAgentsFilesAsyncClient(serviceClient.getPersistentAgentsFiles());
+    }
+
+    /**
+     * Gets an instance of ThreadMessagesAsyncClient class.
+     *
+     * @return an instance of ThreadMessagesAsyncClient class.
+     */
+    public ThreadMessagesAsyncClient getThreadMessagesAsyncClient() {
+        return new ThreadMessagesAsyncClient(serviceClient.getThreadMessages());
+    }
+
+    /**
+     * Gets an instance of ThreadRunsAsyncClient class.
+     *
+     * @return an instance of ThreadRunsAsyncClient class.
+     */
+    public ThreadRunsAsyncClient getThreadRunsAsyncClient() {
+        return new ThreadRunsAsyncClient(serviceClient.getThreadRuns());
     }
 }
